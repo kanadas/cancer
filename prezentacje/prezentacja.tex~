@@ -1,0 +1,206 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+%\usepackage{titling}
+\usepackage{romannum}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathdots}
+\usepackage{gensymb}
+\usepackage{MnSymbol}
+\usepackage{stmaryrd}
+
+\def\R{\mathbb{R}}
+\def\C{\mathbb{C}}
+\def\Z{\mathbb{Z}}
+\def\Q{\mathbb{Q}}
+\def\N{\mathbb{N}}
+\def\Rn{\mathbb{R}^n}
+\def\E{\mathcal{E}}
+\def\B{\mathcal{B}}
+\def\nor{\trianglelefteq}
+\def\ker{\operatorname{ker}}
+\def\gengru#1{\langle\,#1 \,\rangle}
+\def\ch{\blacktriangleleft}
+\def\arr{\longrightarrow}
+\def\Abs#1{\left\vert#1\right\vert}
+\def\rk{\operatorname{rank}}
+\def\lin{\operatorname{lin}}
+\def\af{\operatorname{af}}
+\def\dim{\operatorname{dim}}
+\def\ker{\operatorname{ker}}
+\def\im{\operatorname{im}}
+\def\tr{\operatorname{tr}}
+\def\Hom{\operatorname{Hom}}
+\def\Aut{\operatorname{Aut}}
+\def\id{\triangleleft}
+\def\iif{\operatorname{if}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\def\normsign{\|\cdot\|}
+\newcommand{\series}[3]{\sum_{#1}^{#2}#3}
+\newcommand{\colw}[1]{\column{#1\textwidth}}
+
+\usetheme{Warsaw}
+
+\title{Optymalizacja dawkowania leku przy leczeniu raka}
+\author{Tomasz Kanas}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}
+  \frametitle{Problem}
+  Lek zabija komórki raka, ale szkodzi też pacjentowi. Ponadto niektóre komórki mogą się uodpornić na lek. Kiedy i w jakich dawkach podawać lek, aby zmaksymalizować jego skuteczność?
+  \begin{alertblock}{To niezbyt precyzyjne}
+    Jak działa ten lek? Od czego zależy skuteczność? Co to znaczy skuteczność?
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bardziej formalnie}
+  \begin{itemize}
+  \item Pacjent ma pewną ilość komórek nowotworowych.
+  \item Pewna część z tych komórek jest odporna na lek.
+  \item Liczba komórek nowotworowych zmienia się w czasie.
+  \item Tępo zmian zależy od dawkowania leku.
+  \item Nie można przekroczyć maksymalnej dawki leku.
+  \item Mamy pewną funkcję celu która dla danego dawkowania i przebiegu leczenia zwróci jak dobrze nam poszło.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Problem optymalnego sterowania}
+  \begin{columns}
+    \colw{.5}
+    \[\min_g J(V, g) \text{ gdzie }\]
+    \[\dot{V}(t) = F(V, g, t),\; 0 \le t \le T\]
+    \[V(0) = v_0\]
+    \[\forall_t 0 \le g(t) \le c_{max}\]
+    \colw{.5}
+    \begin{itemize}
+    \item $V$ --- stan układu
+    \item $g$ --- sterowanie
+    \item $F$ --- dynamika układu
+    \item $J$ --- funkcja celu
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Model}
+  \begin{columns}
+    \colw{.6}
+    \[V_1' = \lambda_1V_1F\left(\frac{V_1 + \alpha_{12}V_2}{K}\right) - \beta_1V_1g\]
+    \[V_2' = \lambda_2V_2F\left(\frac{V_2 + \alpha_{21}V_1}{K}\right) - \beta_2V_2g\]
+\[K' = -\mu K + (V_1+V_2) - d{(V_1 + V_2)}^{2/3}K - \beta K g\]
+    \colw{.4}
+    \begin{itemize}
+    \item $g$ --- stężenie leku (sterowanie)
+    \item $V_1$ --- Komórki guza podatne na lek
+    \item $V_2$ --- Komórki guza odporne na lek
+    \item $K$ --- Unaczynienie
+    \item $J$ --- Funkcja celu
+    \end{itemize}
+  \end{columns}
+\[J(V_1, V_2, K, g) = \int_0^T V_1(t) + V_2(t)dt + \omega\int_0^T G\left(\frac{V_2(t) - V_1(t)}{\epsilon}\right) dt \]
+\begin{center}
+  $F = -\ln,\: G = \frac{1+\tanh}{2}\quad \alpha, \beta, \lambda, \mu, d, \omega, \epsilon, g_{max}, T$ --- stałe (znane)
+\end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pierwsze spostrzeżenia}
+  \begin{itemize}
+  \item Problem optymalnego sterowania wygląda na bardzo ogólny i w ogólności trudny do rozwiązania.
+  \item Model wygląda na dość skomplikowany.
+  \item Obliczenie wartości $J$ dla danego sterowania wymaga rozwiązania skomplikowanego równania różniczkowego.
+  \item Wartość $J$ zależy od funkcji, czyli zadanie optymalizacji jest nieskończenie wymiarowe.
+  \end{itemize}
+  \begin{block}{Wniosek}
+    Musimy zadowolić się rozwiązaniem przybliżonym. Zdefiniujmy więc problem przybliżony.
+  \end{block}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Pomysł}
+  \begin{center}{\large Dyskretyzacja czasu}\end{center}
+  \begin{itemize}
+  \item Weźmy pewien skończony zbiór punktów w czasie:
+    \[0 = t_0 < t_1 < \cdots < t_n = T\]
+  \item Będziemy przybliżać sterowanie funkcją kawałkami stałą z węzłami w wybranych punktach.
+  \item Mając takie sterowanie możemy numerycznie obliczyć przybliżone rozwiązanie równania róźniczkowego, oraz obliczyć funkcję celu.
+  \end{itemize}
+  \begin{block}{Podsumowując}
+    Musimy już tylko zapisać funkcję celu w zależności od wartości na przedziałach i znaleźć minimum.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Optymalizacja nieliniowa z ograniczeniami}
+  \begin{columns}
+    \colw{.5}
+    \[\min_x J(x) \text{ z ograniczeniami }\]
+    \[f(x) = 0\]
+    \[h(x) <= 0\]
+    \[\forall_i 0 \le x_i \le x_{max}\]
+    \colw{.5}
+    \begin{itemize}
+    \item $J$ --- funkcja celu
+    \item $f$ --- ograniczenia równościowe
+    \item $h$ --- ograniczenia nierównościowe
+    \end{itemize}
+  \end{columns}
+  \begin{block}{Spostrzeżenie}
+    Ten problem, jak wiemy, nadal nie jest prosty w rozwiązaniu, ale przynajmniej istnieją gotowe biblioteki które mogą rozwiązać go za nas.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Ostateczna forma zadania}
+    \[\min_{x_1,\ldots,x_n} \hat{J}(x_1,\ldots, x_n) \text{ z ograniczeniami } \]
+    \[\forall_i 0 \le x_i \le x_{max}\]
+    Gdzie $x_i$ to przybliżona wartość sterowania na przedziale $[t_{i-1}, t_i]$, $\hat{J}$ to numeryczne przybliżenie funkcji celu.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Plan rozwiązania}
+  \begin{itemize}
+  \item Aproksymacja prowadząca do zadania optymalizacji nieliniowej w przestrzeń skończonego wymiaru.
+  \item Implementacja w MATLAB-ie z wykorzystaniem gotowych narzędzi do optymalizacji nieliniowej.
+  \item Znalezienie parametrów przy których optymalizacja zbiega i daje możliwie dobry wynik.
+  \item Testy numeryczne metody --- weryfikacja.
+  \item Opis rozwiązania wraz z motywacją dokonanych wyborów, dyskusją i krytyką otrzymanych wyników.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Możliwe problemy}
+  \begin{itemize}
+  \item Problem skończonego wymiaru może okazać się za duży i skomplikowany.
+  \item Interesuje nas minimum globalne, a narzędzia znajdują zwykle minimum lokalne, więc trzeba znaleźć dobry punkt startowy, lub użyć innych algorytmów.
+  \item Optymalne sterowanie może być nieciągłe, co może być źródłem błędów przybliżenia i powodować konieczność zagęszczenia siatki dyskretyzacji.
+  \item Jak mierzyć poprawność otrzymanego wyniku?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pomysły na zwiększenie rzędu aproksymacji}
+  \begin{itemize}
+  \item Przybliżanie splajnem (funkcją ciągłą, kawałkami wielomianową), a nie tylko funkcją kawałkami stałą.
+  \item Implementacja algorytmu szukającego odpowiednio gęstego zbioru punktów i odpowiednich stopni wielomianów na przedziałach.
+  \item Uruchomienie rozwiązania dla wielu punktów startowych w celu znalezienia najlepszego.
+  \item Dostosowanie algorytmów optymalizacji nieliniowej do tego zadania.
+  \item Wyliczenie różnych (dostępnych w literaturze) miar błędu i analiza wpływu parametrów na nie.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \center{\Huge Dziękuję za uwagę}
+\end{frame}
+
+\end{document}

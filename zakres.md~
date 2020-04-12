@@ -1,0 +1,10 @@
+
+## Zakres pracy licencjackiej
+
+### Cel
+Znalezienie jak najlepszego sterowania w danym problemie optymalnego sterowania. Implementacja algorytmu wyliczającego sterowanie i opis rozwiązania.
+
+### Podstawowe wymagania
+
+* Dyskretyzacja i sprowadzenie problemu do instancji problemu optymalizacji nieliniowej za pomocą (co najmniej) przybliżania sterowania funkcją kawałkami stałą.
+* Implementacja rozwiązania z możliwym wykorzystaniem 
