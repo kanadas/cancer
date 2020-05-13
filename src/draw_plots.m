@@ -13,12 +13,6 @@ function draw_plots(g, points, x0)
   plot(x, control(x));
   legend('control');
   subplot(2, 1, 2);
-#{  res = zeros(length(x), 3);
-  for i = 1:length(x)
-    res(i,:) = v(x(i));
-  endfor
-  plot(x, res);
-  #}
   plot(x, v(x'));
   legend('V1', 'V2', 'K');
 endfunction

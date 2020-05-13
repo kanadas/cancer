@@ -1,5 +1,5 @@
 
-function y = loss_fun(g, points, x0)
+function y = objf(g, points, x0)
   t0 = points(1);
   T = points(end);
 %  N = length(points);
