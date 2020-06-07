@@ -1,41 +1,10 @@
 #{
 function res = control_to_res(g, points, x0)
-  N = length(points) - 1;
-  t0 = points(1);
-  T = points(end);
-
-%  X = [x0];
-  %Preprocess values at collocation points to return faster function
-%  for i = 1 : N - 1
-%    X = [X ; ode(@(t, V) dynamics(t, V, @(x) g(i)), points(i), points(i + 1), X(end, :))];
-%  end
-
-  function x = approx_dyn(t, points, g, X)
-
-%    persistent calls = 0;
-%    printf ("called %d times\n", ++calls);
-%    if(issorted(t, "ascend")) disp("sorted") else disp("not sorted") endif
-        
-    pos = lookup(points, t);
-    ster = g(pos);
-    zero_idx = points(pos)' == t;
-    nz = points(pos)' != t;    
-    x(zero_idx, :) = X(pos(zero_idx), :);
-    x(nz, :) = ode(@(t, V) dynamics(t, V, @(x) ster(nz)), points(pos(nz)), t(nz), X(pos(nz), :));
-  endfunction
-
-
-  res = @(t) approx_dyn(t, points, g);
-endfunction
-#}
-
-function res = control_to_res(g, points, x0)
 
   function x = approx_dyn(t, g, points, x0)
     t = t';
     t0 = points(1);
-    ster = @(t) g(lookup(points, t));
-    [st, id] = sort(t);
+    ghat = @(t) ster(t, g, points)
     if st(1) == t0
       is_t0 = true;
     else
@@ -54,5 +23,21 @@ function res = control_to_res(g, points, x0)
   endfunction
   
   res = @(t) approx_dyn(t, g, points, x0);  
+endfunction
+#}
+
+function res = control_to_res(g, points, x0, h)
+
+  function [x, dx] = approx_dyn(t, g, points, x0, h)
+    t0 = points(1);
+    ghat = @(t) ster(t, g, points);
+    if nargout == 1
+      x = rk4(@(t, V) dynamics(t, V, ghat), t0, t, x0, h);
+    else
+      [x, dx] = rk4(@(t, V, dV) dynamics(t, V, ghat, dV), t0, t, x0, h, length(g));
+    endif
+  endfunction
+  
+  res = @(t) approx_dyn(t, g, points, x0, h);
 endfunction
 
