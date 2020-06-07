@@ -56,29 +56,35 @@
 Celem pracy jest znalezienie strategii podawania leku, przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy [tu wypada zacytować wyjściową pracę]. Model ten przedstawia rozwój nowotworu w czasie w zależności od dawki leku za pomocą równania różniczkowego:
 \begin{equation} \label{ode}
   \begin{aligned} 
-    V_1'(t) &= \lambda_1V_1F\left(\frac{V_1 + \alpha_{12}V_2}{K}\right) - \beta_1V_1g(t) \\
-    V_2'(t) &= \lambda_2V_2F\left(\frac{V_2 + \alpha_{21}V_1}{K}\right) - \beta_2V_2g(t) \\
-    K'(t) &= -\mu K + (V_1+V_2) - d{(V_1 + V_2)}^{2/3}K - \beta K g(t) \\[3pt]
-   &V_1(0) = 20,\ V_2(0) = 280,\ K(0) = 650
+    V_1'(t) &= \lambda_1V_1F\left(\frac{V_1 + \alpha_{12}V_2}{K}\right) - \beta_1V_1g(t), \\
+    V_2'(t) &= \lambda_2V_2F\left(\frac{V_2 + \alpha_{21}V_1}{K}\right) - \beta_2V_2g(t), \\
+    K'(t) &= -\mu K + (V_1+V_2) - d{(V_1 + V_2)}^{2/3}K - \beta K g(t) \\
   \end{aligned}
 \end{equation}
-Gdzie $F(x) = -\ln(x)$, oraz stałe mają wartości:
-\begin{align*}
-  t &\in [t_0, T]   & \alpha_{12} &= ?? \text{(przyjąłem 0.1)}  & \beta_1 &= 0.15 & \lambda_1 &= 0.192\\
-  t_0 &= 0          & \alpha_{21} &= ?? \text{(przyjąłem 0.15)} & \beta_2 &= 0.1  & \lambda_2 &= 0.192\\
-  T &= 200          &&                                           & \beta &= 0.05  & \mu &= 0 \\
-  0 \le g(&t) \le g_{\max} = 3 && &&                                              & d &= 0.00873 \\
-\end{align*}
-Funkcja $V_1(t)$ modeluje liczbę komórek guza podatnych na lek w momencie $t$, $V_2(t)$ liczbę komórek guza odpornych na lek, a $K(t)$ jest parametrem nazwanym w pracy ``uczynnieniem''. Praca podaje też funkcjonał celu, który pozwala porównać różne przebiegi leczenia i tym samym stwierdzić która strategia podawania leku daje lepsze rezultaty. W tym przypadku im niższa wartość funkcji tym lepszy przebieg leczenia:
+dla $t \in [0, T]$, z warunkami początkowymi
+\begin{equation} \label{ode-start}
+   V_1(0) = V_{10},\ V_2(0) = V_{20},\ K(0) = K_0
+\end{equation}
+gdzie $F(x) = -\ln(x)$, $ 0 \le g(t) \le g_{\max}$, oraz $\lambda_1, \lambda_2, \ldots$ są zadanymi parametrami
+
+Funkcja $V_1(t)$ modeluje liczbę komórek guza podatnych na lek w momencie $t$, $V_2(t)$ liczbę komórek guza odpornych na lek, a $K(t)$ jest parametrem nazwanym w pracy ``uczynnieniem''.
+
+Zadanie polega na znalezieniu mierzalnej funkcji $g: [0, T] \to [0, g_{\max}]$ takiej, że rozwiązanie (\ref{ode}) minimalizuje funkcjonał
 \begin{equation} \label{objf}
   J(V_1, V_2, K) = \int_0^T V_1(t) + V_2(t)dt + \omega\int_0^T G\left(\frac{V_2(t) - V_1(t)}{\epsilon}\right) dt
 \end{equation}
+gdzie
 \begin{equation*}
   G(x) = \frac{1+\tanh(x)}{2} \quad
-  \omega = ?? \text{(przyjąłem 1000)},\ \epsilon = 0.01
+  \omega, \epsilon > 0 
 \end{equation*}
+%Parametrem równania różniczkowego (\ref{ode}) jest funkcja $g: [t_0, T] \to [0, g_{\max}]$. Jeśli dla danej funkcji $g$ równanie (\ref{ode}) posiada rozwiązanie, to możemy przypisać jej wartość funkcjonału $J$ dla tego rozwiązania. Oznacza to, że możemy przyjąć $J(g) := J(V_1, V_2, K)$, gdzie $V_1, V_2, K$ spełniają równanie (\ref{ode}). Dzięki temu naszym celem staje się znalezienie takiej funkcji $g$ dla której istnieje rozwiązanie równania (\ref{ode}) oraz wartość $J(g)$ jest minimalna.
 
-Parametrem równania różniczkowego (\ref{ode}) jest funkcja $g: [t_0, T] \to [0, g_{\max}]$. Jeśli dla danej funkcji $g$ równanie (\ref{ode}) posiada rozwiązanie, to możemy przypisać jej wartość funkcjonału $J$ dla tego rozwiązania. Oznacza to, że możemy przyjąć $J(g) := J(V_1, V_2, K)$, gdzie $V_1, V_2, K$ spełniają równanie (\ref{ode}). Dzięki temu naszym celem staje się znalezienie takiej funkcji $g$ dla której istnieje rozwiązanie równania (\ref{ode}) oraz wartość $J(g)$ jest minimalna. Problem ten w literaturze nazywa się problemem optymalnego sterowania, a funkcję $g$ sterowaniem.
+Problem ten w literaturze nazywa się problemem optymalnego sterowania, a funkcję $g$ sterowaniem.
+
+Zauważmy, że nie wymagamy of $g$ nawet ciągłości, więc rozwiązanie (\ref{ode}) może nie istnieć. Oczywiście w zadaniu interesują nas tylko takie $g$ dla których rozwiązanie (\ref{ode}) istnieje i jest jednoznaczne, więc można sterowaniu przydzielić wartość funkcjonału $J(g) = J(V_1, V_2, K)$. Zauważmy też, że funkcja $F$ posiada osobliwość w 0, ale nie jest to dla nas problemem, ponieważ $\alpha_{12},\alpha_{21} > 0$, więc osiągnięcie tej osobliwości nastąpi tylko gdy $V_1 = V_2 = 0$, czyli gdy pacjent nie ma żadnych komórek nowotworowych, więc jest wyleczony i możemy zakończyć terapię.
+
+Podsumowując, celem pracy jest znalezienie funkcji mierzalnej $g : [0, T] \to [0, g_{\max}]$, oraz funkcji $V_1, V_2, K : [0, T] \to [0, \infty)$ spełniających (\ref{ode}) i (\ref{ode-start}), oraz minimalizujących funkcjonał celu (\ref{objf}).  
 
 \subsection{Problem przybliżony}
 Analityczne rozwiązywanie problemu optymalnego sterowania rzadko kiedy jest możliwe, a nawet gdy jest możliwe, jest trudne. Z tego powodu zdecydujemy się na szukanie rozwiązania przybliżonego.
@@ -87,20 +93,54 @@ Najpierw ograniczmy problem do problemu optymalizacji skończenie wymiarowej. W 
 \begin{equation}
   0 = t_0 < t_1 < \cdots < t_{n-1} < t_n = T\]
 \end{equation}
-oraz wartości sterowania w tych punktach
-\begin{equation}
-  g_i = g(t_i)
+%Możemy teraz przybliżać sterowanie za pomocą splajnu z węzłami w punktach $t_i$. Ustalmy stopień splajnu na $i$-tym przedziale na $s_i$ i przedstawmy przybliżone sterowanie $\hat{g}$ na przedziale $[t_{i-1}, t_i)$ za pomocą bazy Lagrange'a opartej na węzłach równoodległych $t_{ij} = t_{i-1} + h_0j$, $n_i = \frac{t_i - t_{i-1}}{h_0}$:
+%\begin{equation} \label{control}
+%  \hat{g}(t) = \sum_{j = 0}^{s_i}g_{ij}l_{ij}(t),\quad l_{ij}(t) = \frac{\prod_{k=0,k\neq j}^{n_i} (t - t_{ik})}{\prod_{k=0,k\neq j}^{n_i} (t_{ij} - t_{ik})}
+%\end{equation}
+%Dzięki wyborowi bazy Lagrange'a możemy łatwo .
+Możemy teraz przybliżać sterowanie za pomocą funkcji kawałkami stałej:
+\begin{equation} \label{control}
+  \hat{g}(t) = g_i \text{ gdy } t \in [t_{i-1}, t_i)
 \end{equation}
-Możemy teraz przybliżać sterowanie za pomocą funkcji stałej na przedziałach $[t_i, t_{i+1})$, lub splajnem z węzłami w punktach $t_i$. Mając tak przybliżoną funkcję sterowania możemy numerycznie przybliżyć rozwiązanie równania różniczkowego (\ref{ode}), oraz wartość całek występujących w funkcji celu (\ref{objf}). Otrzymujemy w ten sposób przybliżoną funkcję celu $\hat{J} : {[0, g_{\max}]}^n \to \R$ i tym samym problem przybliżony:
+Zauważmy, że przy takim sterowaniu prawa strona (\ref{ode}) nie jest ciągła, ale jest różniczkowalna i Lipszycowska na każdym przedziale, więc z tw. Picarda-Lindel\"ofa o istnieniu i jednoznaczności rozwiązań, dla dowolnego punktu początkowego rozwiązanie (\ref{ode}) na każdym przedziale $[t_{i-1}, t_i]$ istnieje i jest jednoznaczne. Dla pierwszego przedziału punkt początkowy mamy zadany przez (\ref{ode-start}), dla $i$-tego przedziału punkt początkowy jest jednoznacznie zadany przez rozwiązanie dla poprzedniego przedziału, więc rozwiązanie na całym $[0, T]$ jest określone jednoznacznie.
+
+Mając tak przybliżoną funkcję sterowania możemy numerycznie przybliżyć rozwiązanie równania różniczkowego (\ref{ode}). Użyjemy do tego metody Runggego-Kutty rzędu $r$ ze stałym krokiem długości $h$. Dla uproszczenia notacji oznaczmy (\ref{ode}) przez
+\begin{equation} \label{ode-sim}
+  \dot{y}(t) = f(t, y, g),\ y = \begin{pmatrix} V_1 \\ V_2 \\ K \end{pmatrix},\ f = \begin{pmatrix} f_1 \\ f_2 \\ f_3 \end{pmatrix}
+\end{equation}
+wtedy przybliżone rozwiązanie (\ref{ode-sim}) na przedziale $[t_n + ah, t_n + (a + 1)h]$ wyraża się przez:
+\begin{equation} \label{rk}
+  \begin{split}
+    &k_1 = f(t_n + ah, \hat{y}(t_n + ah), \hat{g}) \\
+    &k_l = f(t_n + c_l h, \hat{y}(t_n + ah) + h \sum_{i = 1}^{l-1} a_{li}k_i, \hat{g}) \\
+    &\hat{y}((a+1)h) = \hat{y}(ah) + h \sum_{i = 1}^r b_i k_i
+  \end{split}
+\end{equation}
+gdzie $c_l, a_{li}, b_i$ są stałymi zależnymi od wybranej metody.
+
+Zostało już tylko przybliżyć funkcjonał celu (\ref{objf}). Zapiszmy go w postaci
+\begin{equation} \label{objf-sim}
+  J(y) = \int_0^T j(y(t)) dt
+\end{equation}
+gdzie
+\begin{equation}
+  j(y(t)) = V_1 + V_2 + \omega G\left(\frac{V_2 - V_1}{\epsilon} \right),\ y(t) = \begin{pmatrix} V_1 \\ V_2 \\ K \end{pmatrix}
+\end{equation}
+wtedy ogólny wzór na kwadraturę ze stałym krokiem $h_1$ przybliżającą (\ref{objf-sim}) to
+\begin{equation} \label{quad}
+  \hat{J}(\hat{y}) = \sum_{i = 1}^N \alpha_i j(\hat{y}(ih))
+\end{equation}
+gdzie $N = \frac{T}{h}$, a $\alpha_i$ są stałymi zależnymi od wybranej kwadratury.
+
+W ten sposób wyraziliśmy przybliżoną funkcję celu jako funkcję $g_1,\ldots,g_n$, więc problem przybliżony sprowadza się do
 \begin{equation} \label{nlp}
   \begin{split}
     \min_{g_1,\ldots,g_n} &\hat{J}(g_1,\ldots, g_n) \text{ z ograniczeniami } \\
     &\forall_{i \in \{1,\ldots,n\}} 0 \le g_i \le g_{\max}
   \end{split}
 \end{equation}
-Jest to problem optymalizacji nieliniowej z ograniczeniami. Rozwiązanie tego problemu jest poza zakresem tej pracy i zadowolimy się tu faktem, że istnieją metody pozwalające uzyskać przybliżone rozwiązanie tego problemu, oraz implementacje tych metod.
 
-To podejście do numerycznego problemu optymalnego sterowania jest zaproponowane w~\cite{diehl} i nazywa się sekwencyjnym (ang. ``sequential''). 
+Jest to problem optymalizacji nieliniowej z ograniczeniami i istnieją implementacje metod pozwalających uzyskać przybliżone rozwiązanie tego problemu. To podejście do numerycznego problemu optymalnego sterowania jest podobne do zaproponowanego w~\cite{diehl} i nazywa się sekwencyjnym (ang. ``sequential''). 
 
 \subsection{Plan rozwiązania}
 Aby obliczyć wynik problemu przybliżonego skorzystamy ze środowiska MatLab/Octave wraz z dostarczonym z nim optymalizatorem problemu optymalizacji nieliniowej z ograniczeniami (odpowiednio FMINICON w MatLab, NONLIN\_MIN w Octave). W tym celu zaimplementujemy przejście od problemu optymalnego sterowania. Będziemy też musieli znaleźć odpowiednią siatkę dyskretyzacji i punkt startowy dla optymalizatora.
@@ -121,6 +161,15 @@ Do przybliżenia równania (\ref{ode}) skorzystamy z dostarczonej w Octave imple
 Aby obliczyć wartość funkcji celu użyjemy dostarczonej w Octave implementacji adaptacyjnej kwadratury Gaussa-Konroda. Osiąga ona dobrą dokładność, ewaluując odcałkowywaną funkcję w dość niewielu punktach. Zakłada też, że odcałkowywana funkcja jest zwektoryzowana, co wykorzystamy do poprawy wydajności rozwiązania.
 
 Pewną niedogodnością jest fakt, że nie możemy nic zakładać o kolejności argumentów w wektorze który kwadratura przekazuje odcałkowywanej funkcji, natomiast funkcja rozwiązujące równanie różniczkowe wymaga by punkty były jej przekazane w kolejności rosnącej. Musimy więc posortować wektor argumentów przed przekazaniem ich do funkcji liczącej rozwiązanie równania różniczkowego, oraz przywrócić pierwotny porządek dla wyników tych obliczeń.
+
+\section{Eksperyment}
+\begin{align*}
+  t_0 &= 0 & \alpha_{12} &= ?? \text{(przyjąłem 0.1)}  & \beta_1 &= 0.15 & \lambda_1 &= 0.192\\
+  T &= 200 & \alpha_{21} &= ?? \text{(przyjąłem 0.15)} & \beta_2 &= 0.1  & \lambda_2 &= 0.192\\
+  g_{\max} &= 3 &&     d &= 0.00873                    & \beta &= 0.05  & \mu &= 0 \\
+  V_{10} &= 20 &  V_{20} &= 280                        & K_0 = 650 \\
+  &&       & \omega &= ?? \text{(przyjąłem 1000)} & \epsilon &= 0.01 \\
+\end{align*}
 
 \bibliography{bibliography}{}
 \bibliographystyle{abbrv}
