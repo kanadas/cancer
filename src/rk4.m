@@ -10,8 +10,9 @@ function [res, grad] = rk4(f, t0, pts, x0, h, grad_dim = 0)
   res = zeros(length(pts), length(x0));
   grad = zeros(length(pts), length(x0), grad_dim);
   i = 1;
+
   for p = pts
-    while (t < p)
+    while (t < p - 1e-10)      
       if nargout == 1
 	k1 = f(t, x);
 	k2 = f(t + h/2, x + h/2*k1);

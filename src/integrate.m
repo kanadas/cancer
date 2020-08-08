@@ -13,6 +13,7 @@ function [x, dx] = integrate(f, t0, T, h)
   else
     [y, dy] = f(eval_points);
   endif
+
   x = dot(trap_quad, y, 1);
   if nargout > 1
     dx = dy' * trap_quad;

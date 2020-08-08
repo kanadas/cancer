@@ -1,0 +1,14 @@
+function [p, res, cvg, outp] = run_opt(points, x0, g0, h, algorithm = "lm_feasible", do_grad = "on")
+  gmax = 3;
+  N = length(points);
+  [p, res, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0, h),
+			       X0   = g0,
+			       A    = [],
+			       B    = [],
+			       AEQ  = [],
+			       BEQ  = [],
+			       LB   = zeros(N, 1),
+			       UB   = gmax * ones(N, 1),
+			       NONLCON = [],
+			       OPTIONS=optimset("GradObj", do_grad, "Algorithm", algorithm));
+endfunction

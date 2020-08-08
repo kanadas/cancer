@@ -8,8 +8,10 @@ function [v, dv, dg] = dynamics(t, V, g, dV = [])
   beta1 = 0.15;
   beta2 = 0.1;
   beta = 0.05;
-  alpha12 = 0.1; %???TODO
-  alpha21 = 0.15; %???TODO
+%  alpha12 = 0.1;
+%  alpha21 = 0.15;
+  alpha12 = 0.5;
+  alpha21 = 0.75;
   function y = F(x)
     y = -log(x);
   endfunction
@@ -48,13 +50,13 @@ function [v, dv, dg] = dynamics(t, V, g, dV = [])
     dkdk = -mu - d * pow - beta * ggt;
     dv = [dv1dv1, dv1dv2, dv1dk; dv2dv1, dv2dv2, dv2dk; dkdv1, dkdv2, dkdk];
 
-    dV1 = dV(1);
-    dV2 = dV(2);
-    dK = dV(3);
+    dV1 = dV(1,:);
+    dV2 = dV(2,:);
+    dK = dV(3,:);
     dfrac1 = ((dV1 + alpha12 * dV2) .* K - (V1 + alpha12 * V2) .* dK) ./ (K .* K);
     dfrac2 = ((dV2 + alpha21 * dV1) .* K - (V2 + alpha21 * V1) .* dK) ./ (K .* K);
     dpowdv = dpow .* (dV1 + dV2);
-    dv1dg = lambda1 * (dV1 .* F(frac1) + V1 .* dF(frac1) .* dfrac1) - beta1 * (dV1 .* ggt + V1 .* dgt);
+    dv1dg = lambda1 * (dV1 .* F(frac1) + V1 .* dF(frac1) .* dfrac1) - beta1 * (dV1 .* ggt + V1 .* dgt);    
     dv2dg = lambda2 * (dV2 .* F(frac2) + V2 .* dF(frac2) .* dfrac2) - beta2 * (dV2 .* ggt + V2 .* dgt);
     dkdg = -mu * dK + dV1 + dV2 - d * (dpowdv .* K + pow .* dK) - beta * (dK .* ggt + K .* dgt);
     dg = [dv1dg; dv2dg; dkdg];
@@ -66,3 +68,28 @@ function [v, dv, dg] = dynamics(t, V, g, dV = [])
 %    dg = dg / 1000; %TEST
 %  endif
 endfunction
+
+%TEST FUNCTION
+%function [v, dv, dg] = dynamics(t, V, g, dV = [])
+%  if nargout == 1
+%    u = g(t);
+%  else
+%    [u, du] = g(t);
+%  endif
+%  px = V(2);
+%  pv = u;
+%  v = [px; pv];
+%
+%  if nargout > 1
+%    dxdx = 0;
+%    dxdv = 1;
+%    dvdx = 0;
+%    dvdv = 0;
+%    dv = [dxdx, dxdv; dvdx, dvdv];
+%
+%    dxdg = dV(2,:);
+%    dvdg = du;
+%    dg = [dxdg; dvdg];
+%  endif
+%endfunction
+

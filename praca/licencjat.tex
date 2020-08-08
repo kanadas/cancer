@@ -13,6 +13,11 @@
 \usepackage{gensymb}
 \usepackage{MnSymbol}
 \usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{dsfont}
+\usepackage{url}
 
 \def\R{\mathbb{R}}
 \def\C{\mathbb{C}}
@@ -22,6 +27,7 @@
 \def\Rn{\mathbb{R}^n}
 \def\E{\mathcal{E}}
 \def\B{\mathcal{B}}
+\def\1{\mathds{1}}
 \def\nor{\trianglelefteq}
 \def\ker{\operatorname{ker}}
 \def\gengru#1{\langle\,#1 \,\rangle}
@@ -43,6 +49,9 @@
 \def\normsign{\|\cdot\|}
 \newcommand{\series}[3]{\sum_{#1}^{#2}#3}
 
+\newtheorem{problem}{Problem}
+\newtheorem{definicja}{Definicja}
+
 \setlength{\droptitle}{-2cm}
 \title{Optymalna strategia podawania leku}
 \author{Tomasz Kanas}
@@ -52,8 +61,7 @@
 \maketitle
 
 \section{Sformułowanie problemu}
-
-Celem pracy jest znalezienie strategii podawania leku, przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy [tu wypada zacytować wyjściową pracę]. Model ten przedstawia rozwój nowotworu w czasie w zależności od dawki leku za pomocą równania różniczkowego:
+Celem pracy jest znalezienie strategii podawania leku, przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy [tu wypada zacytować wyjściową pracę]. Model ten przedstawia rozwój nowotworu w czasie w zależności od dawkowania leku za pomocą równania różniczkowego:
 \begin{equation} \label{ode}
   \begin{aligned} 
     V_1'(t) &= \lambda_1V_1F\left(\frac{V_1 + \alpha_{12}V_2}{K}\right) - \beta_1V_1g(t), \\
@@ -65,112 +73,306 @@ dla $t \in [0, T]$, z warunkami początkowymi
 \begin{equation} \label{ode-start}
    V_1(0) = V_{10},\ V_2(0) = V_{20},\ K(0) = K_0
 \end{equation}
-gdzie $F(x) = -\ln(x)$, $ 0 \le g(t) \le g_{\max}$, oraz $\lambda_1, \lambda_2, \ldots$ są zadanymi parametrami
+gdzie $F(x) = -\ln(x)$, $ 0 \le g(t) \le g_{\max}$, oraz
+\[\lambda_1, \lambda_2, \alpha_{12}, \alpha_{21}, \beta_1, \beta_2, \beta, \mu, d, V_{10}, V_{20}, K_0 \ge 0\]
+są zadanymi parametrami.
 
-Funkcja $V_1(t)$ modeluje liczbę komórek guza podatnych na lek w momencie $t$, $V_2(t)$ liczbę komórek guza odpornych na lek, a $K(t)$ jest parametrem nazwanym w pracy ``uczynnieniem''.
+Funkcja $V_1(t)$ modeluje liczbę komórek guza podatnych na lek w momencie $t$, $V_2(t)$ liczbę komórek guza odpornych na lek, a $K(t)$ jest parametrem nazwanym w pracy ,,unaczynieniem''. Zauważmy, że rozwiązania $V_1, V_2, K$ zależą od wyboru funkcji $g$ którą nazywamy sterowaniem. W tym modelu wartość $g(t)$ ma interpretację jako wielkość dawki leku w czasie $t$.
 
-Zadanie polega na znalezieniu mierzalnej funkcji $g: [0, T] \to [0, g_{\max}]$ takiej, że rozwiązanie (\ref{ode}) minimalizuje funkcjonał
+Zadanie polega na znalezieniu funkcji $g: [0, T] \to [0, g_{\max}]$ oraz $V_1, V_2, K: [0, T] \to (0, \infty)$ spełniających (\ref{ode}), oraz minimalizujących funkcjonał:
 \begin{equation} \label{objf}
-  J(V_1, V_2, K) = \int_0^T V_1(t) + V_2(t)dt + \omega\int_0^T G\left(\frac{V_2(t) - V_1(t)}{\epsilon}\right) dt
+  J(g, V_1, V_2, K) = \int_0^T V_1(t) + V_2(t)dt + \omega\int_0^T G\left(\frac{V_2(t) - V_1(t)}{\epsilon}\right) dt
 \end{equation}
 gdzie
 \begin{equation*}
   G(x) = \frac{1+\tanh(x)}{2} \quad
   \omega, \epsilon > 0 
 \end{equation*}
-%Parametrem równania różniczkowego (\ref{ode}) jest funkcja $g: [t_0, T] \to [0, g_{\max}]$. Jeśli dla danej funkcji $g$ równanie (\ref{ode}) posiada rozwiązanie, to możemy przypisać jej wartość funkcjonału $J$ dla tego rozwiązania. Oznacza to, że możemy przyjąć $J(g) := J(V_1, V_2, K)$, gdzie $V_1, V_2, K$ spełniają równanie (\ref{ode}). Dzięki temu naszym celem staje się znalezienie takiej funkcji $g$ dla której istnieje rozwiązanie równania (\ref{ode}) oraz wartość $J(g)$ jest minimalna.
 
-Problem ten w literaturze nazywa się problemem optymalnego sterowania, a funkcję $g$ sterowaniem.
+Problem ten w literaturze nazywa się problemem optymalnego sterowania.
 
-Zauważmy, że nie wymagamy of $g$ nawet ciągłości, więc rozwiązanie (\ref{ode}) może nie istnieć. Oczywiście w zadaniu interesują nas tylko takie $g$ dla których rozwiązanie (\ref{ode}) istnieje i jest jednoznaczne, więc można sterowaniu przydzielić wartość funkcjonału $J(g) = J(V_1, V_2, K)$. Zauważmy też, że funkcja $F$ posiada osobliwość w 0, ale nie jest to dla nas problemem, ponieważ $\alpha_{12},\alpha_{21} > 0$, więc osiągnięcie tej osobliwości nastąpi tylko gdy $V_1 = V_2 = 0$, czyli gdy pacjent nie ma żadnych komórek nowotworowych, więc jest wyleczony i możemy zakończyć terapię.
+\subsection{Problem wyjściowy}
+Zdefiniujmy teraz formalnie problem oraz uprościmy notację.
 
-Podsumowując, celem pracy jest znalezienie funkcji mierzalnej $g : [0, T] \to [0, g_{\max}]$, oraz funkcji $V_1, V_2, K : [0, T] \to [0, \infty)$ spełniających (\ref{ode}) i (\ref{ode-start}), oraz minimalizujących funkcjonał celu (\ref{objf}).  
+\begin{problem}\label{problem}
+  Znaleźć funkcję kawałkami ciągłą
+  \[g: [0, T] \to [0, g_{\max}]\]
+  i funkcję
+  \[y = {(y_1, y_2, y_3)}^T: [0,T] \to {(0, \infty)}^3\]
+  spełniające równanie różniczkowe:
+  \begin{equation}\label{odesim}
+    \begin{aligned}
+      \dot{y}(t) &= f(t, y, g) \\
+      y(0) &= y_0 = {(y_{10}, y_{20}, y_{30})}^T
+    \end{aligned}
+  \end{equation}
+  oraz minimalizujące funkcjonał
+  \begin{equation}\label{objfsim}
+    J(g, y) = \int_0^T y_1(t) + y_2(t)dt + \omega\int_0^T G\left(\frac{y_2(t) - y_1(t)}{\epsilon}\right) dt
+  \end{equation}
+  gdzie $f = {(f_1, f_2, f_3)}^T$ jest określone wzorem
+  \begin{equation}\label{dynamicsim}
+    \begin{aligned}
+      f_1(t, y, g) &= \lambda_1y_1F\left(\frac{y_1 + \alpha_{12}y_2}{y_3}\right) - \beta_1y_1g(t), \\
+      f_2(t, y, g) &= \lambda_2y_2F\left(\frac{y_2 + \alpha_{21}y_1}{y_3}\right) - \beta_2y_2g(t), \\
+      f_3(t, y, g) &= -\mu y_3 + (y_1+y_2) - d{(y_1 + y_2)}^{2/3}y_3 - \beta y_3 g(t) \\
+    \end{aligned}
+  \end{equation}
+\end{problem}
+
+Przez funkcję kawałkami ciągłą określoną na odcinku rozumiemy funkcję o skończonej liczbie punktów nieciągłości. Jako, że o funkcji $f$ zakładamy tylko kawałkami ciągłość, należy doprecyzować co rozumiemy przez (\ref{odesim}). Załóżmy, że punktami nieciągłości $f$ są $t_1,\ \ldots,\ t_n$, wtedy (\ref{odesim}) oznacza ciąg równań różniczkowych postaci
+\begin{equation}\label{nonconode}
+  \begin{aligned}
+    \dot{y}|_{(t_i, t_{i+1})}(t) &= f|_{(t_i, t_{i+1})}(t, y, g)\\
+    y(t_i) &= \lim_{t\to t_i^-}y(t)
+  \end{aligned}
+  \quad \text{ gdzie } i \in \{0,\ldots, n\},\ t_0 = 0,\ t_{n+1}=T
+\end{equation}
+
+Zwróćmy jeszcze uwagę na fakt, że funkcja $F(x) = -\ln(x)$ posiada osobliwość w 0, więc problem nie jest dobrze zdefiniowany dla $y_1(t) = y_2(t) = 0$, a obliczenia w których argumenty $F$ są bliskie 0 mogą być obarczone dużymi błędami numerycznymi. Podobnie we wzorze (\ref{dynamicsim}) występuje dzielenie przez $y_3$, więc dla $y_3(t) = 0$ zadanie także nie jest dobrze określone.
 
 \subsection{Problem przybliżony}
 Analityczne rozwiązywanie problemu optymalnego sterowania rzadko kiedy jest możliwe, a nawet gdy jest możliwe, jest trudne. Z tego powodu zdecydujemy się na szukanie rozwiązania przybliżonego.
 
-Najpierw ograniczmy problem do problemu optymalizacji skończenie wymiarowej. W tym celu wprowadźmy dyskretyzacje czasu, poprzez ustalenie siatki dyskretyzacji, czyli ciągu punktów w czasie:
+Rozwiązanie problemu \ref{problem} przybliżymy rozwiązaniem pewnego problemu optymalizacji skończenie wymiarowej. W tym celu ustalimy siatkę dyskretyzacji przedziału $[0, T]$:
 \begin{equation}
-  0 = t_0 < t_1 < \cdots < t_{n-1} < t_n = T\]
+  0 = t_0 < t_1 < \cdots < t_{n-1} < t_n = T
 \end{equation}
-%Możemy teraz przybliżać sterowanie za pomocą splajnu z węzłami w punktach $t_i$. Ustalmy stopień splajnu na $i$-tym przedziale na $s_i$ i przedstawmy przybliżone sterowanie $\hat{g}$ na przedziale $[t_{i-1}, t_i)$ za pomocą bazy Lagrange'a opartej na węzłach równoodległych $t_{ij} = t_{i-1} + h_0j$, $n_i = \frac{t_i - t_{i-1}}{h_0}$:
-%\begin{equation} \label{control}
-%  \hat{g}(t) = \sum_{j = 0}^{s_i}g_{ij}l_{ij}(t),\quad l_{ij}(t) = \frac{\prod_{k=0,k\neq j}^{n_i} (t - t_{ik})}{\prod_{k=0,k\neq j}^{n_i} (t_{ij} - t_{ik})}
-%\end{equation}
-%Dzięki wyborowi bazy Lagrange'a możemy łatwo .
-Możemy teraz przybliżać sterowanie za pomocą funkcji kawałkami stałej:
-\begin{equation} \label{control}
-  \hat{g}(t) = g_i \text{ gdy } t \in [t_{i-1}, t_i)
-\end{equation}
-Zauważmy, że przy takim sterowaniu prawa strona (\ref{ode}) nie jest ciągła, ale jest różniczkowalna i Lipszycowska na każdym przedziale, więc z tw. Picarda-Lindel\"ofa o istnieniu i jednoznaczności rozwiązań, dla dowolnego punktu początkowego rozwiązanie (\ref{ode}) na każdym przedziale $[t_{i-1}, t_i]$ istnieje i jest jednoznaczne. Dla pierwszego przedziału punkt początkowy mamy zadany przez (\ref{ode-start}), dla $i$-tego przedziału punkt początkowy jest jednoznacznie zadany przez rozwiązanie dla poprzedniego przedziału, więc rozwiązanie na całym $[0, T]$ jest określone jednoznacznie.
+Możemy teraz przybliżać sterowanie za pomocą splajnu interpolującego $g$ w punktach $t_{i}$. Dla prostoty ograniczymy się do splajnów stopnia 0 i 1. Ostatecznie przybliżone sterowanie ma postać:
+\begin{gather}  
+    \hat{g}(t) = g_i \text{ gdy } t \in [t_{i}, t_{i + 1}) \label{control_1}\\
+    \nonumber \text{lub} \\
+    \hat{g}(t) = \frac{(t_i - t)g_{i-1} + (t - t_{i-1})g_{i}}{t_i - t_{i-1}} \text{ gdy } t \in [t_{i-1}, t_i) \label{control_2}
+\end{gather}
+i jest jednoznacznie zdefiniowane przez wartości $g_i = \hat{g}(t_i)$ dla $i = 0,\ldots, n$, te wartości będą optymalizowanymi zmiennymi.
 
-Mając tak przybliżoną funkcję sterowania możemy numerycznie przybliżyć rozwiązanie równania różniczkowego (\ref{ode}). Użyjemy do tego metody Runggego-Kutty rzędu $r$ ze stałym krokiem długości $h$. Dla uproszczenia notacji oznaczmy (\ref{ode}) przez
-\begin{equation} \label{ode-sim}
-  \dot{y}(t) = f(t, y, g),\ y = \begin{pmatrix} V_1 \\ V_2 \\ K \end{pmatrix},\ f = \begin{pmatrix} f_1 \\ f_2 \\ f_3 \end{pmatrix}
-\end{equation}
-wtedy przybliżone rozwiązanie (\ref{ode-sim}) na przedziale $[t_n + ah, t_n + (a + 1)h]$ wyraża się przez:
+Korzystając z przybliżonej funkcji sterowania, przybliżymy rozwiązanie równania różniczkowego (\ref{odesim}). Użyjemy do tego metody Rungego-Kutty rzędu $r$ ze stałym krokiem długości $h$, wtedy przybliżone rozwiązanie (\ref{odesim}) w punkcie $t_n + (a + 1)h$ dla $m = 0,\ldots, \frac{t_{n+1}-t_n}{h} - 1$  wyraża się przez:
 \begin{equation} \label{rk}
   \begin{split}
-    &k_1 = f(t_n + ah, \hat{y}(t_n + ah), \hat{g}) \\
-    &k_l = f(t_n + c_l h, \hat{y}(t_n + ah) + h \sum_{i = 1}^{l-1} a_{li}k_i, \hat{g}) \\
-    &\hat{y}((a+1)h) = \hat{y}(ah) + h \sum_{i = 1}^r b_i k_i
+    &k_1 = f(t_n + mh, \hat{y}(t_n + mh), \hat{g}) \\
+    &k_l = f(t_n + c_l h, \hat{y}(t_n + mh) + h \sum_{i = 1}^{l-1} a_{li}k_i, \hat{g}) \\
+    &\hat{y}(t_n + (m+1)h) = \hat{y}(t_n + mh) + h \sum_{i = 1}^r b_i k_i
   \end{split}
 \end{equation}
 gdzie $c_l, a_{li}, b_i$ są stałymi zależnymi od wybranej metody.
 
-Zostało już tylko przybliżyć funkcjonał celu (\ref{objf}). Zapiszmy go w postaci
+Zostało już tylko przybliżyć funkcjonał celu (\ref{objfsim}). Zapiszmy go w postaci
 \begin{equation} \label{objf-sim}
   J(y) = \int_0^T j(y(t)) dt
 \end{equation}
 gdzie
 \begin{equation}
-  j(y(t)) = V_1 + V_2 + \omega G\left(\frac{V_2 - V_1}{\epsilon} \right),\ y(t) = \begin{pmatrix} V_1 \\ V_2 \\ K \end{pmatrix}
+  j(y) = y_1 + y_2 + \omega G\left(\frac{y_2 - y_1}{\epsilon} \right)
 \end{equation}
-wtedy ogólny wzór na kwadraturę ze stałym krokiem $h_1$ przybliżającą (\ref{objf-sim}) to
+wtedy ogólny wzór na kwadraturę ze stałym krokiem $h$ przybliżającą (\ref{objf-sim}) to
 \begin{equation} \label{quad}
-  \hat{J}(\hat{y}) = \sum_{i = 1}^N \alpha_i j(\hat{y}(ih))
+  \hat{J}(\hat{y}) = h\sum_{i = 0}^N \alpha_i j(\hat{y}(ih))
 \end{equation}
 gdzie $N = \frac{T}{h}$, a $\alpha_i$ są stałymi zależnymi od wybranej kwadratury.
 
-W ten sposób wyraziliśmy przybliżoną funkcję celu jako funkcję $g_1,\ldots,g_n$, więc problem przybliżony sprowadza się do
-\begin{equation} \label{nlp}
-  \begin{split}
-    \min_{g_1,\ldots,g_n} &\hat{J}(g_1,\ldots, g_n) \text{ z ograniczeniami } \\
-    &\forall_{i \in \{1,\ldots,n\}} 0 \le g_i \le g_{\max}
-  \end{split}
+W ten sposób wyraziliśmy przybliżoną funkcję celu jako funkcję $g_1,\ldots,g_n$:
+\begin{equation}
+  \hat{J}(g_1,\ldots, g_n) = \hat{J}(\hat{y})
 \end{equation}
+ponieważ $\hat{y}$ jest jednoznacznie wyznaczony przez $\hat{g}$ za pomocą (\ref{rk}), a $\hat{g}$ jest wyznaczone jednoznacznie przez $g_1,\ldots,g_n$. Podsumowując, problem przybliżony to:
+\begin{problem}\label{problemapprox}
+\begin{align}
+  \min_{g_1,\ldots,g_n} &\hat{J}(g_1,\ldots, g_n) \text{ z ograniczeniami } \label{nlp}\\
+  &\forall_{i \in \{1,\ldots,n\}} 0 \le g_i \le g_{\max} \label{nlp_cons}
+\end{align}
+\end{problem}
 
-Jest to problem optymalizacji nieliniowej z ograniczeniami i istnieją implementacje metod pozwalających uzyskać przybliżone rozwiązanie tego problemu. To podejście do numerycznego problemu optymalnego sterowania jest podobne do zaproponowanego w~\cite{diehl} i nazywa się sekwencyjnym (ang. ``sequential''). 
+Jest to problem optymalizacji nieliniowej z ograniczeniami i istnieją implementacje metod pozwalających uzyskać przybliżone rozwiązanie tego problemu. To podejście do numerycznego problemu optymalnego występuje w~\cite{diehl} pod nazwą ,,sequential'', a w~\cite{rao-methods} pod nazwą ,,direct multiple shooting''.
 
 \subsection{Plan rozwiązania}
-Aby obliczyć wynik problemu przybliżonego skorzystamy ze środowiska MatLab/Octave wraz z dostarczonym z nim optymalizatorem problemu optymalizacji nieliniowej z ograniczeniami (odpowiednio FMINICON w MatLab, NONLIN\_MIN w Octave). W tym celu zaimplementujemy przejście od problemu optymalnego sterowania. Będziemy też musieli znaleźć odpowiednią siatkę dyskretyzacji i punkt startowy dla optymalizatora.
+Aby obliczyć wynik problemu przybliżonego skorzystamy ze środowiska MATLAB/Octave wraz z dostarczonym z nim optymalizatorem problemu optymalizacji nieliniowej z ograniczeniami (FMINICON). W tym celu zaimplementujemy przejście od problemu optymalnego sterowania. Aby poprawić złożoność czasową optymalizacji i tym samym umożliwić stosowanie gęstszej siatki dyskretyzacji, obliczymy gradient przybliżonej funkcji celu. Będziemy też musieli znaleźć odpowiednią siatkę dyskretyzacji i punkt startowy dla optymalizatora.
 
 \section{Implementacja}
-Optymalizator NONLIN\_MIN w Octave posiada prosty interfejs, jest to funkcja której należy dostarczyć funkcję do zoptymalizowania, punkt startowy, ograniczenia oraz ewentualne opcje dodatkowe.
+Optymalizator FMINICON wymaga dostarczenia funkcji do optymalizowania, czyli w naszym przypadku funkcji $\hat{J}(g_1,\ldots,g_n)$, oraz ograniczeń, czyli w naszym przypadku jedynie (\ref{nlp_cons}). Domyślnie optymalizator wyznacza gradient za pomocą różnic skończonych, co wymaga uruchomienia funkcji celu liniowo wiele razy względem liczby parametrów. Aby poprawić wydajność optymalizacji zaimplementujemy liczenie gradientu przybliżonej funkcji celu ze względu na parametry $g_1,\ldots, g_n$.
 
 Zauważmy, że znalezienie dobrego wyniku będzie wymagało zapewne wielokrotnego wywołania naszej funkcji celu przez optymalizator, więc zależy nam aby funkcja celu liczyła się możliwie szybko. Lepsza wydajnościowo implementacja pozwoli też na większe zagęszczenie siatki dyskretyzacji i tym samym wzrost dokładności aproksymacji.
 
-Jedną z praktyk pozwalającą poprawić wydajność programów w środowiskach MatLab i Octave jest tak zwana wektoryzacja. Polega ona na zastępowaniu pętli operacjami na wektorach. Korzysta to z faktu, że wiele funkcji w tych środowiskach można wywołać z wektorem parametrów, zamiast pojedynczego parametru i zwracają one wtedy wektor wyników, oraz wykonują się znacznie szybciej niż gdyby wywołać je wielokrotnie w pętli. Z tego powodu będziemy korzystać z tej techniki gdzie to tylko możliwe.
+Jedną z praktyk pozwalającą poprawić wydajność programów w środowiskach MATLAB i Octave jest tak zwana wektoryzacja. Polega ona na zastępowaniu pętli operacjami na wektorach. Korzysta to z faktu, że wiele funkcji w tych środowiskach można wywołać z wektorem parametrów, zamiast pojedynczego parametru i zwracają one wtedy wektor wyników, oraz wykonują się znacznie szybciej niż gdyby wywołać je wielokrotnie w pętli. Z tego powodu będziemy korzystać z tej techniki gdzie to tylko możliwe.
 
-Aby sprowadzić problem optymalnego sterowania do problemu optymalizacji nieliniowej musimy przybliżyć rozwiązanie równania różniczkowego (\ref{ode}) a następnie za pomocą uzyskanego rozwiązania przybliżyć wartość funkcji celu (\ref{objf}).
+Aby sprowadzić problem optymalnego sterowania do problemu optymalizacji nieliniowej musimy obliczyć przybliżone sterowanie (\ref{control_1}) lub (\ref{control_2}), przybliżyć rozwiązanie równania różniczkowego (\ref{rk}) a następnie za pomocą uzyskanego rozwiązania obliczyć kwadraturę (\ref{quad}) przybliżającą funkcję celu (\ref{objf}). Ponadto chcemy obliczyć gradient funkcji celu, co będzie wymagało policzenia pochodnej każdego z wymienionych wzorów względem parametrów $g_i$.
+
+\subsection{Sterowanie}
+Jedynym problemem przy implementacji przybliżonego sterowania (\ref{control_1}) lub (\ref{control_2}) jest znalezienie indeksu $i$ takiego, że $t \in [t_{i-1}, t_i)$. Użyjemy do tego funkcji $lookup$, która wydajnie znajduje żądany indeks korzystając z wyszukiwania binarnego.
+
+Aby policzyć gradient przybliżonego sterowania należy zróżniczkować równanie (\ref{control_1}) lub (\ref{control_2}):
+
+\begin{gather}
+  \frac{\partial \hat{g}}{\partial g_i}(t) = \begin{cases} 1 \text{ gdy } t \in [t_{i-1}, t_i) \\ 0 \text{ w.p.p.} \end{cases} \label{dcontrol_1}\\
+  \nonumber \text{lub}\\
+  \frac{\partial \hat{g}}{\partial g_i}(t) = \begin{cases} \frac{t_i - t}{t_i - t_{i-1}} \text{ gdy } t \in [t_{i-1}, t_i) \\ \frac{t - t_i}{t_{i+1} - t_i} \text{ gdy } t \in [t_{i}, t_{i+1}) \\ 0 \text{ w.p.p.} \end{cases} \label{dcontrol_2}
+\end{gather}
+
+Implementacja powyższych wzorów jest standardowa, znajdowanie odpowiedniego indeksu $i$ odbywa się tak samo jak przy liczeniu wartości przybliżonego sterowania.
+
+Zarówno funkcja $lookup$ jak i pozostałe operacje wykorzystywane do policzenia przybliżonego sterowania i jego gradientu są zwektoryzowane, w szczególności środowiska MATLAB i Octave umożliwiają wektorowe indeksowanie, więc nasza implementacja sterowania i gradientu też jest zwektoryzowana.
 
 \subsection{Równanie różniczkowe}
-Do przybliżenia równania (\ref{ode}) skorzystamy z dostarczonej w Octave implementacji metody Dormanda-Prince'a 4-tego rzędu ze zmiennym krokiem. Jest to popularna metoda pozwalająca uzyskać wysoką dokładność, ponadto umożliwia przekazanie wektora punktów w czasie w których chcemy otrzymać przybliżenie wyniku. Pozwala to rozwiązywać równanie w sposób zwektoryzowany i okaże się bardzo wygodne przy implementacji funkcji celu.
+Aby przybliżyć rozwiązanie równania (\ref{ode}) należy zaimplementować funkcję $f(t,y,g)$, a następnie zaimplementować odpowiednią metodę Rungego-Kutty (\ref{rk}). Wzory te implementuje się bezpośrednio.
+
+Liczenie pochodnych $\frac{\partial \hat{y}}{\partial g_i}$ polega na zróżniczkowaniu wzorów (\ref{rk}):
+\begin{gather}
+    \frac{\partial k_1}{\partial g_i} = D_f \cdot \frac{\partial \hat{y}}{\partial g_i}(t_n + mh) + \frac{\partial f}{\partial g_i}(t_n + mh, \hat{y}(t_n + mh), \hat{g}) \nonumber \\
+    \frac{\partial k_l}{\partial g_i}  = D_f \cdot \left(\frac{\partial \hat{y}}{\partial g_i}(t_n + mh) + h\sum_{j=1}^{l-1} a_{lj}\frac{\partial k_i}{\partial g_j} \right) + \frac{\partial f}{\partial g_i}(t_n + mh, \hat{y}(t_n + mh), \hat{g})  \label{drk}\\
+    \frac{\partial \hat{y}}{\partial g_i}(t_n + (m+1)h) = \frac{\partial \hat{y}}{\partial g_i}(t_n + mh) + h\sum_{j=1}^r b_j \frac{\partial k_j}{\partial g_i} \nonumber
+\end{gather}
+gdzie
+\begin{equation} \label{Df}
+  D_f = {\left[\frac{\partial f_i}{\partial y_j}\right]}_{i,j = 1,\ldots, 3} (t_n + ah, \hat{y}(t_n + mh), \hat{g})
+\end{equation}
+Wzory na elementy macierzy $D_f$ pominiemy, liczy się je i implementuje standardowo.
+
+Nasza implementacja umożliwia też przekazanie wektora punktów w czasie jako argumentu. W takim przypadku w trakcie iteracji będzie spamiętywać wyliczone wartości w tych punktach. Dla wygody założymy, że punkty podane będą w kolejności rosnącej, oraz odległości między sąsiednimi punktami będą podzielne przez długość kroku $h$.
 
 \subsection{Funkcja celu}
-Aby obliczyć wartość funkcji celu użyjemy dostarczonej w Octave implementacji adaptacyjnej kwadratury Gaussa-Konroda. Osiąga ona dobrą dokładność, ewaluując odcałkowywaną funkcję w dość niewielu punktach. Zakłada też, że odcałkowywana funkcja jest zwektoryzowana, co wykorzystamy do poprawy wydajności rozwiązania.
+Przybliżoną funkcję celu (\ref{quad}) można zaimplementować za pomocą iloczynu skalarnego:
+\begin{equation}
+  \hat{J}(\hat{y}) = h(\alpha_0,\ldots,\alpha_N) \cdot {j(\hat{y}(0, h, 2h, \ldots, T))}^T
+\end{equation}
 
-Pewną niedogodnością jest fakt, że nie możemy nic zakładać o kolejności argumentów w wektorze który kwadratura przekazuje odcałkowywanej funkcji, natomiast funkcja rozwiązujące równanie różniczkowe wymaga by punkty były jej przekazane w kolejności rosnącej. Musimy więc posortować wektor argumentów przed przekazaniem ich do funkcji liczącej rozwiązanie równania różniczkowego, oraz przywrócić pierwotny porządek dla wyników tych obliczeń.
+Korzystamy tu ze zwektoryzowanej implementacji funkcji $\hat{y}$, założenia naszej implementacji są spełnione ponieważ krok kwadratury to $h$. Implementacja funkcji $j$ też jest zwektoryzowana, ponieważ środowisko dostarcza nam zwektoryzowaną funkcję $\tanh$, a pozostałe operacje wektoryzują się naturalnie.
 
-\section{Eksperyment}
+Gradient funkcji celu możemy zaimplementować jako mnożenie wektora przez macierz:
+\begin{equation}
+  {\left[\frac{\partial J}{\partial g_i}\right]}_{i = i, \ldots n} = h(\alpha_0,\ldots,\alpha_N) \cdot {\left[\frac{\partial j(\hat{y}(hi))}{\partial g_j}\right]}_{i = 0, \ldots N, j = 1, \ldots n}
+\end{equation}
+gdzie
+\begin{equation}
+  \frac{\partial j(y(t))}{\partial g_i} = \frac{\partial y_1}{\partial g_i} + \frac{\partial y_2}{\partial g_i} + \omega G'\left(\frac{y_1 - y_2}{\epsilon}\right)\frac{\frac{\partial y_2}{\partial g_i} - \frac{\partial y_1}{\partial g_i}}{\epsilon},\quad G'(x) = \frac{1}{2\cosh^2(x)}
+\end{equation}
+\section{Eksperymenty}
+W eksperymentach użyjemy wartości parametrów podanych w wyjściowej pracy:
 \begin{align*}
-  t_0 &= 0 & \alpha_{12} &= ?? \text{(przyjąłem 0.1)}  & \beta_1 &= 0.15 & \lambda_1 &= 0.192\\
-  T &= 200 & \alpha_{21} &= ?? \text{(przyjąłem 0.15)} & \beta_2 &= 0.1  & \lambda_2 &= 0.192\\
-  g_{\max} &= 3 &&     d &= 0.00873                    & \beta &= 0.05  & \mu &= 0 \\
-  V_{10} &= 20 &  V_{20} &= 280                        & K_0 = 650 \\
-  &&       & \omega &= ?? \text{(przyjąłem 1000)} & \epsilon &= 0.01 \\
+  t_0 &= 0          & \lambda_1 &= 0.192 & g_{\max} &= 3    \\
+  T &= 200          & \lambda_2 &= 0.192 & \epsilon &= 0.01 \\
+  V_{10} &= 20      & \beta_1 &= 0.15    & d &= 0.00873     \\
+  V_{20} &= 280     & \beta_2 &= 0.1     & \mu &= 0         \\
+  K_0 &= 650        & \beta &= 0.05      &       &          \\
 \end{align*}
+Wartości parametrów $\alpha_{12},\ \alpha_{21},\ \omega$ nie zostały ustalone w pracy, jedyne co jest ustalone to
+\[ \alpha_{12} < \alpha_{21}\quad 0 < \omega \le 2000 \]
+więc zbadamy problem dla 2 arbitralnie wybranych zestawów wartości tych parametrów:
+\begin{align}\label{exp1}
+  \alpha_{12} &= 0.1 & \alpha_{21} &= 0.15 & \omega = 1000
+\end{align}
+\begin{align}\label{exp2}
+  \alpha_{12} &= 0.5 & \alpha_{21} &= 0.75 & \omega = 2000
+\end{align}
+Do przybliżania rozwiązania równania (\ref{odesim}) będziemy korzystać z metody Rungego-Kutty 4-tego rzędu, ponieważ daje ona dobrą dokładność, a liczenie wartości funkcji $f$ nie jest zbyt kosztowne. Długość kroku obierzemy na $h = 0.1$, co daje $2000$ kroków na całym przedziale $[t_0, T]$. Wartości stałych $c_l$, $a_{li}$, $b_i$ z wzoru (\ref{rk}) podane na tabeli Butchera:
+\begin{equation}\label{butcher}
+  \begin{array}
+    {c|cccc}
+    0\\
+    \frac{1}{2} & \frac{1}{2}\\
+    \frac{1}{2} &0 &\frac{1}{2} \\
+    1& 0& 0& 1\\
+    \hline{}
+    & \frac{1}{6} &\frac{1}{3} &\frac{1}{3} &\frac{1}{6} 
+  \end{array}
+\end{equation}
+Do przybliżania funkcjonału celu (\ref{objf}) użyjemy kwadratury trapezów. Jest to nieskomplikowana kwadratura, ale przy niskiej długości kroku daje dobre przybliżenie. Wartości parametrów $\alpha_i$ we wzorze (\ref{quad}) to:
+\begin{equation} \label{trapezoidal}
+  \alpha_i = \begin{cases} \frac{1}{2} \text{ gdy } i \in \{0, N\} \\ 1 \text{ w.p.p.} \end{cases}
+\end{equation}
 
+Przeprowadzone eksperymenty obejmowały różne punkty startowe dla optymalizatora i siatki dyskretyzacji. Testowane było zarówno sterowanie kawałkami stałe (\ref{control_1}), jak i kawałkami liniowe (\ref{control_2}). Przykładowymi przetestowanymi punktami startowymi było sterowanie stale równe $0$, $1$ lub $g_{\max}$, sterowanie malejące liniowo od $g_{\max}$ do $0$, czy sterowanie przyjmujące $g_{\max}$ na początku przedziału czasu, i $0$ później. Przykładowymi siatkami dyskretyzacji są punkty rozłożone równo w odległości $\frac{1}{2}$, oraz siatka z odstępami $\frac{1}{2}$ w początkowej i końcowej $\frac{1}{4}$ długości przedziału i odstępami $1$ na pozostałej części przedziału czasu.
+
+Do eksperymentów użyte zostało środowisko Octavie. Optymalizator FMINICON na tym środowisku umożliwia użycie jednego z dwóch backendów do optymalizacji nieliniowej: {\it lm\_feasable}, lub {\it sqp}. Jedną z różnic między tymi backendami jest to, że {\it lm\_feasable\/} zachowuje ograniczenia w trakcie optymalizacji, natomiast {\it sqp\/} wymusza ograniczenia jedynie na koniec procesu optymalizacji. W eksperymentach przetestowane zostały oba z tych algorytmów.
+
+\subsection{Wyniki eksperymentów}
+
+%h - the place, b - bottom, t - top 
+\begin{figure}[h]
+%  \centering
+  \begin{subfigure}{.5\textwidth}
+%    \centering
+    \caption{Rozwiązanie dla parametrów (\ref{exp1})}\label{max_sol}
+    \includegraphics[width=\textwidth]{plot_max}
+  \end{subfigure}
+    \begin{subfigure}{.5\textwidth}
+%    \centering
+    \caption{Rozwiązanie dla parametrów (\ref{exp2})}\label{bang_sol}
+    \includegraphics[width=\textwidth]{plot_bang}
+  \end{subfigure}%
+  \caption{Rozwiązania równania (\ref{ode})}\label{ode_sol}
+\end{figure}
+
+Dla parametrów (\ref{exp1}) wyniki eksperymentów są zgodne: najlepsze rezultaty osiągamy dla sterowania stale równego $g_{\max}$. Optymalizator zaczynając w nim nie znajduje żadnego lepszego punktu, natomiast dla wielu innych punktów startowych (n.p.\ dla sterowania stałego równego $0$ lub $1$) zbiega do sterowania niewiele różniącego się od stale równego $g_{\max}$. Stosowanie różnych backendów, siatek optymalizacji oraz metod przybliżania sterowania nie pozwoliło znaleźć istotnie różnego rozwiązania dającego obiecujące wyniki. Żaden eksperyment nie zbiegł do punktu dającego mniejszą wartość przybliżonego funkcjonału celu.
+
+Wartość przybliżonego funkcjonału celu dla sterowania stale równego $g_{\max}$ to ok. $213575,7$. Dla porównania wartość przy braku leczenia, czyli sterowaniu stale równemu $0$, to ok. $567688,3$. Przybliżone rozwiązania równania (\ref{odesim}) przedstawiono na rysunku~\ref{max_sol}.
+
+Dla parametrów (\ref{exp2}) wyniki są zauważalnie inne. Sterowanie stale maksymalnie nie osiąga już dobrych rezultatów (wynik to $407071.7$), natomiast najlepsze wyniki osiąga sterowanie mające na początku przedziału wartość ok. $0.05$, a w pozostałych punktach wartość ok. $0.59$. Funkcjonał celu dla tego sterowania osiąga wartość $272466.2$. Warto jeszcze dodać, że przy tych wartościach parametrów wyniki nie były tak zgodne, w trakcie eksperymentów znaleziono wiele rozwiązań o niewiele gorszych wynikach, niektóre z nich istotnie różne od przedstawionego. Przykład takiego rozwiązania zaprezentowano na rysunku \ref{weird_sol}. Wartość funkcjonału celu dla tego rozwiązania to $295794.6$, co jest o $8,6\%$ większe od rozwiązania optymalnego.
+
+\begin{figure}[h]
+  \centering
+  \caption{Nietypowe rozwiązanie dla parametrów (\ref{exp2})}\label{weird_sol}
+  \includegraphics[width=.5\textwidth]{plot_weird}
+\end{figure}
+
+%TODO zrobić optmalizację wzgl. punktu nieciągłości i wartości przed i po
+\subsection{Analiza zastosowanych metod}
+
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}
+      \hline
+      & backend & start & wynik & \#iteracji & \#wywołań \\
+      \hline
+      \multirow{3}{5em}{Parametry (\ref{exp1})} & {\it lm\_feasible\/} & $g(t) = 0$ & 234437.6 & 6 & 15 \\
+      \cline{2-6}
+      & {\it lm\_feasible\/} & $g(t) = g_{max}$ & 213575.7 & 1 & 2 \\
+      \cline{2-6}
+      & {\it sqp\/} & $g(t) = 0$ & 213575.7 & 8 & 9 \\
+      \hline
+      \multirow{5}{5em}{Parametry (\ref{exp2})} & {\it lm\_feasible\/} & $g(t) = 0$ & 324132.9 & 7 & 17 \\
+      \cline{2-6}
+      & {\it lm\_feasible\/} & $g(t) = 0.4\cdot\1_{[42.5,200]}$ & 283519.9 & 10 & 26 \\
+      \cline{2-6}
+      & {\it lm\_feasible\/} & $g(t) = 0.55\cdot\1_{[42.5,200]}$ & 272466.2 & 19 & 42 \\
+      \cline{2-6}
+      & {\it sqp\/} & $g(t) = 0$ & 340595.9 & 3 & 57 \\
+      \cline{2-6}
+      & {\it sqp\/} & $g(t) = 0.55\cdot\1_{[42.5,200]}$ & 272502.7 & 7 & 110 \\
+      \hline
+      \multirow{3}{6em}{Parametry (\ref{exp2}), siatka niejednorodna} & {\it lm\_feasible\/} & $g(t) = 0$ & 295303.8 & 20 & 42 \\
+      \cline{2-6}
+      & {\it lm\_feasible\/} & $g(t) = 0.4\cdot\1_{[42.5,200]}$ & 277775.5 & 14 & 35 \\
+      \cline{2-6}
+      & {\it lm\_feasible\/} & $g(t) = 0.55\cdot\1_{[42.5,200]}$ & 272848.2 & 19 & 42 \\
+      \cline{2-6}
+      & {\it sqp\/} & $g(t) = 0$ & 348091.2 & 2 & 53 \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Wyniki niektórych eksperymentów}\label{resulttab}
+\end{table}
+
+
+Osiągnięcie przedstawionych wyników wymagało przeprowadzenia wielu eksperymentów, przetestowania różnych backendów optymalizatora, siatek optymalizacji, sterowania kawałkami stałego lub liniowego i różnych punktów startowych.
+Jak widzimy, dla różnych wartości parametrów (\ref{exp1}) lub (\ref{exp2}), wyniki mocno się różnią i każdy z tych zestawów parametrów wymagał różnego podejścia. Wspólne dla obu tych problemów było działanie siatki optymalizacji. W większości eksperymentów zastosowano siatkę jednorodną o kroku $0.5$. Dalsze próby zagęszczania tej siatki nie poprawiły wyników, a tylko zwiększyły czas wykonania. Próby użycia siatki niejednorodnej przynosiły gorsze rezultaty niż te z siatką jednorodną o podobnej liczbie punktów. Jednym z powodów gorszych wyników siatki niejednorodnej mogą być fakt, że optymalizator zwykle dla takich siatek zbiegał do rozwiązania mającego znaczną różnice wartości na przedziałach z różnymi długościami kroku, które nie występowały przy siatce jednorodnej.
+
+Dla parametrów (\ref{exp1}) najskuteczniejszym backendem był {\it sqp\/} który zbiegł do najlepszego rozwiązania zaczynając od zerowego sterowania, w przeciwieństwie do {\it lm\_feasable\/} który osiągnął trochę gorszy wynik $234437.6$ (dla tego samego punktu startowego). Nie było tu znaczącej różnicy między sterowaniem kawałkami stałym a kawałkami liniowym. Używanie różnych punktów startowych nie przynosiło wyraźnych różnic, z wyjątkiem zaczynania ze sterowania stale maksymalnego, dla którego optymalizacja kończyła się w jednej iteracji.
+
+Dla parametrów (\ref{exp2}) najtrudniej było dobrać odpowiedni punkt startowy i na znalezieniu odpowiedniego punktu startowego skupiła się większość eksperymentów. W tym przypadku backend {\it sqp\/} okazał się znacznie gorszy od {\it lm\_feasable}, za wyjątkiem punktu startowego będącego bardzo blisko najlepszego rozwiązania. Podobnie kawałkami liniowe osiągało gorsze wyniki od sterowania kawałkami stałego, co pewnie jest powodowane nieciągłością  najlepszego rozwiązania. Znalezienie dobrego punktu początkowego wymagało postawienia hipotezy, że na początku wartość sterowania powinna być niska, a później wyższa. Zaczynając z takich pozycji optymalizacja zbiegała do punktu podobnego do najlepszego sterowania i wystarczyło już tylko wyznaczyć metodą prób i błędów najlepszy punkt nieciągłości, ponieważ optymalizator zaczynając z nieciągłego sterowania nie zmieniał punktu nieciągłości.
+
+W kontekście tępa zbieżności i czasu działania różnych metod najważniejszym elementem jest samodzielne liczenie pochodnej, co zmniejszyło czas działania wielokrotnie oraz znacząco poprawiło tępo zbieżności i wyniki optymalizatora. W eksperymentach korzystających z domyślnego algorytmu liczenia pochodnej za pomocą różnic skończonych, trzeba było używać siatki posiadającej 4 razy mniej punktów, a i tak czas działania był wielokrotnie gorszy. Z tego powodu nie przeprowadzono wielu takich eksperymentów i nie będziemy dalej rozważać tego podejścia. Wypada też wspomnieć, że backend {\it sqp\/} wymagał zauważalnie więcej wywołań funkcji celu i czasu aby zbiec niż {\it lm\_feasable}. Dalszy wpływ punktu startowego i metody na wyniki i czas zbieżności zaprezentowano na tabeli \ref{resulttab}.
+  
+\section{Analiza i krytyka wyników}
+
+Jak widzimy wyniki dla różnych rodzajów parametrów znacznie się różnią. Dokładniejsze przyjrzenie się funkcjonałowi celu (\ref{objfsim}) pozwala wyjaśnić takie zjawisko. Jak widzimy parametr $\omega$ jest mnożony przez wartość drugiej całki. Zauważmy, że funkcja pod drugą całką jest gładkim przybliżeniem funkcji znaku wyrażenia $y_2(t) - y_1(t)$. W zestawie parametrów (\ref{exp2}) parametr $\omega$ jest znacznie większy niż w (\ref{exp1}), więc w tym przypadku druga całka ma większy wpływ na wynik funkcjonału. Jak przyjrzymy się rozwiązaniu z rysunku \ref{bang_sol}), widzimy, że punkt nieciągłości znajduje się od razu po przecięciu się krzywych $y_1$ i $y_2$, a po nim sterowanie ma taką wartość aby krzywe te były bardzo blisko siebie, ale przy zachowaniu $y_2(t) - y_1(t) < 0$. Wygląda więc na to, przy wartościach parametrów (\ref{exp2}) bardziej opłaca się utrzymywać stan $y_2(t) - y_1(t) < 0$, natomiast przy wartościach (\ref{exp1}) lepsze wyniki daje minimalizacja pierwszej całki, czyli pola pod $y_1 + y_2$. Możemy się też spodziewać, że wysokie wartości sterowania powodują zmniejszanie się zarówno $y_1$ jak i $y_2$, ale od pewnej wartości sterowania $y_1$ maleje szybciej niż $y_2$. Taka hipoteza zgadzałaby się z interpretacją $y_1$ i $y_2$ jako liczba komórek rakowych odpowiednio podatnych na działanie leku i odpornych na niego, a wartości sterowania jako dawki leku.
+
+\subsection{Krytyka wyników}
+Wszystkie wyniki które udało się osiągnąć są co najwyżej minimami lokalnymi. Wynika to głównie z zastosowanych technologii. Wyniki backendu {\it lm\_feasible\/} były mocno zależne od punktu startowego, natomiast backend {\it sqp\/}, który powinien szukać rozwiązania bardziej globalnie, miał nie najlepszą skuteczność. Być może zastosowanie innych backendów optymalizacji nieliniowej umożliwiłoby szukanie rozwiązania w sposób mniej zależący od znalezienia dobrego punktu startowego.
+
+Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tępa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą splajnów wyższego rzędu mogłoby poprawić tępo zbieżności. Być może zastosowanie tych metod oraz automatyzacja procesu znajdowania siatki dyskretyzacji np. metodą zastosowaną w \cite{Rao-ph} pozwoliłaby uzyskać lepsze wyniki.
+
+Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z rysunku \ref{max_sol} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach (\ref{exp2}), w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{max}$ minimalna wartość $y_3$ wynosi ok. $0.02$, więc ten eksperyment może być obarczony istotnym błędem numerycznym.
+
+\newpage{}
 \bibliography{bibliography}{}
 \bibliographystyle{abbrv}
 \end{document}

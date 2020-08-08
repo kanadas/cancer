@@ -4,79 +4,176 @@ gmax = 3;
 t0 = 0;
 T = 200;
 x0 = [20; 280; 650];
-
-step = 4;
-points = t0 : step : T;
-N = (T - t0) / step + 1;
-disp(N);
+STEP = 0.1;
 
 load "sol0.mat";
-
-[p0, objf0, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0),
-				 X0   = zeros(N, 1),
-				 A    = [],
-				 B    = [],
-				 AEQ  = [],
-				 BEQ  = [],
-				 LB   = zeros(N, 1),
-				 UB   = gmax * ones(N, 1),
-				 NONLCON = [],
-				 OPTIONS=optimset("GradObj", "on"));
-
+load "sol_omega2k_1.mat";
+load "sol_omega2k.mat";
 save "sol0.mat" p0;
 
-step = 1;
-points = t0 : step : T;
-N = (T - t0) / step + 1;
-disp(N);
+points = t0 : 4 : T;
 
-[p, res, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0),
-			       X0   = zeros(N, 1),
-			       A    = [],
-			       B    = [],
-			       AEQ  = [],
-			       BEQ  = [],
-			       LB   = zeros(N, 1),
-			       UB   = gmax * ones(N, 1),
-			       NONLCON = [],
-			       OPTIONS=optimset("GradObj", "on"));
+points = t0 : 1 : T;
 
-[p_max, res_max, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0),
-			       X0   = gmax * ones(N, 1),
-			       A    = [],
-			       B    = [],
-			       AEQ  = [],
-			       BEQ  = [],
-			       LB   = zeros(N, 1),
-			       UB   = gmax * ones(N, 1),
-			       NONLCON = [],
-			       OPTIONS=optimset("GradObj", "on"));
+points = t0 : 0.5 : T;
 
-[p_mid, res_mid, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0),
-			       X0   = gmax/2 * ones(N, 1),
-			       A    = [],
-			       B    = [],
-			       AEQ  = [],
-			       BEQ  = [],
-			       LB   = zeros(N, 1),
-			       UB   = gmax * ones(N, 1),
-			       NONLCON = [],
-			       OPTIONS=optimset("GradObj", "on"));
+points = [(0 : 0.5 : 50), (51 : 1 : 149), (150 : 0.5 : 200)];
 
-%load "old_sol0.mat";
-%[old_p0, old_objf0, cvg, outp] = nonlin_min(@(g) objf(g, points, x0), zeros(N, 1), optimset("lbound", zeros(N, 1), "ubound", gmax * ones(N, 1)));
+points = [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)];
 
-%[p15, objf15, cvg, outp] = nonlin_min(@(g) objf(g, points, x0), 1.5 * ones(N, 1), optimset("lbound", zeros(N, 1), "ubound", gmax * ones(N, 1)));
+N = length(points)
 
-%[pmax, objfmax, cvg, outp] = nonlin_min(@(g) objf(g, points, x0), gmax * ones(N, 1), optimset("lbound", zeros(N, 1), "ubound", gmax * ones(N, 1)));
+start_bang = 1:N;
+start_bang = start_bang < N/2;
 
-#{
-starting_points = {zeros(N, 1),
-		   ones(N,1),
-		   2 * ones(N, 1),
-		   gmax * ones(N, 1)}
+[p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), STEP);
+[p, res, cvg, outp] = run_opt(points, x0, ones(N,1), STEP);
+[p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), STEP);
+[p, res, cvg, outp] = run_opt(points, x0, ((N-1):-1:0)*3/(N-1), STEP);
+[p, res, cvg, outp] = run_opt(points, x0, start_bang, STEP);
 
-for i = 1:length(starting_points)
-  [p, objf, cvg, outp] = nonlin_min(@J, starting_points{i}, optimset("lbound", zeros(N, 1), "ubound", gmax * ones(N, 1)));
-  printf("%d %f\n", i, objf)
+[p_ng, res_ng, cvg, outp] = run_opt(points, x0, zeros(N,1), STEP, "off");
+
+%assume N = 401
+start1 = [(400:-2:0), (0:3:100), (100:-3:0), zeros(1,132)]*3/400;
+start2 = [(300:-3:0), (0:4:100), (100:-4:0), zeros(1,248)] / 100;
+start3 = [300*ones(1,50), zeros(1,351)]/100;
+start4 = [300*ones(1,25), zeros(1,50), 300*ones(1,25), zeros(1,50), 300*ones(1,25) ,zeros(1,226)]/100;
+start5 = [300*ones(1,50), 16*ones(1,351)]/100;
+start6 = [zeros(1,100), 300*ones(1,10), zeros(1,291)] / 100;
+start7 = [300*ones(1,50), zeros(1, 50), 16*ones(1,20), zeros(1,20), 30*ones(1,20), zeros(1,241)] / 100;
+start8 = [300*ones(1,50), zeros(1, 50), 16*ones(1,40), 30*ones(1,10), 16*ones(1,20), 30*ones(1,10), 16*ones(1,20), 30*ones(1,10), 16*ones(1,191)] / 100;
+
+%start2 = [300*ones(1,100), (300:-3:0), (0:4:100), (100:-4:0), (0:4:100), (100:-4:0), zeros(1,96)]/100;
+
+[p0, res0, cvg, outp] = run_opt(points, x0, zeros(N,1), STEP);
+
+start_lin = [0:3:1200]/400;
+
+start = [zeros(1,100), 40*ones(1,301)]/100;
+start = [15*ones(1,100), 55*ones(1,301)]/100;
+start = [zeros(1,90), 55*ones(1,311)]/100;
+start = [zeros(1,85), 55*ones(1,316)]/100;
+
+[p, res, cvg, outp] = run_opt(points, x0, start, STEP);
+[p, res, cvg, outp] = run_opt(points, x0, start, STEP, "active-set");
+
+[p, res, cvg, outp] = run_opt(points, x0, start_lin, STEP, "active-set");
+
+save
+"sol_bang.mat" p;
+
+p_best = p0;
+res_best = res0;
+noncont_best = 400;
+for i = 50:5:150
+  disp(strcat("Compting i=", num2str(i)));
+  start = [zeros(1,i), 40*ones(1,401-i)]/100;
+  [p, res, cvg, outp] = run_opt(points, x0, start, STEP);
+  if(res < res_best)
+    p_best = p;
+    res_best = res;
+    noncont_best = i;
+  endif
+  disp(strcat("Result for i=", num2str(i), " is: ", num2str(res)));
 endfor
+
+save "sol_best.mat" p_best;
+save "sol_150.mat" p;
+
+%Dla siatki niejednorodnej
+points = [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)];
+start = [zeros(1,200), 40*ones(1,451)]/100;
+
+%test
+t0 = 0;
+T = 1;
+x0 = [0; 0];
+STEP = 0.001;
+
+points = t0 : 0.01 : T;
+N = length(points)
+
+cons = [(N-1)/2, (N - 3/2 : -1 : 1/2)]*step^2;
+fin_pos = 0.9993465;
+starting = ones(N,1)*2;
+#starting(1) = 1;
+
+pstarting = [(16/3 + 0.07)*ones((N-1)/4, 1); zeros((N+1)/2, 1); (-16/3 - 0.07)*ones((N-1)/4, 1)];
+
+[p0, objf0, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0, STEP),
+				 X0   = pstarting,
+				 A    = [],
+				 B    = [],
+				 AEQ  = cons',
+				 BEQ  = fin_pos,
+				 LB   = [],
+				 UB   = [],
+				 NONLCON = [],
+				 OPTIONS=optimset("GradObj", "on")); %, "Algorithm",  "active-set"));
+
+
+
+%{
+Statystyki:
+nowe parametry:
+	Wynik dla:
+	zero control: 381831.74497
+	85x0 + 316x40:	301226.27469
+	85x0 + 316x55:  277858.64599
+	Eksperymenty:
+	     start 0:
+	     niter =  6
+	     nobjf =  17
+	     res =  324132.85096
+	     start bang:
+	     niter =  10
+	     nobjf =  26
+	     res =  283519.85873
+	     start best:
+	     niter =  19
+	     nobjf =  42
+	     res =  272466.20561
+	     active_set zero start:
+	     niter =  3
+	     nobjf =  57
+	     res =  340595.93819
+	     active set best start:
+	     niter =  7
+             nobjf =  110
+	     res =  272502.70105
+	Siatka niejednorodna:
+	       start 0:
+	       niter =  20
+	       nobjf =  42
+	       res =  295303.82581
+	       active set zero start:
+	       niter =  2
+	       nobjf =  53
+	       res =  348091.22831
+	       start bang:
+	       niter =  14
+	       nobjf =  35
+	       res =  277775.51745
+	       start best:
+    	       niter =  19
+	       nobjf =  42
+	       res =  272848.18541
+stare parametry:
+      Wynik dla	 
+      zero control: 567688.31755
+      max control:  213575.68897
+      Eksperymenty:
+             start 0:
+	     niter =  6
+	     nobjf =  15
+	     res =  234437.61671
+	     max start:
+	     niter =  1
+	     nobjf =  2
+    	     res =  213575.68897
+	     active set zero start:
+	     niter =  8
+	     nobjf =  9
+	     res =  213575.68897
+
