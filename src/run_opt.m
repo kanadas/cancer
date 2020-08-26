@@ -1,7 +1,7 @@
-function [p, res, cvg, outp] = run_opt(points, x0, g0, h, algorithm = "lm_feasible", do_grad = "on")
+function [p, res, cvg, outp] = run_opt(points, x0, g0, h, discr_fun, constants, algorithm = "lm_feasible", do_grad = "on")
   gmax = 3;
   N = length(points);
-  [p, res, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0, h),
+  [p, res, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0, h, discr_fun, constants),
 			       X0   = g0,
 			       A    = [],
 			       B    = [],

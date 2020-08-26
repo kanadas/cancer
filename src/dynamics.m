@@ -1,17 +1,15 @@
-function [v, dv, dg] = dynamics(t, V, g, dV = [])
-  lambda1 = 0.192;
-  lambda2 = 0.192;
-  mu = 0.0;
-  b1 = 5.85;
-  b2 = 5.85;
-  d = 0.00873;
-  beta1 = 0.15;
-  beta2 = 0.1;
-  beta = 0.05;
-%  alpha12 = 0.1;
-%  alpha21 = 0.15;
-  alpha12 = 0.5;
-  alpha21 = 0.75;
+function [v, dv, dg] = dynamics(t, V, g, constants, dV = [])
+  lambda1 = constants.lambda1;
+  lambda2 = constants.lambda2;
+  mu = constants.mu;
+  b1 = constants.b1;
+  b2 = constants.b2;
+  d = constants.d;
+  beta1 = constants.beta1;
+  beta2 = constants.beta2;
+  beta = constants.beta;
+  alpha12 = constants.alpha12;
+  alpha21 = constants.alpha21;
   function y = F(x)
     y = -log(x);
   endfunction
@@ -61,12 +59,6 @@ function [v, dv, dg] = dynamics(t, V, g, dV = [])
     dkdg = -mu * dK + dV1 + dV2 - d * (dpowdv .* K + pow .* dK) - beta * (dK .* ggt + K .* dgt);
     dg = [dv1dg; dv2dg; dkdg];
   endif
-
-%  v = v / 1000; %TEST
-%  if nargout > 1
-%    dv = dv / 1000; %TEST
-%    dg = dg / 1000; %TEST
-%  endif
 endfunction
 
 %TEST FUNCTION

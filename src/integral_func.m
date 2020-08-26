@@ -1,8 +1,7 @@
 
-function [y, dy] = integral_func(t, dyn)
-  epsilon = 0.01;
-%  omega = 1000;
-  omega = 2000;
+function [y, dy] = integral_func(t, dyn, constants)
+  epsilon = constants.epsilon;
+  omega = constants.omega;
   function y = G(x)
     y = (1 + tanh(x))/2;
   endfunction

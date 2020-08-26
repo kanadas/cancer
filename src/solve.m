@@ -4,7 +4,24 @@ gmax = 3;
 t0 = 0;
 T = 200;
 x0 = [20; 280; 650];
-STEP = 0.1;
+h = 0.1;
+
+constants.lambda1 = 0.192;
+constants.lambda2 = 0.192;
+constants.mu = 0.0;
+constants.b1 = 5.85;
+constants.b2 = 5.85;
+constants.d = 0.00873;
+constants.beta1 = 0.15;
+constants.beta2 = 0.1;
+constants.beta = 0.05;
+%constants.alpha12 = 0.1;
+%constants.alpha21 = 0.15;
+constants.alpha12 = 0.5;
+constants.alpha21 = 0.75;
+constants.epsilon = 0.01;
+%constants.omega = 1000;
+constants.omega = 2000;
 
 load "sol0.mat";
 load "sol_omega2k_1.mat";
@@ -21,18 +38,18 @@ points = [(0 : 0.5 : 50), (51 : 1 : 149), (150 : 0.5 : 200)];
 
 points = [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)];
 
-N = length(points)
+N = length(points);
 
 start_bang = 1:N;
 start_bang = start_bang < N/2;
 
-[p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), STEP);
-[p, res, cvg, outp] = run_opt(points, x0, ones(N,1), STEP);
-[p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), STEP);
-[p, res, cvg, outp] = run_opt(points, x0, ((N-1):-1:0)*3/(N-1), STEP);
-[p, res, cvg, outp] = run_opt(points, x0, start_bang, STEP);
+[p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants);
+[p, res, cvg, outp] = run_opt(points, x0, ones(N,1), h);
+[p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), h);
+[p, res, cvg, outp] = run_opt(points, x0, ((N-1):-1:0)*3/(N-1), h);
+[p, res, cvg, outp] = run_opt(points, x0, start_bang, h);
 
-[p_ng, res_ng, cvg, outp] = run_opt(points, x0, zeros(N,1), STEP, "off");
+[p_ng, res_ng, cvg, outp] = run_opt(points, x0, zeros(N,1), h, "off");
 
 %assume N = 401
 start1 = [(400:-2:0), (0:3:100), (100:-3:0), zeros(1,132)]*3/400;
@@ -46,7 +63,7 @@ start8 = [300*ones(1,50), zeros(1, 50), 16*ones(1,40), 30*ones(1,10), 16*ones(1,
 
 %start2 = [300*ones(1,100), (300:-3:0), (0:4:100), (100:-4:0), (0:4:100), (100:-4:0), zeros(1,96)]/100;
 
-[p0, res0, cvg, outp] = run_opt(points, x0, zeros(N,1), STEP);
+[p0, res0, cvg, outp] = run_opt(points, x0, zeros(N,1), h);
 
 start_lin = [0:3:1200]/400;
 
@@ -55,13 +72,12 @@ start = [15*ones(1,100), 55*ones(1,301)]/100;
 start = [zeros(1,90), 55*ones(1,311)]/100;
 start = [zeros(1,85), 55*ones(1,316)]/100;
 
-[p, res, cvg, outp] = run_opt(points, x0, start, STEP);
-[p, res, cvg, outp] = run_opt(points, x0, start, STEP, "active-set");
+[p, res, cvg, outp] = run_opt(points, x0, start, h);
+[p, res, cvg, outp] = run_opt(points, x0, start, h, "active-set");
 
-[p, res, cvg, outp] = run_opt(points, x0, start_lin, STEP, "active-set");
+[p, res, cvg, outp] = run_opt(points, x0, start_lin, h, "active-set");
 
-save
-"sol_bang.mat" p;
+save "sol_bang.mat" p;
 
 p_best = p0;
 res_best = res0;
@@ -69,7 +85,7 @@ noncont_best = 400;
 for i = 50:5:150
   disp(strcat("Compting i=", num2str(i)));
   start = [zeros(1,i), 40*ones(1,401-i)]/100;
-  [p, res, cvg, outp] = run_opt(points, x0, start, STEP);
+  [p, res, cvg, outp] = run_opt(points, x0, start, h);
   if(res < res_best)
     p_best = p;
     res_best = res;
@@ -89,7 +105,7 @@ start = [zeros(1,200), 40*ones(1,451)]/100;
 t0 = 0;
 T = 1;
 x0 = [0; 0];
-STEP = 0.001;
+h = 0.001;
 
 points = t0 : 0.01 : T;
 N = length(points)
@@ -101,7 +117,7 @@ starting = ones(N,1)*2;
 
 pstarting = [(16/3 + 0.07)*ones((N-1)/4, 1); zeros((N+1)/2, 1); (-16/3 - 0.07)*ones((N-1)/4, 1)];
 
-[p0, objf0, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0, STEP),
+[p0, objf0, cvg, outp] = fmincon(OBJF = @(g) objf(g, points, x0, h),
 				 X0   = pstarting,
 				 A    = [],
 				 B    = [],

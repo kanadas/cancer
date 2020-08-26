@@ -1,14 +1,13 @@
 
-function [y, dy] = objf(g, points, x0, h)
+function [y, dy] = objf(g, points, x0, h, discr_fun, constants)
   t0 = points(1);
   T = points(end);
-  approx_dyn = control_to_res(g, points, x0, h);
+  approx_dyn = control_to_res(g, points, x0, h, discr_fun, constants);
 
   if nargout == 1
-    y = integrate(@(x) integral_func(x, approx_dyn), t0, T, h);
+    y = integrate(@(x) integral_func(x, approx_dyn, constants), t0, T, h);
   else
-    [y, dy] = integrate(@(x) integral_func(x, approx_dyn), t0, T, h);
-
+    [y, dy] = integrate(@(x) integral_func(x, approx_dyn, constants), t0, T, h);
   endif
   
   disp(y);
@@ -17,8 +16,6 @@ function [y, dy] = objf(g, points, x0, h)
 %  endif
 
   if nargout > 1
-    %Seems that it wants - gradient
-%    dy = -dy;
     dy = dy';
   endif
 endfunction
