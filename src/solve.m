@@ -1,4 +1,4 @@
-pkg load optim
+ pkg load optim
 
 gmax = 3;
 t0 = 0;
@@ -44,6 +44,9 @@ start_bang = 1:N;
 start_bang = start_bang < N/2;
 
 [p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants);
+#no gradient calculation experimment
+[p_ng, res_ng, cvg_ng, outp_ng] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, "lm_feasible", "off");
+
 [p, res, cvg, outp] = run_opt(points, x0, ones(N,1), h);
 [p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), h);
 [p, res, cvg, outp] = run_opt(points, x0, ((N-1):-1:0)*3/(N-1), h);

@@ -1,10 +1,10 @@
-function draw_plots(g, points, x0)
+function draw_plots(g, points, x0, discr_fun, constants)
   t0 = points(1);
   T = points(end);
-  v = control_to_res(g, points, x0, (T - t0) / 2000);
+  v = control_to_res(g, points, x0, (T - t0) / 2000, discr_fun, constants);
   step = (T - t0) / 100;
   x = t0:step:T;
-  control = @(t) ster(t, g, points)
+  control = @(t) discr_fun(t, g, points)
 
   subplot(2, 1, 1);
   plot(x, control(x));

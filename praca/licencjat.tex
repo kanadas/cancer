@@ -391,6 +391,209 @@ Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na popra
 
 Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z rysunku \ref{max_sol} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach (\ref{exp2}), w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{max}$ minimalna wartość $y_3$ wynosi ok. $0.02$, więc ten eksperyment może być obarczony istotnym błędem numerycznym.
 
+\section{Appendix: Wyniki wszystkich eksperymentów}
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+      \hline
+      stałe & algorytm & dyskret. & siatka & h & start & wynik\\
+      \hline
+      1 & lm & stała & krok 1 & 0.5 & stały 0 & 222693.646 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.5 & stały g_max & 213576.456 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.5 & skok 0.4 & 234892.685 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.5 & skok 0.55 & 237451.717 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.1 & stały 0 & 221268.2 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.1 & stały g_max & 213575.689 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.1 & skok 0.4 & 228320.226 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.1 & skok 0.55 & 229669.421 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.02 & stały 0 & 223989.084 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.02 & stały g_max & 213575.658 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.02 & skok 0.4 & 232723.678 \\
+      \hline
+      1 & lm & stała & krok 1 & 0.02 & skok 0.55 & 234260.989 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.5 & stały 0 & 220300.896 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.5 & stały g_max & 213576.456 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.5 & skok 0.4 & 229321.206 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.5 & skok 0.55 & 231235.122 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.1 & stały 0 & 220027.018 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.1 & stały g_max & 213575.689 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.1 & skok 0.4 & 229260.051 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.1 & skok 0.55 & 231138.044 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.02 & stały 0 & 220162.401 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.02 & stały g_max & 213575.658 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.02 & skok 0.4 & 229315.768 \\
+      \hline
+      1 & lm & stała & krok 0.5 & 0.02 & skok 0.55 & 282904.547 \\
+      \hline
+      1 & lm & stała & końce & 0.5 & stały 0 & 213576.456 \\
+      \hline
+      1 & lm & stała & końce & 0.5 & stały g_max & 213576.456 \\
+      \hline
+      1 & lm & stała & końce & 0.5 & skok 0.4 & 213576.456 \\
+      \hline
+      1 & lm & stała & końce & 0.5 & skok 0.55 & 213576.456 \\
+      \hline
+      1 & lm & stała & końce & 0.1 & stały 0 & 213575.689 \\
+      \hline
+      1 & lm & stała & końce & 0.1 & stały g_max & 213575.689 \\
+      \hline
+      1 & lm & stała & końce & 0.1 & skok 0.4 & 213575.689 \\
+      \hline
+      1 & lm & stała & końce & 0.1 & skok 0.55 & 213575.689 \\
+      \hline
+      1 & lm & stała & końce & 0.02 & stały 0 & 218849.468 \\
+      \hline
+      1 & lm & stała & końce & 0.02 & stały g_max & 213575.658 \\
+      \hline
+      1 & lm & stała & końce & 0.02 & skok 0.4 & 213575.658 \\
+      \hline
+      1 & lm & stała & końce & 0.02 & skok 0.55 & 213575.658 \\
+      \hline
+      1 & lm & stała & środek & 0.5 & stały 0 & 213576.456 \\
+      \hline
+      1 & lm & stała & środek & 0.5 & stały g_max & 213576.456 \\
+      \hline
+      1 & lm & stała & środek & 0.5 & skok 0.4 & 213576.456 \\
+      \hline
+      1 & lm & stała & środek & 0.5 & skok 0.55 & 213576.456 \\
+      \hline
+      1 & lm & stała & środek & 0.1 & stały 0 & 213575.689 \\
+      \hline
+      1 & lm & stała & środek & 0.1 & stały g_max & 213575.689 \\
+      \hline
+      1 & lm & stała & środek & 0.1 & skok 0.4 & 213575.689 \\
+      \hline
+      1 & lm & stała & środek & 0.1 & skok 0.55 & 213575.689 \\
+      \hline
+      1 & lm & stała & środek & 0.02 & stały 0 & 213575.658 \\
+      \hline
+      1 & lm & stała & środek & 0.02 & stały g_max & 213575.658 \\
+      \hline
+      1 & lm & stała & środek & 0.02 & skok 0.4 & 213575.658 \\
+      \hline
+      1 & lm & stała & środek & 0.02 & skok 0.55 & 213575.658 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.5 & stały 0 & 327539.534 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.5 & stały g_max & 407072.637 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.5 & skok 0.4 & 281530.531 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.5 & skok 0.55 & 271575.788 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.1 & stały 0 & 327999.312 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.1 & stały g_max & 407071.733 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.1 & skok 0.4 & 274801.158 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.1 & skok 0.55 & 271911.909 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.02 & stały 0 & 294674.991 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.02 & stały g_max & 407071.697 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.02 & skok 0.4 & 274811.679 \\
+      \hline
+      1 & lm & liniowa & krok 1 & 0.02 & skok 0.55 & 272140.552 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.5 & stały 0 & 311900.823 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.5 & stały g_max & 407072.637 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.5 & skok 0.4 & 274785.432 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.5 & skok 0.55 & 271317.295 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.1 & stały 0 & 327813.623 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.1 & stały g_max & 407071.733 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.1 & skok 0.4 & 276283.441 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.1 & skok 0.55 & 271701.06 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.02 & stały 0 & 293214.122 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.02 & stały g_max & 407071.697 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.02 & skok 0.4 & 274041.667 \\
+      \hline
+      1 & lm & liniowa & krok 0.5 & 0.02 & skok 0.55 & 271674.26 \\
+      \hline
+      1 & lm & liniowa & końce & 0.5 & stały 0 & 349107.715 \\
+      \hline
+      1 & lm & liniowa & końce & 0.5 & stały g_max & 407072.637 \\
+      \hline
+      1 & lm & liniowa & końce & 0.5 & skok 0.4 & 278477.99 \\
+      \hline
+      1 & lm & liniowa & końce & 0.5 & skok 0.55 & 272724.395 \\
+      \hline
+      1 & lm & liniowa & końce & 0.1 & stały 0 & 348091.228 \\
+      \hline
+      1 & lm & liniowa & końce & 0.1 & stały g_max & 407071.733 \\
+      \hline
+      1 & lm & liniowa & końce & 0.1 & skok 0.4 & 279451.62 \\
+      \hline
+      1 & lm & liniowa & końce & 0.1 & skok 0.55 & 272971.102 \\
+      \hline
+      1 & lm & liniowa & końce & 0.02 & stały 0 & 348665.245 \\
+      \hline
+      1 & lm & liniowa & końce & 0.02 & stały g_max & 407071.697 \\
+      \hline
+      1 & lm & liniowa & końce & 0.02 & skok 0.4 & 279152.003 \\
+      \hline
+      1 & lm & liniowa & końce & 0.02 & skok 0.55 & 273002.165 \\
+      \hline
+      1 & lm & liniowa & środek & 0.5 & stały 0 & 349126.141 \\
+      \hline
+      1 & lm & liniowa & środek & 0.5 & stały g_max & 407072.637 \\
+      \hline
+      1 & lm & liniowa & środek & 0.5 & skok 0.4 & 281146.035 \\
+      \hline
+      1 & lm & liniowa & środek & 0.5 & skok 0.55 & 272462.307 \\
+      \hline
+      1 & lm & liniowa & środek & 0.1 & stały 0 & 349582.318 \\
+      \hline
+      1 & lm & liniowa & środek & 0.1 & stały g_max & 407071.733 \\
+      \hline
+      1 & lm & liniowa & środek & 0.1 & skok 0.4 & 281634.433 \\
+      \hline
+      1 & lm & liniowa & środek & 0.1 & skok 0.55 & 272663.618 \\
+      \hline
+      1 & lm & liniowa & środek & 0.02 & stały 0 & 349521.945 \\
+      \hline
+      1 & lm & liniowa & środek & 0.02 & stały g_max & 407071.697 \\
+      \hline
+      1 & lm & liniowa & środek & 0.02 & skok 0.4 & 281668.599 \\
+      \hline
+      1 & lm & liniowa & środek & 0.02 & skok 0.55 & 272623.516 \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
 \newpage{}
 \bibliography{bibliography}{}
 \bibliographystyle{abbrv}

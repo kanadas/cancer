@@ -45,24 +45,30 @@ function run_experiments()
   start55 = @(grid) start_bang(grid, 0.55);
   starts = {start0, start_max, start40, start55};
 
-  results = [];
+  experiments = []
   for const = constants
-    for back = backends
+    for back = backends	    
       for discr = discretizations
 	for grid = grids
 	  for h = steps
-	    for startf = starts
-	      disp(strcat("Processing experiment ", num2str(length(results))));
-	      start = startf{1}(grid{1});
-	      [p, res, cvg, outp] = run_opt(grid{1}, x0, start, h{1}, discr{1}, const{1}, back{1});
-	      results(end + 1) = res;
-	    endfor
-	  endfor
-	endfor
+            for startf = starts
+	      experiments(end+1) = {const, back, discr, grid, h, startf};
+            endfor
+          endfor
+        endfor
       endfor
     endfor
   endfor
 
-  save -ascii "results" results;
+  disp(length(experiments));
+
+% results = [];
+%
+%              disp(strcat("Processing experiment ", num2str(length(results))));
+%              start = startf{1}(grid{1});
+%              [p, res, cvg, outp] = run_opt(grid{1}, x0, start, h{1}, discr{1}, const{1}, back{1});
+%              results(end + 1,:) = [res, outp.niter, outp.nobjf];
+%
+%  save -ascii "results_all" results;
 endfunction
 
