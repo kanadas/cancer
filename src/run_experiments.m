@@ -45,30 +45,57 @@ function run_experiments()
   start55 = @(grid) start_bang(grid, 0.55);
   starts = {start0, start_max, start40, start55};
 
-  experiments = []
-  for const = constants
-    for back = backends	    
-      for discr = discretizations
-	for grid = grids
-	  for h = steps
-            for startf = starts
-	      experiments(end+1) = {const, back, discr, grid, h, startf};
+%  factors = {backends, discretizations, grids, steps, starts};
+%  disp(length(factors));
+%  function exps = product(factors, acc)
+%    len = length(factors);
+%    if(len == 0)
+%      exps = acc;
+%    else
+%      factor = factors{end};
+%      nacc = {};
+%      for exp = acc
+%	for fc = factor
+%	  exp{end+1} = fc;
+%	  nacc{end+1} = exp;
+%	endfor
+%      endfor
+%      disp(length(nacc))
+%      exps = product(factors(1:(len - 1)), nacc);
+%    endif
+%  endfunction
+  
+  results = zeros(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts), 3);
+  idx = 1;
+  for i = 1:length(constants)
+    for j = 1:length(backends)
+      for k = 1:length(discretizations)
+	for l = 1:length(grids)
+	  for m = 1:length(steps)
+            for n = 1:length(starts)
+	      disp(strcat("Processing experiment  ", int2str(idx) ));
+              start = starts{n}(grids{l});
+              [p, res, cvg, outp] = run_opt(grids{l},
+					    x0,
+					    start,
+					    steps{m},
+					    discretizations{k},
+					    constants{i},
+					    backends{j});
+              results(idx,:) = [res, outp.niter, outp.nobjf];
+	      idx = idx + 1;
             endfor
-          endfor
-        endfor
+	  endfor
+	endfor
       endfor
     endfor
-  endfor
+  endfor  
 
   disp(length(experiments));
 
-% results = [];
-%
-%              disp(strcat("Processing experiment ", num2str(length(results))));
-%              start = startf{1}(grid{1});
-%              [p, res, cvg, outp] = run_opt(grid{1}, x0, start, h{1}, discr{1}, const{1}, back{1});
-%              results(end + 1,:) = [res, outp.niter, outp.nobjf];
-%
-%  save -ascii "results_all" results;
+ results = [];
+
+
+save -ascii "results_all" results;
 endfunction
 

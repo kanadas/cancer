@@ -16,6 +16,6 @@ function [x, dx] = integrate(f, t0, T, h)
 
   x = dot(trap_quad, y, 1);
   if nargout > 1
-    dx = dy' * trap_quad;
+    dx = (dy * trap_quad)';
   endif
 endfunction

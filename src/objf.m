@@ -11,11 +11,21 @@ function [y, dy] = objf(g, points, x0, h, discr_fun, constants)
   endif
   
   disp(y);
-%  if nargout > 1
-%    disp(dy);
-%  endif
 
-  if nargout > 1
-    dy = dy';
+  global DEBUG;
+  if DEBUG > 1 && nargout > 1
+    test_grad = dfpdp(g, @(g) objf(g, points, x0, h, discr_fun, constants));
+    diff_norm = norm(dy - test_grad, 1);
+    disp(strcat("OBJF grad diff norm: ", num2str(diff_norm)));
+    if diff_norm >= 1
+      disp("g: ")
+      disp(g)
+      disp("Computed gradient");
+      disp(dy');
+      disp("Finite diff gradient");
+      disp(test_grad');
+      save "bug_log" g dy test_grad;
+      exit;
+    endif
   endif
 endfunction

@@ -1,4 +1,6 @@
- pkg load optim
+pkg load optim
+
+global DEBUG = 2;
 
 gmax = 3;
 t0 = 0;
@@ -23,6 +25,11 @@ constants.epsilon = 0.01;
 %constants.omega = 1000;
 constants.omega = 2000;
 
+constants1 = constants;
+constants1.alpha12 = 0.1;
+constants1.alpha21 = 0.15;
+constants1.omega = 1000;
+
 load "sol0.mat";
 load "sol_omega2k_1.mat";
 load "sol_omega2k.mat";
@@ -46,6 +53,9 @@ start_bang = start_bang < N/2;
 [p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants);
 #no gradient calculation experimment
 [p_ng, res_ng, cvg_ng, outp_ng] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, "lm_feasible", "off");
+
+save "sol_nograd.mat" p_ng res_ng outp_ng;
+load "sol_nograd.mat";
 
 [p, res, cvg, outp] = run_opt(points, x0, ones(N,1), h);
 [p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), h);
@@ -75,7 +85,7 @@ start = [15*ones(1,100), 55*ones(1,301)]/100;
 start = [zeros(1,90), 55*ones(1,311)]/100;
 start = [zeros(1,85), 55*ones(1,316)]/100;
 
-[p, res, cvg, outp] = run_opt(points, x0, start, h);
+[p, res, cvg, outp] = run_opt(points, x0, @const_discr, h);
 [p, res, cvg, outp] = run_opt(points, x0, start, h, "active-set");
 
 [p, res, cvg, outp] = run_opt(points, x0, start_lin, h, "active-set");

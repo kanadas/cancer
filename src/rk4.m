@@ -19,13 +19,13 @@ function [res, grad] = rk4(f, t0, pts, x0, h, grad_dim = 0)
 	k3 = f(t + h/2, x + h/2*k2);
 	k4 = f(t + h, x + h*k3);
       else
-	[k1, dfdx, dfdg] = f(t, x, dx);
+	[k1, dfdx, dfdg] = f(t, x);
 	dk1 = dfdx * dx + dfdg;
-	[k2, dfdx, dfdg] = f(t + h/2, x + h/2*k1, dx + h/2*dk1);
+	[k2, dfdx, dfdg] = f(t + h/2, x + h/2*k1);
 	dk2 = dfdx * (dx + h/2*dk1) + dfdg;
-	[k3, dfdx, dfdg] = f(t + h/2, x + h/2*k2, dx + h/2*dk2);
+	[k3, dfdx, dfdg] = f(t + h/2, x + h/2*k2);
 	dk3 = dfdx * (dx + h/2*dk2) + dfdg;
-	[k4, dfdx, dfdg] = f(t + h, x + h*k3, dx + h*dk3);
+	[k4, dfdx, dfdg] = f(t + h, x + h*k3);
 	dk4 = dfdx * (dx + h*dk3) + dfdg;
 
 	dx = dx + h/6*(dk1 + 2*dk2 + 2*dk3 + dk4);

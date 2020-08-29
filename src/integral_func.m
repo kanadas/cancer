@@ -17,8 +17,8 @@ function [y, dy] = integral_func(t, dyn, constants)
   endif
   y = V(:, 1) + V(:, 2) + omega * G((V(:, 2) - V(:, 1)) / epsilon);
   if nargout > 1
-    dy = dV(:, 1, :) + dV(:, 2, :) + omega * dG((V(:, 2) - V(:, 1)) / epsilon) .* ((dV(:, 1, :) + dV(:, 2, :)) /epsilon);
-    dy = squeeze(dy); %remove singleton dimension
+    dy = dV(:, 1, :) + dV(:, 2, :) + omega * dG((V(:, 2) - V(:, 1)) / epsilon) .* ((dV(:, 2, :) - dV(:, 1, :)) /epsilon);
+    dy = squeeze(dy)'; %remove singleton dimension
   endif
 endfunction
 
