@@ -1,5 +1,5 @@
 %Run all experiments
-function run_experiments()
+function run_experiments(fname)
   pkg load optim;
   gmax = 3;
   t0 = 0;
@@ -25,16 +25,6 @@ function run_experiments()
   c2.alpha21 = 0.75;
   c2.omega = 2000;
 
-  constants = {c1, c2};
-  backends = {"lm_feasible", "active-set"};
-  discretizations = {@const_discr, @linear_discr};
-  grids = {t0 : 1 : T,
-	   t0 : 0.5 : T,
-	   [(0 : 0.5 : 50), (51 : 1 : 149), (150 : 0.5 : 200)],
-	   [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)]
-	  };
-  steps = {0.5, 0.1, 0.02};
-
   function s = start_bang(grid, val)
     pos = lookup(grid, 42.5);
     s = [zeros(1, pos - 1), val*ones(1, length(grid) - pos + 1)];
@@ -43,8 +33,30 @@ function run_experiments()
   start_max = @(grid) gmax*ones(1,length(grid));
   start40 = @(grid) start_bang(grid, 0.4);
   start55 = @(grid) start_bang(grid, 0.55);
-  starts = {start0, start_max, start40, start55};
 
+% All experiments  
+%  constants = {c1, c2};
+%  backends = {"lm_feasible", "active-set"};
+%  discretizations = {@const_discr, @linear_discr};
+%  grids = {t0 : 1 : T,
+%	   t0 : 0.5 : T,
+%	   [(0 : 0.5 : 50), (51 : 1 : 149), (150 : 0.5 : 200)],
+%	   [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)]
+%	  };
+%  steps = {0.5, 0.1, 0.02};
+%  starts = {start0, start_max, start40, start55};
+
+%C1 test  
+  constants = {c1};
+  backends = {"lm_feasible"};
+  discretizations = {@const_discr, @linear_discr};
+  grids = {t0 : 1 : T,
+	   t0 : 0.5 : T,
+	   [(0 : 0.5 : 50), (51 : 1 : 149), (150 : 0.5 : 200)],
+	  };
+  steps = {0.1};
+  starts = {start0, start_max};
+  
 %  factors = {backends, discretizations, grids, steps, starts};
 %  disp(length(factors));
 %  function exps = product(factors, acc)
@@ -91,11 +103,6 @@ function run_experiments()
     endfor
   endfor  
 
-  disp(length(experiments));
-
- results = [];
-
-
-save -ascii "results_all" results;
+  save("-ascii", fname, "results");
 endfunction
 

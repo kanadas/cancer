@@ -1,6 +1,6 @@
 pkg load optim
 
-global DEBUG = 2;
+%global DEBUG = 2;
 
 gmax = 3;
 t0 = 0;
@@ -85,12 +85,13 @@ start = [15*ones(1,100), 55*ones(1,301)]/100;
 start = [zeros(1,90), 55*ones(1,311)]/100;
 start = [zeros(1,85), 55*ones(1,316)]/100;
 
-[p, res, cvg, outp] = run_opt(points, x0, @const_discr, h);
-[p, res, cvg, outp] = run_opt(points, x0, start, h, "active-set");
-
+[p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants);
+[p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
 [p, res, cvg, outp] = run_opt(points, x0, start_lin, h, "active-set");
 
 save "sol_bang.mat" p;
+
+[p_c1, res_c1, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants1, "active-set");
 
 p_best = p0;
 res_best = res0;
