@@ -139,11 +139,10 @@ Rozwiązanie problemu \ref{problem} przybliżymy rozwiązaniem pewnego problemu 
   0 = t_0 < t_1 < \cdots < t_{n-1} < t_n = T
 \end{equation}
 Możemy teraz przybliżać sterowanie $g$ za pomocą splajnu opartego na punktach $t_{i}$. Dla prostoty ograniczymy się do splajnów stopnia 0 i 1. Ostatecznie przybliżone sterowanie $\hat{g}$ ma postać:
-%TODO czy o \hat{g}_0(t) chodziło?
 \begin{gather}  
-    \hat{g}_0(t) = g_i \text{ gdy } t \in [t_{i}, t_{i + 1}) \label{control_1}\\
+    \hat{g}(t) = g_i \text{ gdy } t \in [t_{i}, t_{i + 1}) \label{control_1}\\
     \nonumber \text{lub} \\
-    \hat{g}_1(t) = \frac{(t_i - t)g_{i-1} + (t - t_{i-1})g_{i}}{t_i - t_{i-1}} \text{ gdy } t \in [t_{i-1}, t_i) \label{control_2}
+    \hat{g}(t) = \frac{(t_{i+1} - t)g_i + (t - t_i)g_{i+1}}{t_{i+1} - t_i} \text{ gdy } t \in [t_i, t_{i+1}) \label{control_2}
 \end{gather}
 i jest jednoznacznie zdefiniowane przez wartości $g_i$ dla $i = 0,\ldots, n$. Te wartości będą optymalizowanymi zmiennymi.
 
@@ -257,14 +256,14 @@ W implementacji w Octave korzystamy ze zwektoryzowanej implementacji funkcji $\h
 
 Gradient funkcji celu możemy zaimplementować jako mnożenie wektora przez macierz:
 \begin{equation}
-  {\left[\frac{\partial J}{\partial g_i}\right]}_{i = i, \ldots n} = \left(h(\alpha_0),\ldots,h(\alpha_N)\right) \cdot {\left[\frac{\partial j(\hat{y}(hi))}{\partial g_j}\right]}_{i = 0, \ldots N, j = 1, \ldots n}
+  {\left[\frac{\partial J}{\partial g_i}\right]}_{i = 0, \ldots n} = \left(h(\alpha_0),\ldots,h(\alpha_N)\right) \cdot {\left[\frac{\partial j(\hat{y}(hi))}{\partial g_k}\right]}_{i = 0, \ldots N, k = 1, \ldots n}
 \end{equation}
 gdzie
 \begin{equation}
-  \frac{\partial j(y(t))}{\partial g_i} = \frac{\partial y_1(t)}{\partial g_i} + \frac{\partial y_2(t)}{\partial g_i} + \omega G'\left(\frac{y_1(t) - y_2(t)}{\epsilon}\right)\frac{\frac{\partial y_2(t)}{\partial g_i} - \frac{\partial y_1(t)}{\partial g_i}}{\epsilon},\quad G'(x) = \frac{1}{2\cosh^2(x)}
+  \frac{\partial j(y(t))}{\partial g_i} = \frac{\partial y_1(t)}{\partial g_i} + \frac{\partial y_2(t)}{\partial g_i} + \omega G'\left(\frac{y_2(t) - y_1(t)}{\epsilon}\right)\frac{\frac{\partial y_2(t)}{\partial g_i} - \frac{\partial y_1(t)}{\partial g_i}}{\epsilon},\quad G'(x) = \frac{1}{2\cosh^2(x)}
 \end{equation}
 \section{Eksperymenty}
-W eksperymentach użyjemy wartości parametrów podanych w wyjściowej pracy:
+W eksperymentach użyjemy wartości parametrów podanych w wyjściowej pracy \ref{BBF-manuscript}:
 \begin{align*}
   t_0 &= 0          & \lambda_1 &= 0.192 & g_{\max} &= 3    \\
   T &= 200          & \lambda_2 &= 0.192 & \epsilon &= 0.01 \\
@@ -275,12 +274,12 @@ W eksperymentach użyjemy wartości parametrów podanych w wyjściowej pracy:
 Wartości parametrów $\alpha_{12},\ \alpha_{21},\ \omega$ nie zostały ustalone w pracy, jedyne co jest ustalone to
 \[ \alpha_{12} < \alpha_{21}\quad 0 < \omega \le 2000 \]
 więc zbadamy problem dla 2 arbitralnie wybranych zestawów wartości tych parametrów:
-\begin{align}\label{exp1}
-  \alpha_{12} &= 0.1 & \alpha_{21} &= 0.15 & \omega = 1000
-\end{align}
-\begin{align}\label{exp2}
-  \alpha_{12} &= 0.5 & \alpha_{21} &= 0.75 & \omega = 2000
-\end{align}
+\begin{align*}
+1.& &  \alpha_{12} &= 0.1 & \alpha_{21} &= 0.15 & \omega = 1000
+\end{align*}
+\begin{align*}
+2.& &  \alpha_{12} &= 0.5 & \alpha_{21} &= 0.75 & \omega = 2000
+\end{align*}
 Do przybliżania rozwiązania równania (\ref{odesim}) będziemy korzystać z metody Rungego-Kutty 4-tego rzędu, ponieważ daje ona dobrą dokładność, a liczenie wartości funkcji $f$ nie jest zbyt kosztowne. Długość kroku obierzemy na $h = 0.1$, co daje $2000$ kroków na całym przedziale $[t_0, T]$. Wartości stałych $c_l$, $a_{li}$, $b_i$ z wzoru (\ref{rk}) podane na tabeli Butchera:
 \begin{equation}\label{butcher}
   \begin{array}
@@ -293,16 +292,137 @@ Do przybliżania rozwiązania równania (\ref{odesim}) będziemy korzystać z me
     & \frac{1}{6} &\frac{1}{3} &\frac{1}{3} &\frac{1}{6} 
   \end{array}
 \end{equation}
-Do przybliżania funkcjonału celu (\ref{objf}) użyjemy kwadratury trapezów. Jest to nieskomplikowana kwadratura, ale przy niskiej długości kroku daje dobre przybliżenie. Kwadratura (\ref{quad}) wyraża się wiec przez:
+Do przybliżania funkcjonału celu (\ref{objf}) użyjemy kwadratury trapezów. Kwadratura (\ref{quad}) wyraża się wiec przez:
 \begin{equation} \label{trapezoidal}
   Q(\hat{y}) = h\left(\frac{1}{2}(j(\hat{y}(0)) + j(\hat{y}(T))) + \sum_{i=1}^{N-1} j(\hat{y}(ih))\right)
 \end{equation}
 
-Przeprowadzone eksperymenty obejmowały różne punkty startowe dla optymalizatora i siatki dyskretyzacji. Testowane było zarówno sterowanie kawałkami stałe (\ref{control_1}), jak i kawałkami liniowe (\ref{control_2}). Przykładowymi przetestowanymi punktami startowymi było sterowanie stale równe $0$, $1$ lub $g_{\max}$, sterowanie malejące liniowo od $g_{\max}$ do $0$, czy sterowanie przyjmujące $g_{\max}$ na początku przedziału czasu, i $0$ później. Przykładowymi siatkami dyskretyzacji są punkty rozłożone równo w odległości $\frac{1}{2}$, oraz siatka z odstępami $\frac{1}{2}$ w początkowej i końcowej $\frac{1}{4}$ długości przedziału i odstępami $1$ na pozostałej części przedziału czasu.
+Do eksperymentów użyte zostało środowisko Octave. Optymalizator FMINICON na tym środowisku umożliwia użycie jednego z dwóch algorytmów do optymalizacji nieliniowej: {\it lm\_feasable}, lub {\it sqp}. Jedną z różnic między tymi algorytmami jest to, że {\it lm\_feasable\/} zachowuje ograniczenia w trakcie optymalizacji, natomiast {\it sqp\/} wymusza ograniczenia jedynie na koniec procesu optymalizacji. W eksperymentach przetestowane zostały oba z tych algorytmów.
 
-Do eksperymentów użyte zostało środowisko Octave. Optymalizator FMINICON na tym środowisku umożliwia użycie jednego z dwóch backendów do optymalizacji nieliniowej: {\it lm\_feasable}, lub {\it sqp}. Jedną z różnic między tymi backendami jest to, że {\it lm\_feasable\/} zachowuje ograniczenia w trakcie optymalizacji, natomiast {\it sqp\/} wymusza ograniczenia jedynie na koniec procesu optymalizacji. W eksperymentach przetestowane zostały oba z tych algorytmów.
+\subsection{Zbiór testowy}
+Aby móc zbadać wpływ róźnych czynników na ostateczny wynik nasz zbiór testowy będzie zawierał
+\begin{itemize}
+\item{Zestawy parametrów}
+  \begin{itemize}
+  \item{1.}
+  \item{2.}
+  \end{itemize}
+\item{Algorytmy}
+  \begin{itemize}
+  \item{\it lm\_feasible\/} oznaczany w skrócie {\it lm\/}
+  \item{\it sqp\/}
+  \end{itemize}
+\item{Metody dyskretyzacji}
+  \begin{itemize}
+  \item{Stała} (\ref{dcontrol_1})
+  \item{Liniowa} (\ref{dcontrol_2})
+  \end{itemize}
+\item{Siatki dyskretyzacji}
+  \begin{itemize}
+  \item{Stała krok=4 ($S_4$)} $t_n = 4n$
+  \item{Stała krok=1 ($S_1$)} $t_n = n$
+  \item{Stała krok=$0.5$ ($S_{0.5}$)} $t_n = 0.5\cdot n$
+  \item{Niejednorodna, gęstsza w środku ($N_{sr}$)} $t_n = \begin{cases}
+      n \iif n \le 25 \\
+      25 + 0.1\cdot(n-25) \iif 25 < n \le 525 \\
+      75 + (n - 525) \iif n > 525
+    \end{cases}$
+  \item{Niejednorodna, gęstsza na końcach ($N_{kon}$)} $t_n = \begin{cases}
+      0.5\cdot n \iif n \le 100 \\
+      50 + (n - 50) \iif 100 < n \le 200 \\
+      150 + 0.5\cdot (n - 200) \iif n > 200
+    \end{cases}$
+  \end{itemize}
+\item{Kroki dyskretyzacji ($h$)}
+  \begin{itemize}
+  \item $0.5$
+  \item $0.1$
+  \item $0.02$
+  \end{itemize}
+\item{Sterowania startowe}
+  \begin{itemize}
+  \item{$g_0$:} $g \equiv 0$
+  \item{$g_{3}$:} $g \equiv g_{\max} = 3$
+  \item{$g_{0,0.4}$:} $g = 0.4 \cdot \1_{[42.5, T]}$
+  \item{$g_{0,0.55}$:} $g = 0.55 \cdot \1_{[42.5, T]}$
+  \item{$g_{3,0,0.5}$:} $g = g_{\max}\cdot \1_{[0,10]} + 0.5 \cdot \1_{[50, T]}$
+  \end{itemize}
+\end{itemize}
+Jako, że zbiór ten jest duży, przeprowadzimy kilka eksperymentów. Każdy eksperyment będzie przeprowadzony na podzbiorze tego zbioru wybranym tak, aby zaprezentować wpływ konkretnego parametru na wyniki.
 
 \subsection{Wyniki eksperymentów}
+Wartości funkcji celu są duże, więc dla zwiększenia czytelności będziemy podawać wartości dla $10^{-5}\hat{J}$ zaokrąglone do 2 miejsc po przecinku.
+\subsubsection{Test poprawności liczenia gradientu}
+Pierwszy eksperyment ma na celu zaprezentowanie poprawności implementacji obliczania gradientu funkcji celu. Aby to sprawdzić porównamy naszą implementację, z domyślną implementacją przybliżającą gradient za pomocą różnic skończonych. Obliczanie wyników metodą domyślną wymaga wiele czasu, więc eksperyment obejmie tylko jeden przypadek, opisany na Tabeli~\ref{test_tbl}.
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+      \hline
+      Gradient & Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      \hline
+      nie & 1. & {\it lm\/} & stała & $S_4$ & 0.1 & $g_0$ & $3.26$ & 20 & 38 \\
+      \hline
+      tak & 1. & {\it lm\/} & stała & $S_4$ & 0.1 & $g_0$ & $3.25$ & 20 & 37 \\
+      \hline
+    \end{tabular}
+    \caption{Test implementacji gradientu}\label{test_tbl}
+  \end{center}
+\end{table}
+
+\begin{figure}[h]
+  \begin{subfigure}{.5\textwidth}
+    \caption{Rozwiązanie przy użyciu różnic skończonych}\label{nograd_sol}
+    \includegraphics[width=\textwidth]{../plots/plot_nograd}
+  \end{subfigure}
+  \begin{subfigure}{.5\textwidth}
+    \caption{Rozwiązanie z liczeniem gradientu}\label{test_sol}
+    \includegraphics[width=\textwidth]{../plots/plot_test}
+  \end{subfigure}%
+  \caption{Rozwiązania dla przypadku testowego}\label{test_nograd_sol}
+\end{figure}
+Jak widzimy na Tabeli~\ref{test_tbl} i Rysunku~\ref{test_nograd_sol}, rozwiązania uzyskane obiema metodami są prawie identyczne, oraz nasza implementacja osiągnęła minimalnie lepszy wynik. Daje nam to dużą dozę pewności o poprawności naszej implementacji liczenia gradientu.
+
+Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{test_tbl} nie uwzględnia wywołań potrzebnych do oszacowania gradientu metodą różnic skończonych. Aby policzyć pochodną dla jednego parametru potrzeba raz dodatkowo wywołać $\hat{J}$, więc jednorazowe policzenie gradientu wymaga tylu wywołań ile jest parametrów (w tym przypadku 51). Gradient jest liczony w każdej iteracji co daje łącznie $20\cdot 51 = 1020$ dodatkowych wywołań $\hat{J}$. Inną wadą przybliżania gradientu metodą różnic skończonych są błędy numeryczne. Zauważmy, że w okolicy punktu przecięcia się krzywych $y_1$ i $y_2$ wartość i pochodna wyrażenia $G((y_2(t) - y_1(t))/\epsilon) = \frac{1 + \tanh(x)}{2}$ zmienia się bardzo szybko w czasie, co powoduje znaczne błędy przy zbyt dużym kroku metody różnic skończonych.
+
+\subsubsection{Parametry 1.}
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+      \hline
+      Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      \hline
+      1. & {\it lm\/} & stała & $S_1$ & 0.1 & $g_0$ & 2.2 & 3 & 8 \\
+      \hline
+      1. & {\it lm\/} & stała & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
+      1. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 2.19 & 3 & 8 \\
+      \hline
+      1. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
+      1. & {\it lm\/} & stała & $N_{kon}$ & 0.1 & $g_0$ & 2.64 & 9 & 14 \\
+      \hline
+      1. & {\it lm\/} & stała & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
+      1. & {\it lm\/} & liniowa & $S_1$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      \hline
+      1. & {\it lm\/} & liniowa & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
+      1. & {\it lm\/} & liniowa & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      \hline
+      1. & {\it lm\/} & liniowa & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
+      1. & {\it lm\/} & liniowa & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 \\
+      \hline
+      1. & {\it lm\/} & liniowa & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
+    \end{tabular}
+    \caption{Eksperymetry z parametrami 1.}\label{param1_tbl}
+  \end{center}
+\end{table}
+
+Przypadek ten okazał się mniej skomplikowany od Parametrów 2., więc poświęcimy mu tylko jeden eksperyment.
+
+\subsubsection{Metoda dyskretyzacji}
 
 %h - the place, b - bottom, t - top 
 \begin{figure}[h]
@@ -310,27 +430,27 @@ Do eksperymentów użyte zostało środowisko Octave. Optymalizator FMINICON na 
   \begin{subfigure}{.5\textwidth}
 %    \centering
     \caption{Rozwiązanie dla parametrów (\ref{exp1})}\label{max_sol}
-    \includegraphics[width=\textwidth]{plot_max}
+    \includegraphics[width=\textwidth]{../plots/plot_max}
   \end{subfigure}
     \begin{subfigure}{.5\textwidth}
 %    \centering
     \caption{Rozwiązanie dla parametrów (\ref{exp2})}\label{bang_sol}
-    \includegraphics[width=\textwidth]{plot_bang}
+    \includegraphics[width=\textwidth]{../plots/plot_bang}
   \end{subfigure}%
   \caption{Rozwiązania równania (\ref{ode})}\label{ode_sol}
 \end{figure}
 
-Dla parametrów (\ref{exp1}) wyniki eksperymentów są zgodne: najlepsze rezultaty osiągamy dla sterowania stale równego $g_{\max}$. Optymalizator zaczynając w nim nie znajduje żadnego lepszego punktu, natomiast dla wielu innych punktów startowych (n.p.\ dla sterowania stałego równego $0$ lub $1$) zbiega do sterowania niewiele różniącego się od stale równego $g_{\max}$. Stosowanie różnych backendów, siatek optymalizacji oraz metod przybliżania sterowania nie pozwoliło znaleźć istotnie różnego rozwiązania dającego obiecujące wyniki. Żaden eksperyment nie zbiegł do punktu dającego mniejszą wartość przybliżonego funkcjonału celu.
+Dla parametrów (\ref{exp1}) wyniki eksperymentów są zgodne: najlepsze rezultaty osiągamy dla sterowania stale równego $g_{\max}$. Optymalizator zaczynając w nim nie znajduje żadnego lepszego punktu, natomiast dla wielu innych punktów startowych (n.p.\ dla sterowania stałego równego $0$ lub $1$) zbiega do sterowania niewiele różniącego się od stale równego $g_{\max}$. Stosowanie różnych algorytmów, siatek optymalizacji oraz metod przybliżania sterowania nie pozwoliło znaleźć istotnie różnego rozwiązania dającego obiecujące wyniki. Żaden eksperyment nie zbiegł do punktu dającego mniejszą wartość przybliżonego funkcjonału celu.
 
 Wartość przybliżonego funkcjonału celu dla sterowania stale równego $g_{\max}$ to ok. $213575,7$. Dla porównania wartość przy braku leczenia, czyli sterowaniu stale równemu $0$, to ok. $567688,3$. Przybliżone rozwiązania równania (\ref{odesim}) przedstawiono na rysunku~\ref{max_sol}.
 
 Dla parametrów (\ref{exp2}) wyniki są zauważalnie inne. Sterowanie stale maksymalnie nie osiąga już dobrych rezultatów (wynik to $407071.7$), natomiast najlepsze wyniki osiąga sterowanie mające na początku przedziału wartość ok. $0.05$, a w pozostałych punktach wartość ok. $0.59$. Funkcjonał celu dla tego sterowania osiąga wartość $272466.2$. Warto jeszcze dodać, że przy tych wartościach parametrów wyniki nie były tak zgodne, w trakcie eksperymentów znaleziono wiele rozwiązań o niewiele gorszych wynikach, niektóre z nich istotnie różne od przedstawionego. Przykład takiego rozwiązania zaprezentowano na rysunku \ref{weird_sol}. Wartość funkcjonału celu dla tego rozwiązania to $295794.6$, co jest o $8,6\%$ większe od rozwiązania optymalnego.
 
-\begin{figure}[h]
-  \centering
-  \caption{Nietypowe rozwiązanie dla parametrów (\ref{exp2})}\label{weird_sol}
-  \includegraphics[width=.5\textwidth]{plot_weird}
-\end{figure}
+%\begin{figure}[h]
+%  \centering
+%  \caption{Nietypowe rozwiązanie dla parametrów (\ref{exp2})}\label{weird_sol}
+%  \includegraphics[width=.5\textwidth]{../plots/plot_weird}
+%\end{figure}
 
 %TODO zrobić optmalizację wzgl. punktu nieciągłości i wartości przed i po
 \subsection{Analiza zastosowanych metod}
@@ -390,209 +510,6 @@ Wszystkie wyniki które udało się osiągnąć są minimami lokalnymi. Wynika t
 Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tępa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą splajnów wyższego rzędu mogłoby poprawić tępo zbieżności. Być może zastosowanie tych metod oraz automatyzacja procesu znajdowania siatki dyskretyzacji np. metodą zastosowaną w \cite{Rao-ph} pozwoliłaby uzyskać lepsze wyniki.
 
 Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z rysunku \ref{max_sol} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach (\ref{exp2}), w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{max}$ minimalna wartość $y_3$ wynosi ok. $0.02$, więc ten eksperyment może być obarczony istotnym błędem numerycznym.
-
-\section{Appendix: Wyniki wszystkich eksperymentów}
-\begin{table}[h]
-  \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|}
-      \hline
-      stałe & algorytm & dyskret. & siatka & h & start & wynik\\
-      \hline
-      1 & lm & stała & krok 1 & 0.5 & stały 0 & 222693.646 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.5 & stały g_max & 213576.456 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.5 & skok 0.4 & 234892.685 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.5 & skok 0.55 & 237451.717 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.1 & stały 0 & 221268.2 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.1 & stały g_max & 213575.689 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.1 & skok 0.4 & 228320.226 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.1 & skok 0.55 & 229669.421 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.02 & stały 0 & 223989.084 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.02 & stały g_max & 213575.658 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.02 & skok 0.4 & 232723.678 \\
-      \hline
-      1 & lm & stała & krok 1 & 0.02 & skok 0.55 & 234260.989 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.5 & stały 0 & 220300.896 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.5 & stały g_max & 213576.456 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.5 & skok 0.4 & 229321.206 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.5 & skok 0.55 & 231235.122 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.1 & stały 0 & 220027.018 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.1 & stały g_max & 213575.689 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.1 & skok 0.4 & 229260.051 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.1 & skok 0.55 & 231138.044 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.02 & stały 0 & 220162.401 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.02 & stały g_max & 213575.658 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.02 & skok 0.4 & 229315.768 \\
-      \hline
-      1 & lm & stała & krok 0.5 & 0.02 & skok 0.55 & 282904.547 \\
-      \hline
-      1 & lm & stała & końce & 0.5 & stały 0 & 213576.456 \\
-      \hline
-      1 & lm & stała & końce & 0.5 & stały g_max & 213576.456 \\
-      \hline
-      1 & lm & stała & końce & 0.5 & skok 0.4 & 213576.456 \\
-      \hline
-      1 & lm & stała & końce & 0.5 & skok 0.55 & 213576.456 \\
-      \hline
-      1 & lm & stała & końce & 0.1 & stały 0 & 213575.689 \\
-      \hline
-      1 & lm & stała & końce & 0.1 & stały g_max & 213575.689 \\
-      \hline
-      1 & lm & stała & końce & 0.1 & skok 0.4 & 213575.689 \\
-      \hline
-      1 & lm & stała & końce & 0.1 & skok 0.55 & 213575.689 \\
-      \hline
-      1 & lm & stała & końce & 0.02 & stały 0 & 218849.468 \\
-      \hline
-      1 & lm & stała & końce & 0.02 & stały g_max & 213575.658 \\
-      \hline
-      1 & lm & stała & końce & 0.02 & skok 0.4 & 213575.658 \\
-      \hline
-      1 & lm & stała & końce & 0.02 & skok 0.55 & 213575.658 \\
-      \hline
-      1 & lm & stała & środek & 0.5 & stały 0 & 213576.456 \\
-      \hline
-      1 & lm & stała & środek & 0.5 & stały g_max & 213576.456 \\
-      \hline
-      1 & lm & stała & środek & 0.5 & skok 0.4 & 213576.456 \\
-      \hline
-      1 & lm & stała & środek & 0.5 & skok 0.55 & 213576.456 \\
-      \hline
-      1 & lm & stała & środek & 0.1 & stały 0 & 213575.689 \\
-      \hline
-      1 & lm & stała & środek & 0.1 & stały g_max & 213575.689 \\
-      \hline
-      1 & lm & stała & środek & 0.1 & skok 0.4 & 213575.689 \\
-      \hline
-      1 & lm & stała & środek & 0.1 & skok 0.55 & 213575.689 \\
-      \hline
-      1 & lm & stała & środek & 0.02 & stały 0 & 213575.658 \\
-      \hline
-      1 & lm & stała & środek & 0.02 & stały g_max & 213575.658 \\
-      \hline
-      1 & lm & stała & środek & 0.02 & skok 0.4 & 213575.658 \\
-      \hline
-      1 & lm & stała & środek & 0.02 & skok 0.55 & 213575.658 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.5 & stały 0 & 327539.534 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.5 & stały g_max & 407072.637 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.5 & skok 0.4 & 281530.531 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.5 & skok 0.55 & 271575.788 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.1 & stały 0 & 327999.312 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.1 & stały g_max & 407071.733 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.1 & skok 0.4 & 274801.158 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.1 & skok 0.55 & 271911.909 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.02 & stały 0 & 294674.991 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.02 & stały g_max & 407071.697 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.02 & skok 0.4 & 274811.679 \\
-      \hline
-      1 & lm & liniowa & krok 1 & 0.02 & skok 0.55 & 272140.552 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.5 & stały 0 & 311900.823 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.5 & stały g_max & 407072.637 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.5 & skok 0.4 & 274785.432 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.5 & skok 0.55 & 271317.295 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.1 & stały 0 & 327813.623 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.1 & stały g_max & 407071.733 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.1 & skok 0.4 & 276283.441 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.1 & skok 0.55 & 271701.06 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.02 & stały 0 & 293214.122 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.02 & stały g_max & 407071.697 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.02 & skok 0.4 & 274041.667 \\
-      \hline
-      1 & lm & liniowa & krok 0.5 & 0.02 & skok 0.55 & 271674.26 \\
-      \hline
-      1 & lm & liniowa & końce & 0.5 & stały 0 & 349107.715 \\
-      \hline
-      1 & lm & liniowa & końce & 0.5 & stały g_max & 407072.637 \\
-      \hline
-      1 & lm & liniowa & końce & 0.5 & skok 0.4 & 278477.99 \\
-      \hline
-      1 & lm & liniowa & końce & 0.5 & skok 0.55 & 272724.395 \\
-      \hline
-      1 & lm & liniowa & końce & 0.1 & stały 0 & 348091.228 \\
-      \hline
-      1 & lm & liniowa & końce & 0.1 & stały g_max & 407071.733 \\
-      \hline
-      1 & lm & liniowa & końce & 0.1 & skok 0.4 & 279451.62 \\
-      \hline
-      1 & lm & liniowa & końce & 0.1 & skok 0.55 & 272971.102 \\
-      \hline
-      1 & lm & liniowa & końce & 0.02 & stały 0 & 348665.245 \\
-      \hline
-      1 & lm & liniowa & końce & 0.02 & stały g_max & 407071.697 \\
-      \hline
-      1 & lm & liniowa & końce & 0.02 & skok 0.4 & 279152.003 \\
-      \hline
-      1 & lm & liniowa & końce & 0.02 & skok 0.55 & 273002.165 \\
-      \hline
-      1 & lm & liniowa & środek & 0.5 & stały 0 & 349126.141 \\
-      \hline
-      1 & lm & liniowa & środek & 0.5 & stały g_max & 407072.637 \\
-      \hline
-      1 & lm & liniowa & środek & 0.5 & skok 0.4 & 281146.035 \\
-      \hline
-      1 & lm & liniowa & środek & 0.5 & skok 0.55 & 272462.307 \\
-      \hline
-      1 & lm & liniowa & środek & 0.1 & stały 0 & 349582.318 \\
-      \hline
-      1 & lm & liniowa & środek & 0.1 & stały g_max & 407071.733 \\
-      \hline
-      1 & lm & liniowa & środek & 0.1 & skok 0.4 & 281634.433 \\
-      \hline
-      1 & lm & liniowa & środek & 0.1 & skok 0.55 & 272663.618 \\
-      \hline
-      1 & lm & liniowa & środek & 0.02 & stały 0 & 349521.945 \\
-      \hline
-      1 & lm & liniowa & środek & 0.02 & stały g_max & 407071.697 \\
-      \hline
-      1 & lm & liniowa & środek & 0.02 & skok 0.4 & 281668.599 \\
-      \hline
-      1 & lm & liniowa & środek & 0.02 & skok 0.55 & 272623.516 \\
-      \hline
-    \end{tabular}
-  \end{center}
-\end{table}
 
 \newpage{}
 \bibliography{bibliography}{}

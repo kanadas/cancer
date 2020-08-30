@@ -1,45 +1,53 @@
 import sys
 import itertools
 
-if len(sys.argv) != 1:
+if len(sys.argv) != 2:
     print("Usage: python " + sys.argv[0] + " <filename>")
+    exit(1)
 
+best = 1e9
+    
+def convert_row(row):
+    global best
+    best = min(best, row[0])
+    row[0] = str(round(1e-5*row[0], 2))
+    if len(row) > 1:
+        row[1] = str(round(row[1]))
+        row[2] = str(round(row[2]))
+    return row
+    
 content = []    
 with open(sys.argv[1], "r") as in_file:
-    content = [float(i) for line in in_file for i in line.split(' ') if i.strip()]
+    content = [convert_row([float(i) for i in line.split(' ') if i.strip()]) for line in in_file]
+    
+#All experiments    
+#parameters = ["1.", "2."]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["stała", "liniowa"]
+#grids = ["$S_1$", "$_{0.5}$", "$N_{kon}$", "$N_{sr}$"]
+#steps = ["0.5", "0.1", "0.02"]
+#starts = ["$g_0$", "$g_3$", "$g_{0,0.4}$", "$g_{0,0.55}$", "$g_{3,0,0.5}$"]
 
-parameters = ["1.", "2."]
-backends = ["{\\it lm}", "{\\it sqp}"]
+#C1 test
+parameters = ["1."]
+backends = ["{\\it lm\\/}"]
 discrs = ["stała", "liniowa"]
-grids = ["krok 1", "krok 0.5", "gęstsze końce", "gęstszy środek"]
-steps = ["0.5", "0.1", "0.02"]
-starts = ["0", "$g_max$", "$0.4\\cdot\\1_{[42.5,200]}$", "$0.55\\cdot\\1_{[42.5,200]}$"]
-#
-#def product(ar_list):
-#    if not ar_list:
-#        yield ()
-#    else:
-#        for a in ar_list[0]:
-#            for prod in product(ar_list[1:]):
-#                yield (a,)+prod
-#
-res = '''\\begin{tabular}{|c|c|c|c|c|c|c|}
+grids = ["$S_1$", "$S_{0.5}$", "$N_{kon}$"]
+steps = ["0.1"]
+starts = ["$g_0$", "$g_3$"]
+
+res = '''\\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \\hline
-parametry & algorytm & dyskret. & siatka & h & start & wynik \\\\
+Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \\#iteracji & \\#wywołań $\\hat{J}$ \\\\
 \\hline
 '''
-
-best = {"1.": 100000000, "2.": 100000000}
-
-cases = [case + (str(result),) for (case,result) in
+cases = [case + (tuple(result)) for (case,result) in
          zip(itertools.product(parameters, backends, discrs, grids, steps, starts), content)]
 
 for case in cases:
-    best[case[0]] = min(best[case[0]], float(case[6]))
     res += " & ".join(case) + " \\\\\n\\hline\n"
 
 res += '\\end{tabular}\n'
 print(res)
 
-print("\n\n")
-print("Wyniki: " + str(best));
+print("Najlepszy: " + str(best));

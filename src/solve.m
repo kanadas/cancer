@@ -55,7 +55,7 @@ start_bang = start_bang < N/2;
 [p_ng, res_ng, cvg_ng, outp_ng] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, "lm_feasible", "off");
 
 save "sol_nograd.mat" p_ng res_ng outp_ng;
-load "sol_nograd.mat";
+load "data/sol_nograd.mat";g
 
 [p, res, cvg, outp] = run_opt(points, x0, ones(N,1), h);
 [p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), h);
@@ -84,6 +84,7 @@ start = [zeros(1,100), 40*ones(1,301)]/100;
 start = [15*ones(1,100), 55*ones(1,301)]/100;
 start = [zeros(1,90), 55*ones(1,311)]/100;
 start = [zeros(1,85), 55*ones(1,316)]/100;
+start = [300*ones(1,20), zeros(1, 80), 50*ones(1,301)]/100;
 
 [p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants);
 [p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
@@ -92,6 +93,8 @@ start = [zeros(1,85), 55*ones(1,316)]/100;
 save "sol_bang.mat" p;
 
 [p_c1, res_c1, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants1, "active-set");
+
+save "sol_test_c1.mat" p_c1, res_c1;
 
 p_best = p0;
 res_best = res0;
