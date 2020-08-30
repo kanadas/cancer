@@ -29,12 +29,44 @@ with open(sys.argv[1], "r") as in_file:
 #starts = ["$g_0$", "$g_3$", "$g_{0,0.4}$", "$g_{0,0.55}$", "$g_{3,0,0.5}$"]
 
 #C1 test
-parameters = ["1."]
-backends = ["{\\it lm\\/}"]
-discrs = ["stała", "liniowa"]
-grids = ["$S_1$", "$S_{0.5}$", "$N_{kon}$"]
+#parameters = ["1."]
+#backends = ["{\\it lm\\/}"]
+#discrs = ["stała", "liniowa"]
+#grids = ["$S_1$", "$S_{0.5}$", "$N_{kon}$"]
+#steps = ["0.1"]
+#starts = ["$g_0$", "$g_3$"]
+
+#Discretization test
+#parameters = ["2."]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["stała", "liniowa"]
+#grids = ["$S_{0.5}$"]
+#steps = ["0.1"]
+#starts = ["$g_0$", "$g_{0,0.4}$"]
+
+# Grid test
+#parameters = ["2."]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["stała"]
+#grids = ["$S_1$", "$S_{0.5}$", "$N_{sr}$"]
+#steps = ["0.1"]
+#starts = ["$g_0$", "$g_{0,0.4}$"]
+
+# h test
+#parameters = ["2."]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["stała"]
+#grids = ["$S_{0.5}$"]
+#steps = ["0.5", "0.1", "0.02"]
+#starts = ["$g_0$", "$g_{0,0.4}$"]
+
+# start test
+parameters = ["2."]
+backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+discrs = ["stała"]
+grids = ["$S_{0.5}$"]
 steps = ["0.1"]
-starts = ["$g_0$", "$g_3$"]
+starts = ["$g_0$", "$g_3$", "$g_{0,0.4}$", "$g_{0,0.55}$", "$g_{3,0,0.5}$"]
 
 res = '''\\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \\hline

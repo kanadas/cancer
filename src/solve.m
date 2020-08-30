@@ -55,7 +55,7 @@ start_bang = start_bang < N/2;
 [p_ng, res_ng, cvg_ng, outp_ng] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, "lm_feasible", "off");
 
 save "sol_nograd.mat" p_ng res_ng outp_ng;
-load "data/sol_nograd.mat";g
+load "data/sol_nograd.mat";
 
 [p, res, cvg, outp] = run_opt(points, x0, ones(N,1), h);
 [p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), h);
@@ -92,9 +92,22 @@ start = [300*ones(1,20), zeros(1, 80), 50*ones(1,301)]/100;
 
 save "sol_bang.mat" p;
 
-[p_c1, res_c1, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants1, "active-set");
+[p_c1, res_c1, cvg_c1, outp_c1] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants1, "active-set");
+save "data/sol_test_c1.mat" p_c1, res_c1, outp_c1;
 
-save "sol_test_c1.mat" p_c1, res_c1;
+%Test sqp siatka S_1 start40 (na testach wyszedł absurdalny wynik)
+points = t0 : 1 : T;
+N = length(points);
+start = [zeros(1,42), 40*ones(1,159)]/100;
+[p_sqs1, res_sqs1, cvg_sqs1, outp_sqs1] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
+save "data/sol_test_sqs1.mat" p_sqs1, res_sqs1, outp_sqs1;
+
+%BEST
+% 2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.55}$ & 2.71 & 10 & 130 \\
+points = t0 : 0.5 : T;
+N = length(points);
+start = [zeros(1,85), 55*ones(1,316)]/100;
+[p_min, res_min, cvg_min, outp_min] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
 
 p_best = p0;
 res_best = res0;
