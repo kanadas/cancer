@@ -43,4 +43,12 @@ h_del = 3*2
 #starts = ["$g_0$", "$g_3$", "$g_{0,0.4}$", "$g_{0,0.55}$", "$g_{3,0,0.5}$"]
 start_del = 5
 
-dels = [cc_del, discr_del, grid_del, h_del, start_del]
+#with open("res/res_discr_lm", "r") as in_file:
+#    new_data = in_file.readlines()
+#
+#with open("res/result_discr", "r") as out_file:
+#    old_data = out_file.readlines()[discr_del:]
+#    
+#with open("res/result_discr", "w") as out_file:
+#    out_file.writelines(new_data + old_data)
+#

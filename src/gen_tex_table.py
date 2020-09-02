@@ -21,52 +21,52 @@ with open(sys.argv[1], "r") as in_file:
     content = [convert_row([float(i) for i in line.split(' ') if i.strip()]) for line in in_file]
     
 #All experiments    
-#parameters = ["1.", "2."]
+#parameters = ["(CC)", "(DC)"]
 #backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-#discrs = ["stała", "liniowa"]
+#discrs = ["$P_0$", "$P_1$"]
 #grids = ["$S_1$", "$_{0.5}$", "$N_{kon}$", "$N_{sr}$"]
 #steps = ["0.5", "0.1", "0.02"]
-#starts = ["$g_0$", "$g_3$", "$g_{0,0.4}$", "$g_{0,0.55}$", "$g_{3,0,0.5}$"]
+#starts = ["$g_0$", "$g_3$", "$g_{0.4,42.5}$", "$g_{0.55,42.5}$", "$\\mathfrak{g}$"]
 
 #C1 test
-#parameters = ["1."]
+#parameters = ["(CC)"]
 #backends = ["{\\it lm\\/}"]
-#discrs = ["stała", "liniowa"]
+#discrs = ["$P_0$", "$P_1$"]
 #grids = ["$S_1$", "$S_{0.5}$", "$N_{kon}$"]
 #steps = ["0.1"]
 #starts = ["$g_0$", "$g_3$"]
 
 #Discretization test
-#parameters = ["2."]
-#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-#discrs = ["stała", "liniowa"]
-#grids = ["$S_{0.5}$"]
-#steps = ["0.1"]
-#starts = ["$g_0$", "$g_{0,0.4}$"]
-
-# Grid test
-#parameters = ["2."]
-#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-#discrs = ["stała"]
-#grids = ["$S_1$", "$S_{0.5}$", "$N_{sr}$"]
-#steps = ["0.1"]
-#starts = ["$g_0$", "$g_{0,0.4}$"]
-
-# h test
-#parameters = ["2."]
-#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-#discrs = ["stała"]
-#grids = ["$S_{0.5}$"]
-#steps = ["0.5", "0.1", "0.02"]
-#starts = ["$g_0$", "$g_{0,0.4}$"]
-
-# start test
-parameters = ["2."]
+parameters = ["(DC)"]
 backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-discrs = ["stała"]
+discrs = ["$P_0$", "$P_1$"]
 grids = ["$S_{0.5}$"]
 steps = ["0.1"]
-starts = ["$g_0$", "$g_3$", "$g_{0,0.4}$", "$g_{0,0.55}$", "$g_{3,0,0.5}$"]
+starts = ["$g_0$", "$g_{0.4,42.5}$"]
+
+# Grid test
+#parameters = ["(DC)"]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["$P_0$"]
+#grids = ["$S_1$", "$S_{0.5}$", "$N_{sr}$"]
+#steps = ["0.1"]
+#starts = ["$g_0$", "$g_{0.4,42.5}$"]
+
+# h test
+#parameters = ["(DC)"]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["$P_0$"]
+#grids = ["$S_{0.5}$"]
+#steps = ["0.5", "0.1", "0.02"]
+#starts = ["$g_0$", "$g_{0.4,42.5}$"]
+
+# start test
+#parameters = ["(DC)"]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["$P_0$"]
+#grids = ["$S_{0.5}$"]
+#steps = ["0.1"]
+#starts = ["$g_0$", "$g_3$", "$g_{0.4,42.5}$", "$g_{0.55,42.5}$", "$\\mathfrak{g}$"]
 
 res = '''\\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \\hline
@@ -75,6 +75,9 @@ Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\\#\
 '''
 cases = [case + (tuple(result)) for (case,result) in
          zip(itertools.product(parameters, backends, discrs, grids, steps, starts), content)]
+
+starts_order = {"$g_0$": 0, "$g_3$":1, "$g_{0.4,42.5}$":2, "$g_{0.55,42.5}$":3, "$\\mathfrak{g}$":4}
+cases.sort(key=lambda tup: starts_order[tup[5]])
 
 for case in cases:
     res += " & ".join(case) + " \\\\\n\\hline\n"

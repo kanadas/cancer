@@ -407,33 +407,31 @@ Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{te
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
       \hline
       (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 2.2 & 3 & 8 \\
       \hline
-      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
-      \hline
       (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.19 & 3 & 8 \\
-      \hline
-      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
       (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_0$ & 2.64 & 9 & 14 \\
       \hline
+      (CC) & {\it lm\/} & $P_1$ & $S_1$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      \hline
+      (CC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      \hline
+      (CC) & {\it lm\/} & $P_1$ & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 \\
+      \hline
+      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
+      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      \hline
       (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      (CC) & {\it lm\/} & $P_2$ & $S_1$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      (CC) & {\it lm\/} & $P_1$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      (CC) & {\it lm\/} & $P_2$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      (CC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
-      \hline
-      (CC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
-      \hline
-      (CC) & {\it lm\/} & $P_2$ & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 \\
-      \hline
-      (CC) & {\it lm\/} & $P_2$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
-      \hline
-      (CC) & {\it sqp\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.14 & 9 & 10 \\
+      (CC) & {\it lm\/} & $P_1$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty z parametrami (CC) dla różnych wyborów aproksymacji, siatki i startu}\label{param1_tbl}
@@ -456,23 +454,23 @@ Jako, że najlepsze znalezione rozwiązanie dla tych parametrów jest dość pro
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
-      \hline
-      (DC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.99 & 20 & 42 \\
-      \hline
-      (DC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.94 & 95 & 185 \\
       \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
       \hline
+      (DC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.28 & 9 & 105 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
+      \hline
+      (DC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.74 & 103 & 202 \\
+      \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
-      (DC) & {\it sqp\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.28 & 9 & 105 \\
-      \hline
-      (DC) & {\it sqp\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 136 \\
+      (DC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 136 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające metodę dyskretyzacji}\label{discr_tbl}
