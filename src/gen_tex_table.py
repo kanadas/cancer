@@ -70,7 +70,7 @@ starts = ["$g_0$", "$g_3$", "$g_{0,0.4}$", "$g_{0,0.55}$", "$g_{3,0,0.5}$"]
 
 res = '''\\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \\hline
-Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \\#iteracji & \\#wywołań $\\hat{J}$ \\\\
+Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\\#\\hat{J}$ \\\\
 \\hline
 '''
 cases = [case + (tuple(result)) for (case,result) in

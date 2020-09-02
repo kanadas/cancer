@@ -52,10 +52,29 @@ start_bang = start_bang < N/2;
 
 [p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants);
 #no gradient calculation experimment
-[p_ng, res_ng, cvg_ng, outp_ng] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, "lm_feasible", "off");
+points = t0 : 4 : T;
+N = length(points);
+[p_tstng, res_tstng, cvg_tstng, outp_tstng] = run_opt_bak(points, x0, zeros(N,1), h, @const_discr, constants);
+[p_ng, res_ng, cvg_ng, outp_ng] = run_opt_bak(points, x0, zeros(N,1), h, @const_discr, constants, "lm_feasible", "off");
 
-save "sol_nograd.mat" p_ng res_ng outp_ng;
+save "sol_tstng.mat" p_tstng res_tstng cvg_tstng outp_tstng;
+save "sol_nograd.mat" p_ng res_ng outp_ng nograd_err;
 load "data/sol_nograd.mat";
+
+[res, grad_tstng] = objf(p_tstng, points, x0, h, @const_discr, constants);
+hook.diffp =.001 * ones (size (p_tstng)); %Default
+grads = zeros(8, size(p_tstng));
+for i = 1:8
+  grads(i,:) = dfpdp(p_tstng, @(g) objf(g, points, x0, h, @const_discr, constants), hook);
+  diff(i) = norm(grad_tstng - grads(i,:), 1);
+  disp(strcat("Diff(", num2str(i), ") = ", num2str(diff(i))));
+  hook.diffp = 0.1*hook.diffp;
+endfor
+save "grads_findif.mat" grads;
+
+for i = 1:8
+  diff(i) = norm(grad_tstng - grad(i,:), 1);
+endfor
 
 [p, res, cvg, outp] = run_opt(points, x0, ones(N,1), h);
 [p_max, res_max, cvg, outp] = run_opt(points, x0, gmax*ones(N,1), h);
@@ -82,7 +101,7 @@ start_lin = [0:3:1200]/400;
 
 start = [zeros(1,100), 40*ones(1,301)]/100;
 start = [15*ones(1,100), 55*ones(1,301)]/100;
-start = [zeros(1,90), 55*ones(1,311)]/100;
+start = [zeros(1,85), 40*ones(1,316)]/100;
 start = [zeros(1,85), 55*ones(1,316)]/100;
 start = [300*ones(1,20), zeros(1, 80), 50*ones(1,301)]/100;
 
@@ -102,12 +121,22 @@ start = [zeros(1,42), 40*ones(1,159)]/100;
 [p_sqs1, res_sqs1, cvg_sqs1, outp_sqs1] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
 save "data/sol_test_sqs1.mat" p_sqs1, res_sqs1, outp_sqs1;
 
+%Eksperymenty z gęstą siatką
+points = t0 : 0.1 : T;
+N = length(points);
+h = 0.1;
+start40 = [zeros(1,85*5), 40*ones(1,315*5+1)]/100;
+start55 = [zeros(1,85*5), 55*ones(1,315*5+1)]/100;
+[p_s01, res_s01, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants);
+[p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
+
 %BEST
 % 2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.55}$ & 2.71 & 10 & 130 \\
 points = t0 : 0.5 : T;
 N = length(points);
 start = [zeros(1,85), 55*ones(1,316)]/100;
 [p_min, res_min, cvg_min, outp_min] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
+save "data/sol_min.mat" p_min, res_min, outp_min;
 
 p_best = p0;
 res_best = res0;

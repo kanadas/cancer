@@ -61,7 +61,7 @@
 \maketitle
 
 \section{Sformułowanie problemu}
-Celem pracy jest znalezienie strategii podawania leku, przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy \cite{BBF-manuscript}. Model ten przedstawia rozwój nowotworu w czasie w zależności od dawkowania leku za pomocą równania różniczkowego:
+Celem pracy jest znalezienie strategii podawania leku przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy \cite{BBF-manuscript}. Zobacz też \cite{BBF2016}, \cite{BBF2019} gdzie przedstawiono podobne zagadnienia. Model ten przedstawia rozwój nowotworu w czasie w zależności od dawkowania leku, $g(t)$, za pomocą równania różniczkowego:
 \begin{equation} \label{ode}
   \begin{aligned} 
     V_1'(t) &= \lambda_1V_1F\left(\frac{V_1 + \alpha_{12}V_2}{K}\right) - \beta_1V_1g(t), \\
@@ -79,7 +79,7 @@ są zadanymi parametrami.
 
 Funkcja $V_1(t)$ modeluje liczbę komórek guza podatnych na lek w momencie $t$, $V_2(t)$ liczbę komórek guza odpornych na lek, a $K(t)$ jest parametrem nazwanym w pracy ,,unaczynieniem''. Zauważmy, że rozwiązania $V_1, V_2, K$ zależą od wyboru funkcji $g$ którą nazywamy sterowaniem. W tym modelu wartość $g(t)$ ma interpretację jako wielkość dawki leku w czasie $t$.
 
-Zadanie polega na znalezieniu funkcji $g: [0, T] \to [0, g_{\max}]$ oraz $V_1, V_2, K: [0, T] \to (0, \infty)$ spełniających (\ref{ode}), oraz minimalizujących funkcjonał:
+Zgodnie z \cite{BBF-manuscript}, zadanie polega na znalezieniu funkcji $g: [0, T] \to [0, g_{\max}]$ takiej, że funkcje $V_1, V_2, K: [0, T] \to (0, \infty)$ spełniające (\ref{ode}) minimalizują funkcjonał:
 \begin{equation} \label{objf}
   J(g, V_1, V_2, K) = \int_0^T V_1(t) + V_2(t)dt + \omega\int_0^T G\left(\frac{V_2(t) - V_1(t)}{\epsilon}\right) dt
 \end{equation}
@@ -92,7 +92,7 @@ gdzie
 Problem ten w literaturze nazywa się problemem optymalnego sterowania.
 
 \subsection{Problem wyjściowy}
-Zdefiniujmy teraz formalnie problem oraz uprościmy notację.
+Zdefiniujmy teraz formalnie problem oraz uprośćmy notację.
 
 \begin{problem}\label{problem}
   Znaleźć funkcję kawałkami ciągłą
@@ -120,7 +120,7 @@ Zdefiniujmy teraz formalnie problem oraz uprościmy notację.
   \end{equation}
 \end{problem}
 
-Przez funkcję kawałkami ciągłą określoną na odcinku rozumiemy funkcję o skończonej liczbie punktów nieciągłości. Jako, że o funkcji $f$ zakładamy tylko kawałkami ciągłość, należy doprecyzować co rozumiemy przez (\ref{odesim}). Załóżmy, że punktami nieciągłości $f$ są $\xi_1,\ \ldots,\ \xi_n$, wtedy (\ref{odesim}) oznacza ciąg równań różniczkowych postaci
+Przez funkcję kawałkami ciągłą określoną na odcinku rozumiemy funkcję o skończonej liczbie punktów nieciągłości. Jako, że o funkcji $f$ zakładamy tylko kawałkami ciągłość, należy doprecyzować co rozumiemy przez (\ref{odesim}). Załóżmy, że punktami nieciągłości $f(t,y,g): \R^5 \to \R$ są $t = \xi_1,\ \ldots,\ \xi_n \in \R$, wtedy (\ref{odesim}) oznacza sekwencję równań różniczkowych postaci
 \begin{equation}\label{nonconode}
   \begin{aligned}
     \dot{y}|_{(\xi_i, \xi_{i+1})}(t) &= f|_{(\xi_i, \xi_{i+1})}(t, y, g)\\
@@ -140,49 +140,49 @@ Rozwiązanie problemu \ref{problem} przybliżymy rozwiązaniem pewnego problemu 
 \end{equation}
 Możemy teraz przybliżać sterowanie $g$ za pomocą splajnu opartego na punktach $t_{i}$. Dla prostoty ograniczymy się do splajnów stopnia 0 i 1. Ostatecznie przybliżone sterowanie $\hat{g}$ ma postać:
 \begin{gather}  
-    \hat{g}(t) = g_i \text{ gdy } t \in [t_{i}, t_{i + 1}) \label{control_1}\\
-    \nonumber \text{lub} \\
-    \hat{g}(t) = \frac{(t_{i+1} - t)g_i + (t - t_i)g_{i+1}}{t_{i+1} - t_i} \text{ gdy } t \in [t_i, t_{i+1}) \label{control_2}
+    \hat{g}(t) = g_i \text{ gdy } t \in [t_{i}, t_{i + 1}) \quad \text{(sterowanie kawałkami stałe)} \label{control_1}\\
+    \nonumber \text{albo} \\
+    \hat{g}(t) = \frac{(t_{i+1} - t)g_i + (t - t_i)g_{i+1}}{t_{i+1} - t_i} \text{ gdy } t \in [t_i, t_{i+1}) \quad \text{(sterowanie kawałkami liniowe)} \label{control_2}
 \end{gather}
-i jest jednoznacznie zdefiniowane przez wartości $g_i$ dla $i = 0,\ldots, n$. Te wartości będą optymalizowanymi zmiennymi.
+i jest jednoznacznie zdefiniowane przez wartości $g_i \simeq g(t_i)$ dla $i = 0,\ldots, n$. Te wartości będą optymalizowanymi zmiennymi.
 
-Korzystając z przybliżonej funkcji sterowania, przybliżymy rozwiązanie $y$ równania różniczkowego (\ref{odesim}). Użyjemy do tego metody Rungego-Kutty rzędu $r$ ze stałym krokiem długości $h$, wtedy przybliżone rozwiązanie $\hat{y}(t) \simeq y(t)$ w punkcie $t = t_n + (m + 1)h$ dla $m = 0,\ldots, \frac{t_{n+1}-t_n}{h} - 1$  wyraża się przez:
+Korzystając z przybliżonej funkcji sterowania, na każdym odcinku $[t_n, t_{n+1}]$ przybliżymy rozwiązanie $y$ równania różniczkowego (\ref{odesim}). Użyjemy do tego $M$ kroków metody Rungego-Kutty rzędu $r$ ze stałym krokiem długości $h = \frac{t_{n+1} - t_n}{M}$, wtedy przybliżone rozwiązanie $\hat{y}(t) \simeq y(t)$ w punkcie $t = t_n + (m + 1)h$ dla $m = 0,\ldots, M$  wyraża się przez:
 \begin{equation} \label{rk}
   \begin{split}
-    &k_1 = f(t_n + mh, \hat{y}(t_n + mh), \hat{g}) \\
-    &k_l = f(t_n + c_l h, \hat{y}(t_n + mh) + h \sum_{i = 1}^{l-1} a_{li}k_i, \hat{g}) \\
-    &\hat{y}(t_n + (m+1)h) = \hat{y}(t_n + mh) + h \sum_{i = 1}^r b_i k_i
+    &k_1 = f(t_n + mh, \hat{y}(t_n + mh), \hat{g}), \\
+    &k_l = f(t_n + c_l h, \hat{y}(t_n + mh) + h \sum_{i = 1}^{l-1} a_{li}k_i, \hat{g}),\quad l = 2,\ldots, r \\
+    &\hat{y}(t_n + (m+1)h) = \hat{y}(t_n + mh) + h \sum_{i = 1}^r b_i k_i,
   \end{split}
 \end{equation}
 gdzie $c_l, a_{li}, b_i$ są stałymi zależnymi od wybranej metody.
 
 Zostało już tylko przybliżyć funkcjonał celu (\ref{objfsim}). Zapiszmy go w postaci
 \begin{equation} \label{objf-sim}
-  J(y) = \int_0^T j(y(t)) dt
+  J(y) = \int_0^T j(y(t)) dt,
 \end{equation}
 gdzie
 \begin{equation}
-  j(y) = y_1 + y_2 + \omega G\left(\frac{y_2 - y_1}{\epsilon} \right)
+  j(y) = y_1 + y_2 + \omega G\left(\frac{y_2 - y_1}{\epsilon} \right).
 \end{equation}
-wtedy ogólny wzór na kwadraturę ze stałym krokiem $h$ przybliżającą (\ref{objf-sim}) to
+Wtedy ogólny wzór na kwadraturę ze stałym krokiem $h$ przybliżającą (\ref{objf-sim}) to
 \begin{equation} \label{quad}
-  Q(\hat{y}) = h\sum_{i = 0}^N \alpha_i j(\hat{y}(ih))
+  Q(\hat{y}) = h\sum_{i = 0}^N \alpha_i j(\hat{y}(ih)),
 \end{equation}
 gdzie $N = \frac{T}{h}$, a $\alpha_i$ są stałymi zależnymi od wybranej kwadratury.
 
-Zatem możemy zdefiniować przybliżoną funkcję celu jako funkcję $g_1,\ldots,g_n$:
+Zatem możemy zdefiniować przybliżoną funkcję celu jako funkcję $g_0,\ldots,g_n$:
 \begin{equation}
-  \hat{J}(g_1,\ldots, g_n) = Q(\hat{y})
+  \hat{J}(g_0,\ldots, g_n) = Q(\hat{y}),
 \end{equation}
-ponieważ $\hat{y}$ jest jednoznacznie wyznaczony przez $\hat{g}$ za pomocą (\ref{rk}), a $\hat{g}$ jest wyznaczone jednoznacznie przez $g_1,\ldots,g_n$. Podsumowując, problem przybliżony to:
+ponieważ $\hat{y}$ jest jednoznacznie wyznaczony przez $\hat{g}$ za pomocą (\ref{rk}), a $\hat{g}$ jest wyznaczone jednoznacznie przez $g_0,\ldots,g_n$. Podsumowując, problem przybliżony to:
 \begin{problem}\label{problemapprox}
-  Znaleźć $g_1,\ldots, g_n$ minimalizujące
+  Znaleźć $g_0,\ldots, g_n$ minimalizujące
 \begin{equation}\label{nlp}
-  \hat{J}(g_1,\ldots, g_n)
+  \hat{J}(g_0,\ldots, g_n),
 \end{equation}
 i spełniające
 \begin{equation}\label{nlp_cons}
-  \forall_{i \in \{1,\ldots,n\}} 0 \le g_i \le g_{\max}
+  \forall_{i \in \{0,\ldots,n\}} 0 \le g_i \le g_{\max}.
 \end{equation}
 \end{problem}
 
@@ -191,15 +191,25 @@ Jest to problem optymalizacji nieliniowej z ograniczeniami i istnieją implement
 \subsection{Alternatywne podejście}
 
 Innym popularnym podejściem jest ,,direct collocation''. W tym podejściu zaczyna się, tak samo jak powyżej, od dyskretyzacji czasu:
-\[0 = t_0 < t_1 < \ldots < t_n = T\]
+\begin{equation}
+  0 = t_0 < t_1 < \ldots < t_n = T.
+\end{equation}
 Następnie zarówno sterowanie jak i stan układu przybliża się splajnem opartym na punktach $t_i$. Dzięki temu sterowanie jest jednoznacznie wyznaczone przez wartości $g_i = \hat{g}(t_i)$, natomiast stan układu przez wartości $y_i = \hat{y}(t_i)$. Celem jest, tak samo jak powyżej, sprowadzenie problemu do problemu optymalizacji nieliniowej z ograniczeniami. Aby móc to zrobić należy znaleźć warunki jakie wartości $y_i$ muszą spełniać, aby układ spełniał w przybliżeniu równanie
-\[\dot{y}(t) = f(t,y(t),g(t))\]
+\begin{equation}\label{ode-alternative}
+  \dot{y}(t) = f(t,y(t),g(t)).
+\end{equation}
 Aby znaleźć te warunki przybliża się całkę z powyższego równania za pomocą pewnej kwadratury. Dla przykładu ustalmy kwadraturę trapezową. Wtedy dostajemy równanie przybliżone
-\[\int_{t_i}^{t_{i+1}} \dot{y}(t)dt = \int_{t_i}^{t_{i+1}} f(t,y(t),g(t))dt\]
-\[y_{i+1} - y_{i} \simeq \frac{1}{2}(t_{i+1}-t_i)(f(t_{i+1}, y_{i+1}, g(t_{i+1})) - f(t_i, y_i, g(t_i)))\]
+\begin{equation}
+  \int_{t_i}^{t_{i+1}} \dot{y}(t)dt = \int_{t_i}^{t_{i+1}} f(t,y(t),g(t))dt
+\end{equation}
+\begin{equation}
+  y_{i+1} - y_{i} \simeq \frac{1}{2}(t_{i+1}-t_i)(f(t_{i+1}, y_{i+1}, g(t_{i+1})) - f(t_i, y_i, g(t_i))).
+\end{equation}
+Powyższy wzór dodaje się do ograniczeń optymalizatora jako ograniczenie równościowe. W ten sposób RRZ (\ref{ode-alternative}) zostaje w przybliżeniu wymuszone w rozwiązaniu.
+
 Ograniczenia występujące w sformułowaniu oryginalnego problemu można zwykle bez problemu przekształcić na ograniczenia na $g_i$ oraz $y_i$. Przybliżony funkcjonał celu definiuje się, jako numeryczne przybliżenie oryginalnego funkcjonału celu zastosowane do przybliżonego stanu $\hat{y}$ i sterowania $\hat{g}$.
 
-Podejście to jest dokładnie opisane w \cite{Kelly}, występuje też w \cite{diehl} i \cite{rao-methods}.
+Podejście to jest dokładnie opisane w~\cite{Kelly}, występuje też w~\cite{diehl} i~\cite{rao-methods}.
 
 \subsection{Plan rozwiązania}
 Aby obliczyć wynik problemu przybliżonego skorzystamy ze środowiska MATLAB/Octave wraz z dostarczonym z nim optymalizatorem problemu optymalizacji nieliniowej z ograniczeniami (FMINICON). W tym celu zaimplementujemy przejście od problemu optymalnego sterowania. Aby poprawić złożoność czasową optymalizacji i tym samym umożliwić stosowanie gęstszej siatki dyskretyzacji, obliczymy gradient przybliżonej funkcji celu. Będziemy też musieli znaleźć odpowiednią siatkę dyskretyzacji i punkt startowy dla optymalizatora.
@@ -213,14 +223,14 @@ Jedną z praktyk pozwalającą poprawić wydajność programów w środowiskach 
 
 Aby sprowadzić problem optymalnego sterowania do problemu optymalizacji nieliniowej musimy obliczyć przybliżone sterowanie (\ref{control_1}) lub (\ref{control_2}), przybliżyć rozwiązanie równania różniczkowego (\ref{rk}) a następnie za pomocą uzyskanego rozwiązania obliczyć kwadraturę (\ref{quad}) przybliżającą funkcję celu (\ref{objf}). Ponadto chcemy obliczyć gradient funkcji celu, co będzie wymagało policzenia pochodnej każdego z wymienionych wzorów względem parametrów $g_i$.
 
-\subsection{Sterowanie}
+\subsection{Sterowanie}\label{subsec_sterowanie}
 Jedynym problemem przy implementacji przybliżonego sterowania (\ref{control_1}) lub (\ref{control_2}) jest znalezienie indeksu $i$ takiego, że $t \in [t_{i-1}, t_i)$. Użyjemy do tego funkcji $lookup$, która wydajnie znajduje żądany indeks korzystając z wyszukiwania binarnego.
 
 Aby policzyć gradient przybliżonego sterowania $\hat{g}$ ze względu na parametry $g_1,\ldots,g_n$ należy zróżniczkować równanie (\ref{control_1}) lub (\ref{control_2}):
 
 \begin{gather}
   \frac{\partial \hat{g}}{\partial g_i}(t) = \begin{cases} 1 \text{ gdy } t \in [t_{i-1}, t_i) \\ 0 \text{ w.p.p.} \end{cases} \label{dcontrol_1}\\
-  \nonumber \text{lub}\\
+  \nonumber \text{albo}\\
   \frac{\partial \hat{g}}{\partial g_i}(t) = \begin{cases} \frac{t_i - t}{t_i - t_{i-1}} \text{ gdy } t \in [t_{i-1}, t_i) \\ \frac{t - t_i}{t_{i+1} - t_i} \text{ gdy } t \in [t_{i}, t_{i+1}) \\ 0 \text{ w.p.p.} \end{cases} \label{dcontrol_2}
 \end{gather}
 
@@ -228,7 +238,7 @@ Implementacja powyższych wzorów jest standardowa, znajdowanie odpowiedniego in
 
 Zarówno funkcja $lookup$ jak i pozostałe operacje wykorzystywane do policzenia przybliżonego sterowania i jego gradientu są zwektoryzowane, w szczególności środowiska MATLAB i Octave umożliwiają wektorowe indeksowanie, więc nasza implementacja sterowania i gradientu też jest zwektoryzowana.
 
-\subsection{Równanie różniczkowe}
+\subsection{Równanie różniczkowe}\label{subsec_rrz}
 Aby przybliżyć rozwiązanie równania (\ref{ode}) należy zaimplementować funkcję $f(t,y,g)$, a następnie bezpośrednio zaimplementować odpowiednią metodę Rungego-Kutty (\ref{rk}). Wzory te implementuje się bezpośrednio.
 
 Liczenie pochodnych $\frac{\partial \hat{y}}{\partial g_i}$ polega na zróżniczkowaniu wzorów (\ref{rk}):
@@ -248,7 +258,7 @@ Nasza implementacja umożliwia też przekazanie wektora punktów w czasie jako a
 \subsection{Funkcja celu}
 Przybliżoną funkcję celu (\ref{quad}) można zaimplementować za pomocą iloczynu skalarnego:
 \begin{equation}
-  Q(\hat{y}) = h(\alpha_0,\ldots,\alpha_N) \cdot {j(\hat{y}(0, h, 2h, \ldots, T))}^T
+  Q(\hat{y}) = {\left(h(\alpha_0),\ldots,h(\alpha_N)\right)}^T \cdot {j(\hat{y}(0, h, 2h, \ldots, T))}
 \end{equation}
 
 W implementacji w Octave korzystamy ze zwektoryzowanej implementacji funkcji $\hat{y}$. Implementacja funkcji $j$ też jest zwektoryzowana, ponieważ środowisko dostarcza nam zwektoryzowaną funkcję $\tanh$, a pozostałe operacje wektoryzują się naturalnie.
@@ -262,24 +272,7 @@ gdzie
   \frac{\partial j(y(t))}{\partial g_i} = \frac{\partial y_1(t)}{\partial g_i} + \frac{\partial y_2(t)}{\partial g_i} + \omega G'\left(\frac{y_2(t) - y_1(t)}{\epsilon}\right)\frac{\frac{\partial y_2(t)}{\partial g_i} - \frac{\partial y_1(t)}{\partial g_i}}{\epsilon},\quad G'(x) = \frac{1}{2\cosh^2(x)}
 \end{equation}
 \section{Eksperymenty}
-W eksperymentach użyjemy wartości parametrów podanych w wyjściowej pracy \ref{BBF-manuscript}:
-\begin{align*}
-  t_0 &= 0          & \lambda_1 &= 0.192 & g_{\max} &= 3    \\
-  T &= 200          & \lambda_2 &= 0.192 & \epsilon &= 0.01 \\
-  V_{10} &= 20      & \beta_1 &= 0.15    & d &= 0.00873     \\
-  V_{20} &= 280     & \beta_2 &= 0.1     & \mu &= 0         \\
-  K_0 &= 650        & \beta &= 0.05      &       &          \\
-\end{align*}
-Wartości parametrów $\alpha_{12},\ \alpha_{21},\ \omega$ nie zostały ustalone w pracy, jedyne co jest ustalone to
-\[ \alpha_{12} < \alpha_{21}\quad 0 < \omega \le 2000 \]
-więc zbadamy problem dla 2 arbitralnie wybranych zestawów wartości tych parametrów:
-\begin{align*}
-1.& &  \alpha_{12} &= 0.1 & \alpha_{21} &= 0.15 & \omega = 1000
-\end{align*}
-\begin{align*}
-2.& &  \alpha_{12} &= 0.5 & \alpha_{21} &= 0.75 & \omega = 2000
-\end{align*}
-Do przybliżania rozwiązania równania (\ref{odesim}) będziemy korzystać z metody Rungego-Kutty 4-tego rzędu, ponieważ daje ona dobrą dokładność, a liczenie wartości funkcji $f$ nie jest zbyt kosztowne. Długość kroku obierzemy na $h = 0.1$, co daje $2000$ kroków na całym przedziale $[t_0, T]$. Wartości stałych $c_l$, $a_{li}$, $b_i$ z wzoru (\ref{rk}) podane na tabeli Butchera:
+W eksperymentach, do przybliżania rozwiązania równania (\ref{odesim}), będziemy korzystać z metody Rungego-Kutty 4-tego rzędu, ponieważ daje ona dobrą dokładność, a liczenie wartości funkcji $f$ nie jest zbyt kosztowne. Wartości stałych $c_l$, $a_{li}$, $b_i$ z wzoru (\ref{rk}) podane na tabeli Butchera:
 \begin{equation}\label{butcher}
   \begin{array}
     {c|cccc}
@@ -291,77 +284,85 @@ Do przybliżania rozwiązania równania (\ref{odesim}) będziemy korzystać z me
     & \frac{1}{6} &\frac{1}{3} &\frac{1}{3} &\frac{1}{6} 
   \end{array}
 \end{equation}
-Do przybliżania funkcjonału celu (\ref{objf}) użyjemy kwadratury trapezów. Kwadratura (\ref{quad}) wyraża się wiec przez:
+Do przybliżania funkcjonału celu (\ref{objf}) użyjemy kwadratury trapezów. Kwadratura (\ref{quad}) wyraża się więc przez:
 \begin{equation} \label{trapezoidal}
   Q(\hat{y}) = h\left(\frac{1}{2}(j(\hat{y}(0)) + j(\hat{y}(T))) + \sum_{i=1}^{N-1} j(\hat{y}(ih))\right)
 \end{equation}
 
-Do eksperymentów użyte zostało środowisko Octave. Optymalizator FMINICON na tym środowisku umożliwia użycie jednego z dwóch algorytmów do optymalizacji nieliniowej: {\it lm\_feasable}, lub {\it sqp}. Jedną z różnic między tymi algorytmami jest to, że {\it lm\_feasable\/} zachowuje ograniczenia w trakcie optymalizacji, natomiast {\it sqp\/} wymusza ograniczenia jedynie na koniec procesu optymalizacji. W eksperymentach przetestowane zostały oba z tych algorytmów.
-
 \subsection{Zbiór testowy}
-Aby móc zbadać wpływ róźnych czynników na ostateczny wynik nasz zbiór testowy będzie zawierał
+Opiszemy teraz szeroki zbiór testowy, dobrany w taki sposób, aby móc zbadać wpływ różnych czynników na ostateczny wynik optymalizacji.
+\subsubsection{Zestawy parametrów}
+Użyjemy wartości parametrów podanych w wyjściowej pracy~\cite{BBF-manuscript}:
+\begin{align*}
+  t_0 &= 0          & \lambda_1 &= 0.192 & g_{\max} &= 3    \\
+  T &= 200          & \lambda_2 &= 0.192 & \epsilon &= 0.01 \\
+  V_{10} &= 20      & \beta_1 &= 0.15    & d &= 0.00873     \\
+  V_{20} &= 280     & \beta_2 &= 0.1     & \mu &= 0         \\
+  K_0 &= 650        & \beta &= 0.05      &       &          \\
+\end{align*}
+Wartości parametrów $\alpha_{12},\ \alpha_{21},\ \omega$ nie zostały ustalone w pracy, jedyne co jest ustalone to
+\[ \alpha_{12} < \alpha_{21}\quad 0 < \omega \le 2000 \]
+więc zbadamy problem dla 2 arbitralnie wybranych zestawów wartości tych parametrów:
 \begin{itemize}
-\item{Zestawy parametrów}
-  \begin{itemize}
-  \item{1.}
-  \item{2.}
-  \end{itemize}
-\item{Algorytmy}
-  \begin{itemize}
-  \item{\it lm\_feasible\/} oznaczany w skrócie {\it lm\/}
-  \item{\it sqp\/}
-  \end{itemize}
-\item{Metody dyskretyzacji}
-  \begin{itemize}
-  \item{Stała} (\ref{dcontrol_1})
-  \item{Liniowa} (\ref{dcontrol_2})
-  \end{itemize}
-\item{Siatki dyskretyzacji}
-  \begin{itemize}
-  \item{$S_4$: Stała krok=4} $t_n = 4n$
-  \item{$S_1$: Stała krok=1} $t_n = n$
-  \item{$S_{0.5}$: Stała krok=$0.5$} $t_n = 0.5\cdot n$
-  \item{$N_{sr}$: Niejednorodna, gęstsza w środku} $t_n = \begin{cases}
-      n \iif n \le 25 \\
-      25 + 0.1\cdot(n-25) \iif 25 < n \le 525 \\
-      75 + (n - 525) \iif n > 525
-    \end{cases}$
-  \item{$N_{kon}$: Niejednorodna, gęstsza na końcach} $t_n = \begin{cases}
-      0.5\cdot n \iif n \le 100 \\
-      50 + (n - 50) \iif 100 < n \le 200 \\
-      150 + 0.5\cdot (n - 200) \iif n > 200
-    \end{cases}$
-  \end{itemize}
-\item{Kroki dyskretyzacji ($h$)}
-  \begin{itemize}
-  \item $0.5$
-  \item $0.1$
-  \item $0.02$
-  \end{itemize}
-\item{Sterowania startowe}
-  \begin{itemize}
-  \item{$g_0$:} $g \equiv 0$
-  \item{$g_{3}$:} $g \equiv g_{\max} = 3$
-  \item{$g_{0,0.4}$:} $g = 0.4 \cdot \1_{[42.5, T]}$
-  \item{$g_{0,0.55}$:} $g = 0.55 \cdot \1_{[42.5, T]}$
-  \item{$g_{3,0,0.5}$:} $g = g_{\max}\cdot \1_{[0,10]} + 0.5 \cdot \1_{[50, T]}$
-  \end{itemize}
+\item{(CC)} $\quad \alpha_{12} = 0.1 \quad \alpha_{21} = 0.15 \quad \omega = 1000$
+\item{(DC)} $\quad \alpha_{12} = 0.5 \quad \alpha_{21} = 0.75 \quad \omega = 2000$ 
 \end{itemize}
-Jako, że zbiór ten jest duży, wykorzystamy jedynie niekóre testy. Przeprowadzimy kilka eksperymentów, każdy eksperyment będzie przeprowadzony na podzbiorze zbioru testowego, wybranym tak, aby zaprezentować wpływ konkretnego parametru na wyniki.
+Oznaczane ,,Parametry'' w tabelach z wynikami.
+\subsubsection{Algorytmy}
+Do eksperymentów użyte zostało środowisko Octave. Optymalizator FMINICON na tym środowisku umożliwia użycie jednego z dwóch algorytmów do optymalizacji nieliniowej:
+\begin{itemize}
+\item{\it lm\_feasible\/} oznaczany w skrócie {\it lm\/}
+\item{\it sqp\/}
+\end{itemize}
+Jedną z różnic między tymi algorytmami jest to, że {\it lm\_feasable\/} zachowuje ograniczenia w trakcie optymalizacji, natomiast {\it sqp\/} wymusza ograniczenia jedynie na koniec procesu optymalizacji. W eksperymentach przetestowane zostały oba z tych algorytmów.
+\subsubsection{Metody dyskretyzacji}
+\begin{itemize}
+\item{$P_0$:} wykorzystująca splajny kawałkami stałe, zob. (\ref{dcontrol_1})
+\item{$P_1$:} wykorzystująca splajny kawałkami liniowe, zob. (\ref{dcontrol_2})
+\end{itemize}
+Oznaczane ,,aproks.'' tabelach z wynikami.
+\subsubsection{Siatki dyskretyzacji sterowania}
+\begin{itemize}
+\item{$S_{\tau}$:} jednorodna, z krokiem $\tau$, więc $t_n = \tau n$. Ograniczymy się do $\tau \in \{0.5, 1, 4\}$.
+\item{$N_{sr}$: Niejednorodna, gęstsza w środku} $t_n = \begin{cases}
+    n \iif n \le 25 \\
+    25 + 0.1\cdot(n-25) \iif 25 < n \le 525 \\
+    75 + (n - 525) \iif n > 525
+  \end{cases}$
+\item{$N_{kon}$: Niejednorodna, gęstsza na końcach} $t_n = \begin{cases}
+    0.5\cdot n \iif n \le 100 \\
+    50 + (n - 50) \iif 100 < n \le 200 \\
+    150 + 0.5\cdot (n - 200) \iif n > 200
+  \end{cases}$
+\end{itemize}
+Oznaczane ,,siatka'' w tabelach z wynikami.
+\subsubsection{Kroki dyskretyzacji $h$ metody R-K rozwiązania (\ref{odesim})}
+Ograniczymy się do $h \in \{0.02, 0.1, 0.5\}$.
+\subsubsection{Sterowania startowe}
+\begin{itemize}
+\item $g_0\equiv 0$
+\item $g_{3} \equiv g_{\max} = 3$
+\item $g_{\alpha,\beta} = \alpha \cdot \1_{[\beta, T]}$. Ograniczymy się do: $g_{0.4,42.5},\ g_{0.55,42.5}$.
+\end{itemize}
+Oznaczane ,,start'' w tabelach z wynikami.
 
 \subsection{Wyniki eksperymentów}
+Jako, że powyższy zbiór jest duży, wykorzystamy jedynie niektóre testy. Przeprowadzimy kilka eksperymentów, każdy eksperyment będzie przeprowadzony na podzbiorze zbioru testowego, wybranym tak, aby zaprezentować wpływ konkretnego parametru na wyniki.
+
+Wyniki eksperymentów będziemy oceniać na podstawie trzech wartości: wartości przybliżonego funkcjonału celu $\hat{J}$, liczby iteracji optymalizatora (oznaczaną przez ,,iter''), oraz liczbę wywołań funkcjonału celu w trakcie optymalizacji (oznaczaną przez $\#\hat{J}$).
+
 Wartości funkcji celu są duże, więc dla zwiększenia czytelności będziemy podawać wartości dla $10^{-5}\hat{J}$ zaokrąglone do 2 miejsc po przecinku.
 \subsubsection{Test poprawności liczenia gradientu}
-Pierwszy eksperyment ma na celu zaprezentowanie poprawności implementacji obliczania gradientu funkcji celu. Aby to sprawdzić porównamy naszą implementację, z domyślną implementacją przybliżającą gradient za pomocą różnic skończonych. Obliczanie wyników metodą domyślną wymaga wiele czasu, więc eksperyment obejmie tylko jeden przypadek, opisany na Tabeli~\ref{test_tbl}.
+Pierwszy eksperyment ma na celu zaprezentowanie poprawności implementacji obliczania gradientu funkcji celu. Aby to sprawdzić porównamy naszą implementację, z domyślną implementacją przybliżającą gradient za pomocą różnic skończonych dostępną w FMINICON.\ Obliczanie wyników metodą domyślną wymaga wiele czasu, więc eksperyment obejmie tylko jeden przypadek, opisany na Tabeli~\ref{test_tbl}. Celem tego eksperymentu jest sprawdzenie poprawności implementacji, więc ograniczymy liczbę iteracji optymalizatora do 20.
 \begin{table}[h]
   \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|p{1.7cm}|c|c|c|c|c|c|c|c|c|}
       \hline
-      Gradient & Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Gradient & Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
       \hline
-      nie & 1. & {\it lm\/} & stała & $S_4$ & 0.1 & $g_0$ & $3.26$ & 20 & 38 \\
+      FD & (CC) & {\it lm\/} & $P_0$ & $S_4$ & 0.1 & $g_0$ & $3.26$ & 20 & 38 \\
       \hline
-      tak & 1. & {\it lm\/} & stała & $S_4$ & 0.1 & $g_0$ & $3.25$ & 20 & 37 \\
+      wg. rozdz. \ref{subsec_sterowanie}, \ref{subsec_rrz} & (CC) & {\it lm\/} & $P_0$ & $S_4$ & 0.1 & $g_0$ & $3.25$ & 20 & 37 \\
       \hline
     \end{tabular}
     \caption{Test implementacji gradientu}\label{test_tbl}
@@ -379,89 +380,106 @@ Pierwszy eksperyment ma na celu zaprezentowanie poprawności implementacji oblic
   \end{subfigure}%
   \caption{Rozwiązania dla przypadku testowego}\label{test_nograd_sol}
 \end{figure}
-Jak widzimy na Tabeli~\ref{test_tbl} i Rysunku~\ref{test_nograd_sol}, rozwiązania uzyskane obiema metodami są prawie identyczne, a nasza implementacja osiągnęła minimalnie lepszy wynik. Daje nam to dużą dozę pewności o poprawności naszej implementacji liczenia gradientu.
+Rozwiązania uzyskane obiema metodami są bardzo podobne, o czym świadczą wyniki zaprezentowane na Tabeli~\ref{test_tbl} i Rysunku~\ref{test_nograd_sol}. Ponadto nasza implementacja osiągnęła minimalnie lepszy wynik.
 
-Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{test_tbl} nie uwzględnia wywołań potrzebnych do oszacowania gradientu metodą różnic skończonych. Aby policzyć pochodną dla jednego parametru potrzeba raz dodatkowo wywołać $\hat{J}$, więc jednorazowe policzenie gradientu wymaga tylu wywołań ile jest parametrów (w tym przypadku 51). Gradient jest liczony w każdej iteracji co daje łącznie $20\cdot 51 = 1020$ dodatkowych wywołań $\hat{J}$. Inną wadą przybliżania gradientu metodą różnic skończonych są błędy. Zauważmy, że w okolicy punktu przecięcia się krzywych $y_1$ i $y_2$ wartość i pochodna wyrażenia $G((y_2(t) - y_1(t))/\epsilon) = \frac{1 + \tanh(x)}{2}$ zmienia się bardzo szybko w czasie, co powoduje znaczne błędy przy zbyt dużym kroku metody różnic skończonych.
+Aby zyskać jeszcze większą pewność o poprawności naszej implementacji policzymy gradient $\hat{J}$ względem parametrów $g_i$, w punkcie zaprezentowanym na (\ref{test_sol}) przy użyciu naszej implementacji (oznaczmy go $G$), oraz przy użyciu metody różnic skończonych dla różnych wartości kroku $\tau \in \{10^{-3},\ldots,10^{-10}\}$ (oznaczmy je $G_\tau$). Następnie dla wszystkich $\tau$ obliczymy $\norm{G - G_\tau}_1$. Wyniki tych obliczneń przedstawiamy na Tabeli~\ref{grad_fd_tbl}.
 
-\subsubsection{Parametry 1.}
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+      \hline
+      $\tau$ & 10^{-3} & 10^{-4} & 10^{-5} & 10^{-6} & 10^{-7} & 10^{-8} & 10^{-9} & 10^{-10} \\
+      \hline
+      $\norm{G - G_\tau}_1$ & 444599.7 & 34471.1 & 357.2 & 3.6 & 0.5 & 4.7 & 54.0 & 384.5 \\
+      \hline
+    \end{tabular}
+    \caption{Różnice wyników między naszą implementacją gradientu, a różnicami skończonymi.}\label{grad_fd_tbl}
+  \end{center}
+\end{table}
+
+Zgodnie z oczekiwaniami gdy krok różnic skończonych $\tau$ maleje, do pewnego momentu maleje też $\norm{G - G_\tau}_1$. W pewnym momencie norma ta zaczyna rosnąć wraz z dalszym zmniejszaniem $\tau$, co też jest zachowaniem oczekiwanym.
+
+Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{test_tbl} nie uwzględnia wywołań potrzebnych do aproksymacji gradientu metodą różnic skończonych. Aby policzyć pochodną dla jednego parametru potrzeba raz dodatkowo wywołać $\hat{J}$, więc jednorazowe policzenie gradientu wymaga tylu wywołań ile jest parametrów (w tym przypadku 51). Gradient jest liczony w każdej iteracji co daje łącznie $20\cdot 51 = 1020$ dodatkowych wywołań $\hat{J}$. Inną wadą przybliżania gradientu metodą różnic skończonych są błędy. Zauważmy, że w okolicy punktu przecięcia się krzywych $y_1$ i $y_2$ wartość i pochodna wyrażenia $G((y_2(t) - y_1(t))/\epsilon) = \frac{1 + \tanh(x)}{2}$ zmienia się bardzo szybko w czasie, co powoduje znaczne błędy przy zbyt dużym kroku metody różnic skończonych.
+
+\subsubsection{Parametry (CC)}
 
 \begin{table}[h]
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
       \hline
-      1. & {\it lm\/} & stała & $S_1$ & 0.1 & $g_0$ & 2.2 & 3 & 8 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 2.2 & 3 & 8 \\
       \hline
-      1. & {\it lm\/} & stała & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      1. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 2.19 & 3 & 8 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.19 & 3 & 8 \\
       \hline
-      1. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      1. & {\it lm\/} & stała & $N_{kon}$ & 0.1 & $g_0$ & 2.64 & 9 & 14 \\
+      (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_0$ & 2.64 & 9 & 14 \\
       \hline
-      1. & {\it lm\/} & stała & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      1. & {\it lm\/} & liniowa & $S_1$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      (CC) & {\it lm\/} & $P_2$ & $S_1$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
       \hline
-      1. & {\it lm\/} & liniowa & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_2$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      1. & {\it lm\/} & liniowa & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      (CC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
       \hline
-      1. & {\it lm\/} & liniowa & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      1. & {\it lm\/} & liniowa & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 \\
+      (CC) & {\it lm\/} & $P_2$ & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 \\
       \hline
-      1. & {\it lm\/} & liniowa & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_2$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
-      1. & {\it sqp\/} & liniowa & $S_{0.5}$ & 0.1 & $g_0$ & 2.14 & 9 & 10 \\
+      (CC) & {\it sqp\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.14 & 9 & 10 \\
       \hline
     \end{tabular}
-    \caption{Eksperymetry z parametrami 1.}\label{param1_tbl}
+    \caption{Eksperymenty z parametrami (CC) dla różnych wyborów aproksymacji, siatki i startu}\label{param1_tbl}
   \end{center}
 \end{table}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=.5\textwidth]{../plots/plot_max}
-  \caption{Rozwiązanie dla parametrów 1.}\label{max_plot}
+  \caption{Rozwiązanie dla parametrów (CC)}\label{max_plot}
 \end{figure}
 
-Wyniki dla parametrów 1.\ są dość jednoznaczne. Najlepszym znalezionym rozwiązaniem jest $g \equiv g_{\max} = 3$, które zaprezentowano na Rysunku~\ref{max_plot}. Wszystkie testy zaczynające z tego sterowania zbiegły do niego po jednej iteracji, co możemy zaobserwować na Tabeli~\ref{param1_tbl}. Widzimy też z tej tabeli, że testy korzystające z siatki niejednorodne wypadają zauważalnie gorzej od pozostałych, algorytm {\it sqp\/} jest jedynym który zbiegł z zerowego sterowania do sterowania optymalnego. Różnice między pozostałymi metodami są nieznaczne.
+Wyniki dla parametrów (CC)\ są dość jednoznaczne. Najlepszym znalezionym rozwiązaniem jest $g \equiv g_{\max} = 3$, które zaprezentowano na Rysunku~\ref{max_plot}. Wszystkie testy zaczynające z tego sterowania zbiegły do niego po jednej iteracji, patrz Tabela~\ref{param1_tbl}. Widzimy też z tej tabeli, że testy korzystające z siatki niejednorodne wypadają zauważalnie gorzej od pozostałych, algorytm {\it sqp\/} jest jedynym który zbiegł z zerowego sterowania do sterowania optymalnego. Różnice między pozostałymi metodami są nieznaczne.
 
-Jako, że najlepsze znalezione rozwiązanie dla tych parametrów jest dość proste, w dalszych eksperymentach skupimy się na parametrach~2.
+Jako, że najlepsze znalezione rozwiązanie dla tych parametrów jest dość proste, w dalszych eksperymentach skupimy się na parametrach~(DC)
 
 \subsubsection{Metoda dyskretyzacji}
 
-\begin{table}[h]
+\begin{table}[h!]
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.76 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
       \hline
-      2. & {\it lm\/} & liniowa & $S_{0.5}$ & 0.1 & $g_0$ & 2.99 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.99 & 20 & 42 \\
       \hline
-      2. & {\it lm\/} & liniowa & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.76 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 40 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.75 & 10 & 123 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
-      2. & {\it sqp\/} & liniowa & $S_{0.5}$ & 0.1 & $g_0$ & 3.28 & 9 & 105 \\
+      (DC) & {\it sqp\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.28 & 9 & 105 \\
       \hline
-      2. & {\it sqp\/} & liniowa & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.75 & 10 & 136 \\
+      (DC) & {\it sqp\/} & $P_2$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 136 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające metodę dyskretyzacji}\label{discr_tbl}
   \end{center}
 \end{table}
 
-Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować, że dla sterowania startowego $g_0$, dyskretyzacja liniowa osiąga zauważalnie lepsze rezultaty niż dyskretyzacja stała. Dla algorytmu {\it lm\/} zastosowanie dyskretyzacji liniowej poprawiło wyniki, natomiast dla algorytmu {\it sqp\/} zmniejszyło zarówno liczbę iteracji jak i liczbę wywołań prawie dwukrotnie. Gdy punkt startowy to $g_{0,0.4}$, to obie dyskretyzacje osiągają prawie identyczne rezultaty, a wręcz dyskretyzacja stała wymaga minimalnie mniejszej liczby wywołań funkcji celu. 
+Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować, że dla sterowania startowego $g_0$, dyskretyzacja $P_2$ osiąga zauważalnie lepsze rezultaty niż dyskretyzacja $P_0$. Dla algorytmu {\it lm\/} zastosowanie dyskretyzacji liniowej poprawiło wyniki, natomiast dla algorytmu {\it sqp\/} zmniejszyło zarówno liczbę iteracji jak i liczbę wywołań prawie dwukrotnie. Gdy punkt startowy to $g_{0.4,42.5}$, to obie dyskretyzacje osiągają prawie identyczne rezultaty, a wręcz dyskretyzacja $P_0$ wymaga minimalnie mniejszej liczby wywołań funkcji celu. 
 
 \subsubsection{Siatka dyskretyzacji}
 
@@ -469,42 +487,42 @@ Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
       \hline
-      2. & {\it lm\/} & stała & $S_1$ & 0.1 & $g_0$ & 3.09 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.09 & 20 & 40 \\
       \hline
-      2. & {\it lm\/} & stała & $S_1$ & 0.1 & $g_{0,0.4}$ & 2.81 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 2.81 & 20 & 40 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.76 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
       \hline
-      2. & {\it lm\/} & stała & $N_{sr}$ & 0.1 & $g_0$ & 3.02 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.02 & 20 & 40 \\
       \hline
-      2. & {\it lm\/} & stała & $N_{sr}$ & 0.1 & $g_{0,0.4}$ & 2.77 & 20 & 39 \\
+      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.77 & 20 & 39 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_1$ & 0.1 & $g_0$ & 3.16 & 14 & 164 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.16 & 14 & 164 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_1$ & 0.1 & $g_{0,0.4}$ & 4.07 & 24 & 85 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 4.07 & 24 & 85 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.75 & 10 & 123 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
-      2. & {\it sqp\/} & stała & $N_{sr}$ & 0.1 & $g_0$ & 3.39 & 15 & 172 \\
+      (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.39 & 15 & 172 \\
       \hline
-      2. & {\it sqp\/} & stała & $N_{sr}$ & 0.1 & $g_{0,0.4}$ & 2.75 & 8 & 104 \\
+      (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 8 & 104 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające siatkę dyskretyzacji}\label{grid_tbl}
   \end{center}
 \end{table}
 
-Pierwszym wnioskiem na temat siatki dyskretyzacji który możemy wyciągnąć z Tabeli~\ref{grid_tbl} jest to, że siatka dyskretyzacji nie ma zbyt dużego wpływu na końcowy wynik. Dla testów różniących się tylko siatką dyskretyzacji, różnica w wynikach dla algorytmu {\it lm\/} wyosi co najwyżej $0.09$. Nie ma też istotnych różnic w liczbie iteracji ani liczbie wywołań $\hat{J}$. Dla algorytmu {\it sqp\/} siatka dyskretyzacji ma już większe znaczenie, różnice wynoszą nawet $0.23$, pojawają się też większe różnice w liczbie iteracji i wywołań $\hat{J}$.
+Pierwszym wnioskiem na temat siatki dyskretyzacji który możemy wyciągnąć z Tabeli~\ref{grid_tbl} jest to, że siatka dyskretyzacji nie ma zbyt dużego wpływu na końcowy wynik. Dla testów różniących się tylko siatką dyskretyzacji, różnica w wynikach dla algorytmu {\it lm\/} wynosi co najwyżej $0.09$. Nie ma też istotnych różnic w liczbie iteracji ani liczbie wywołań $\hat{J}$. Dla algorytmu {\it sqp\/} siatka dyskretyzacji ma już większe znaczenie, różnice wynoszą nawet $0.23$, pojawają się też większe różnice w liczbie iteracji i wywołań $\hat{J}$.
 
-Co ciekawe, dla startu $g_0$ siatka $S_1$ (czyli siatka o kroku 1) osiąga lepsze wyniki niż siatka $S_{0.5}$, ale przy starcie $g_{0,0.4}$ gęstsza siatka osiąga już lepsze wyniki, choć różnice są bardzo niewielkie. Siatka $N_{sr}$ (czyli siatka niejednorodna gęstsza na przedziale $[25, 75]$), przy startcie $g_0$, osiąga najlepsze wyniki  dla algorytmu {\it lm\/} oraz najgorsze dla algorytmu {\it sqp}.
+Co ciekawe, dla startu $g_0$ siatka $S_1$ (czyli siatka o kroku 1) osiąga lepsze wyniki niż siatka $S_{0.5}$, ale przy starcie $g_{0.4,42.5}$ gęstsza siatka osiąga już lepsze wyniki, choć różnice są bardzo niewielkie. Siatka $N_{sr}$ (czyli siatka niejednorodna gęstsza na przedziale $[25, 75]$), przy startcie $g_0$, osiąga najlepsze wyniki  dla algorytmu {\it lm\/} oraz najgorsze dla algorytmu {\it sqp}.
 
-Wyniki dla algorytmu {\it sqp\/} siatki $S_1$ i startu $g_{0,0.4}$ są podejrzane. Wartość $\hat{J}$ dla sterowania startowego $g_{0,0.4}$ wynosi $30.1$, więc jest lepsza niż wynik. Sprawdzenie wyników dla wywołań pośrednich ujawniło, że algorytm w trakcie optymalizacji osiągał wyniki podobne jak pozostałe testy dla tego sterowania startowego. Takie zachowanie byłoby teoretycznie możliwe dla tego algorytmu, ponieważ nie wymaga on spełnienia ograniczeń w trakcie optymalizacji, więc mógłby nie znaleźć lepszego punktu spełniającego ograniczenia. Jednakże punkt startowy spełnia ograniczenia, więc zachowanie takie wydaje się błędem optymalizatora.
+Wyniki dla algorytmu {\it sqp\/} siatki $S_1$ i startu $g_{0.4,42.5}$ są podejrzane. Wartość $\hat{J}$ dla sterowania startowego $g_{0.4,42.5}$ wynosi $30.1$, więc jest lepsza niż wynik. Sprawdzenie wyników dla wywołań pośrednich ujawniło, że algorytm w trakcie optymalizacji osiągał wyniki podobne jak pozostałe testy dla tego sterowania startowego. Takie zachowanie byłoby teoretycznie możliwe dla tego algorytmu, ponieważ nie wymaga on spełnienia ograniczeń w trakcie optymalizacji, więc mógłby nie znaleźć lepszego punktu spełniającego ograniczenia. Jednakże punkt startowy spełnia ograniczenia, więc zachowanie takie wydaje się błędem optymalizatora.
 
 \subsubsection{Krok dyskretyzacji $h$}
 
@@ -512,38 +530,38 @@ Wyniki dla algorytmu {\it sqp\/} siatki $S_1$ i startu $g_{0,0.4}$ są podejrzan
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.5 & $g_0$ & 3.2 & 20 & 39 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.2 & 20 & 39 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.5 & $g_{0,0.4}$ & 2.76 & 20 & 41 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.76 & 20 & 41 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.76 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.02 & $g_0$ & 2.95 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 2.95 & 20 & 42 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.02 & $g_{0,0.4}$ & 2.76 & 20 & 41 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.76 & 20 & 41 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.5 & $g_0$ & 3.28 & 8 & 92 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.28 & 8 & 92 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.5 & $g_{0,0.4}$ & 2.75 & 10 & 127 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 10 & 127 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.75 & 10 & 123 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.02 & $g_0$ & 3.31 & 9 & 106 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 3.31 & 9 & 106 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.02 & $g_{0,0.4}$ & 2.75 & 13 & 166 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.75 & 13 & 166 \\
       \hline
     \end{tabular}    
     \caption{Eksperymenty badające krok dyskretyzacji $h$}\label{step_tbl}
   \end{center}
 \end{table}
 
-Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it lm\/} zachowuje się przewidywalnie, to znaczy im niższy, tym lepsze wyniki. Co ciekawe, dla algorytmu {\it sqp\/} zależność jest odwrotna, choć różnice w wynikach są dość nieznaczne (rzędu $0.03$). Dla sterowania startowego $g_{0,0.4}$ krok dyskretyzacji wydaje się nie mieć prawie żadnego wpływu na wynik. Można też zauważyć pewien wzrost liczby wywołań $\hat{J}$ wraz ze spadkiem długości kroku.
+Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it lm\/} zachowuje się przewidywalnie, to znaczy im niższy, tym lepsze wyniki. Co ciekawe, dla algorytmu {\it sqp\/} zależność jest odwrotna, choć różnice w wynikach są dość nieznaczne (rzędu $0.03$). Dla sterowania startowego $g_{0.4,42.5}$ krok dyskretyzacji wydaje się nie mieć prawie żadnego wpływu na wynik. Można też zauważyć pewien wzrost liczby wywołań $\hat{J}$ wraz ze spadkiem długości kroku.
 
 \subsubsection{Sterowanie startowe}
 
@@ -551,27 +569,23 @@ Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it 
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & dyskret. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.76 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.55}$ & 2.72 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.72 & 20 & 42 \\
       \hline
-      2. & {\it lm\/} & stała & $S_{0.5}$ & 0.1 & $g_{3,0,0.5}$ & 2.85 & 20 & 41 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.4}$ & 2.75 & 10 & 123 \\
-      \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.55}$ & 2.71 & 10 & 130 \\
-      \hline
-      2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{3,0,0.5}$ & 2.81 & 100 & 1065 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.71 & 10 & 130 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające sterowanie startowe}\label{start_tbl}
@@ -582,14 +596,14 @@ Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it 
 \begin{figure}[h]
   \centering
   \includegraphics[width=.5\textwidth]{../plots/plot_param2_best}
-  \caption{Rozwiązanie dla parametrów 2.}\label{param2_best_sol}
+  \caption{Rozwiązanie dla parametrów (DC)}\label{param2_best_sol}
 \end{figure}
 
 Jak mogliśmy się już przekonać na poprzednich eksperymentach i co potwierdzają wyniki z Tabeli~\ref{start_tbl}, dobór odpowiedniego sterowania startowego jest kluczowy.
 
-Widzimy, że przy parametrach 2, podobnie jak przy parametrach 1, sterowanie $g_3$ (czyli stale równe $3 = g_{\max}$) wydaje się być minimum lokalnym, ale w tym przypadku znacznie gorszym od pozostałych rezultatów. Najlepsze wyniki osiągane są dla sterowania startowego $g_{0,0.55}$. Widzimy też, że algorytm {\it sqp\/} osiąga ogólnie lekko lepsze wyniki niż algorytm {\it lm}, ale wymaga znacznie większej ilości czasu. W szczególności zbiegnięcie algorytmu {\it sqp\/} dla sterowania $g_{3,0,0.5}$ wymagało aż 100 iteracji i ponad 1000 wywołań funkcji $\hat{J}$.
+Widzimy, że przy parametrach 2, podobnie jak przy parametrach 1, sterowanie $g_3$ (czyli stale równe $3 = g_{\max}$) wydaje się być minimum lokalnym, ale w tym przypadku znacznie gorszym od pozostałych rezultatów. Najlepsze wyniki osiągane są dla sterowania startowego $g_{0.55,42.5}$. Widzimy też, że algorytm {\it sqp\/} osiąga ogólnie lekko lepsze wyniki niż algorytm {\it lm}, ale wymaga znacznie większej ilości czasu.
 
-Najlepszy wynik to $2.71$ i osiągneliśmy go dla sterowania startowego $g_{0,0.55}$ i algorytmu {\it sqp}. Zaprezentowany jest on na Rysunku~\ref{param2_best_sol}.
+Najlepszy wynik to $2.71$ i osiągneliśmy go dla sterowania startowego $g_{0.55,42.5}$ i algorytmu {\it sqp}. Zaprezentowany jest on na Rysunku~\ref{param2_best_sol}.
 
 %TODO zrobić optmalizację wzgl. punktu nieciągłości i wartości przed i po
 %\subsection{Analiza zastosowanych metod}
@@ -630,12 +644,12 @@ Najlepszy wynik to $2.71$ i osiągneliśmy go dla sterowania startowego $g_{0,0.
 %\end{table}  
 \section{Analiza i krytyka wyników}
 
-Jak widzimy, wyniki dla różnych rodzajów parametrów znacznie się różnią. Dokładniejsze przyjrzenie się funkcjonałowi celu (\ref{objfsim}) pozwala wyjaśnić takie zjawisko. Jak widzimy parametr $\omega$ jest mnożony przez wartość drugiej całki. Zauważmy, że funkcja pod drugą całką jest gładkim przybliżeniem funkcji znaku wyrażenia $y_2(t) - y_1(t)$. W 2-gim zestawie parametrów parametr $\omega$ jest znacznie większy niż w 1-szym, więc w tym przypadku druga całka ma większy wpływ na wynik funkcjonału. Jak przyjrzymy się rozwiązaniu z Rysunku~\ref{param2_best_sol}, widzimy, że punkt nieciągłości znajduje się od razu po przecięciu się krzywych $y_1$ i $y_2$, a po nim sterowanie ma taką wartość aby krzywe te były bardzo blisko siebie, ale przy zachowaniu $y_2(t) - y_1(t) < 0$. Wygląda więc na to, przy parametrach 2.\ bardziej opłaca się utrzymywać stan $y_2(t) - y_1(t) < 0$, natomiast przy parametrach 1.\ lepsze wyniki daje minimalizacja pierwszej całki, czyli pola pod $y_1 + y_2$. Możemy się też spodziewać, że wysokie wartości sterowania powodują zmniejszanie się zarówno $y_1$ jak i $y_2$, ale od pewnej wartości sterowania $y_1$ maleje szybciej niż $y_2$. Taka hipoteza zgadzałaby się z interpretacją $y_1$ i $y_2$ jako liczba komórek rakowych odpowiednio podatnych na działanie leku i odpornych na niego, a wartości sterowania jako dawki leku.
+Jak widzimy, wyniki dla różnych rodzajów parametrów znacznie się różnią. Dokładniejsze przyjrzenie się funkcjonałowi celu (\ref{objfsim}) pozwala wyjaśnić takie zjawisko. Jak widzimy parametr $\omega$ jest mnożony przez wartość drugiej całki. Zauważmy, że funkcja pod drugą całką jest gładkim przybliżeniem funkcji znaku wyrażenia $y_2(t) - y_1(t)$. W 2-gim zestawie parametrów parametr $\omega$ jest znacznie większy niż w 1-szym, więc w tym przypadku druga całka ma większy wpływ na wynik funkcjonału. Jak przyjrzymy się rozwiązaniu z Rysunku~\ref{param2_best_sol}, widzimy, że punkt nieciągłości znajduje się od razu po przecięciu się krzywych $y_1$ i $y_2$, a po nim sterowanie ma taką wartość aby krzywe te były bardzo blisko siebie, ale przy zachowaniu $y_2(t) - y_1(t) < 0$. Wygląda więc na to, przy parametrach (DC)\ bardziej opłaca się utrzymywać stan $y_2(t) - y_1(t) < 0$, natomiast przy parametrach (CC)\ lepsze wyniki daje minimalizacja pierwszej całki, czyli pola pod $y_1 + y_2$. Możemy się też spodziewać, że wysokie wartości sterowania powodują zmniejszanie się zarówno $y_1$ jak i $y_2$, ale od pewnej wartości sterowania $y_1$ maleje szybciej niż $y_2$. Taka hipoteza zgadzałaby się z interpretacją $y_1$ i $y_2$ jako liczba komórek rakowych odpowiednio podatnych na działanie leku i odpornych na niego, a wartości sterowania jako dawki leku.
 
 \subsection{Krytyka wyników}
 Wszystkie wyniki które udało się osiągnąć są minimami lokalnymi. Jak już zauważyliśmy, wyniki były mocno zależne od punktu startowego, nawet w przypadku algorytmu {\it sqp}, który powinien szukać rozwiązania bardziej globalnie. Być może zastosowanie innych algorytmów optymalizacji nieliniowej umożliwiłoby szukanie rozwiązania w sposób mniej zależący od znalezienia dobrego punktu startowego.
 
-Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tępa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą splajnów wyższego rzędu też mogłoby poprawić tępo zbieżności. W literaturze rozwarza też metody automatyzacji znajdowania siatki dyskretyzacji i odpowiedniego rzędu dyskretyzacji. Przykładem jest tu praca~\cite{Rao-ph}. Być może zastosowanie ich umożliwiłoby uzyskanie lepszych wyników.
+Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tępa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą Solana wyższego rzędu też mogłoby poprawić tępo zbieżności. W literaturze rozważa też metody automatyzacji znajdowania siatki dyskretyzacji i odpowiedniego rzędu dyskretyzacji. Przykładem jest tu praca~\cite{Rao-ph}. Być może zastosowanie ich umożliwiłoby uzyskanie lepszych wyników.
 
 Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z Rysunku~\ref{max_plot} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach 2, w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{\max}$ minimalna wartość $y_3$ wynosi ok. $0.02$, więc ten eksperyment może być obarczony istotnym błędem numerycznym.
 
