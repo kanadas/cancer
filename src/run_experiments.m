@@ -6,7 +6,8 @@ function run_experiments()
   T = 200;
   x0 = [20; 280; 650];
   function run(constants, backends, discretizetions, grids, steps, starts, fname)
-    results = zeros(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts), 3);
+    results = zeros(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts), 4);
+    solutins = cell(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts));
     idx = 1;
     for i = 1:length(constants)
       for j = 1:length(backends)
@@ -24,8 +25,8 @@ function run_experiments()
 					      constants{i},
 					      backends{j});
 		[y, dy] = objf(p, grids{l}, x0, steps{m}, discretizations{k}, constants{i});
-		solutions(idx, :) = p;
-		results(idx,:) = [res, outp.niter, outp.nobjf, dy];
+		solutions{idx} = p;
+		results(idx,:) = [res, outp.niter, outp.nobjf, norm(dy,1)];
 		idx = idx + 1;
               endfor
 	    endfor

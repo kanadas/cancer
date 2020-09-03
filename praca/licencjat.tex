@@ -61,7 +61,7 @@
 \maketitle
 
 \section{Sformułowanie problemu}
-Celem pracy jest znalezienie strategii podawania leku przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy \cite{BBF-manuscript}. Zobacz też \cite{BBF2016}, \cite{BBF2019} gdzie przedstawiono podobne zagadnienia. Model ten przedstawia rozwój nowotworu w czasie w zależności od dawkowania leku, $g(t)$, za pomocą równania różniczkowego:
+Celem pracy jest znalezienie strategii podawania leku przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy \cite{BBF-manuscript} (zobacz też \cite{BBF2016}, \cite{BBF2019} gdzie przedstawiono podobne zagadnienia). Model ten przedstawia rozwój nowotworu w czasie w zależności od dawkowania leku, $g(t)$, za pomocą równania różniczkowego:
 \begin{equation} \label{ode}
   \begin{aligned} 
     V_1'(t) &= \lambda_1V_1F\left(\frac{V_1 + \alpha_{12}V_2}{K}\right) - \beta_1V_1g(t), \\
@@ -74,8 +74,8 @@ dla $t \in [0, T]$, z warunkami początkowymi
    V_1(0) = V_{10},\ V_2(0) = V_{20},\ K(0) = K_0
 \end{equation}
 gdzie $F(x) = -\ln(x)$, $ 0 \le g(t) \le g_{\max}$, oraz
-\[\lambda_1, \lambda_2, \alpha_{12}, \alpha_{21}, \beta_1, \beta_2, \beta, \mu, d, V_{10}, V_{20}, K_0 \ge 0\]
-są zadanymi parametrami.
+\[\lambda_1, \lambda_2, \alpha_{12}, \alpha_{21}, \beta_1, \beta_2, \beta, \mu, d, V_{10}, V_{20}, K_0 \]
+są zadanymi nieujemnymi parametrami.
 
 Funkcja $V_1(t)$ modeluje liczbę komórek guza podatnych na lek w momencie $t$, $V_2(t)$ liczbę komórek guza odpornych na lek, a $K(t)$ jest parametrem nazwanym w pracy ,,unaczynieniem''. Zauważmy, że rozwiązania $V_1, V_2, K$ zależą od wyboru funkcji $g$ którą nazywamy sterowaniem. W tym modelu wartość $g(t)$ ma interpretację jako wielkość dawki leku w czasie $t$.
 
@@ -96,26 +96,26 @@ Zdefiniujmy teraz formalnie problem oraz uprośćmy notację.
 
 \begin{problem}\label{problem}
   Znaleźć funkcję kawałkami ciągłą
-  \[g: [0, T] \to [0, g_{\max}]\]
+  \[g: [0, T] \to [0, g_{\max}],\]
   i funkcję
-  \[y = {(y_1, y_2, y_3)}^T: [0,T] \to {(0, \infty)}^3\]
-  spełniające równanie różniczkowe:
+  \[y = {(y_1, y_2, y_3)}^T: [0,T] \to {(0, \infty)}^3,\]
+  spełniającą równanie różniczkowe:
   \begin{equation}\label{odesim}
     \begin{aligned}
-      \dot{y}(t) &= f(t, y, g) \\
-      y(0) &= y_0 = {(y_{10}, y_{20}, y_{30})}^T
+      \dot{y}(t) &= f(t, y, g), \\
+      y(0) &= y_0 = {(y_{10}, y_{20}, y_{30})}^T,
     \end{aligned}
   \end{equation}
-  oraz minimalizujące funkcjonał
+  minimalizujące funkcjonał
   \begin{equation}\label{objfsim}
-    J(g, y) = \int_0^T y_1(t) + y_2(t)dt + \omega\int_0^T G\left(\frac{y_2(t) - y_1(t)}{\epsilon}\right) dt
+    J(g, y) = \int_0^T y_1(t) + y_2(t)dt + \omega\int_0^T G\left(\frac{y_2(t) - y_1(t)}{\epsilon}\right) dt,
   \end{equation}
   gdzie $f = {(f_1, f_2, f_3)}^T$ jest określone wzorem
   \begin{equation}\label{dynamicsim}
     \begin{aligned}
       f_1(t, y, g) &= \lambda_1y_1F\left(\frac{y_1 + \alpha_{12}y_2}{y_3}\right) - \beta_1y_1g(t), \\
       f_2(t, y, g) &= \lambda_2y_2F\left(\frac{y_2 + \alpha_{21}y_1}{y_3}\right) - \beta_2y_2g(t), \\
-      f_3(t, y, g) &= -\mu y_3 + (y_1+y_2) - d{(y_1 + y_2)}^{2/3}y_3 - \beta y_3 g(t) \\
+      f_3(t, y, g) &= -\mu y_3 + (y_1+y_2) - d{(y_1 + y_2)}^{2/3}y_3 - \beta y_3 g(t). \\
     \end{aligned}
   \end{equation}
 \end{problem}
@@ -131,7 +131,7 @@ Przez funkcję kawałkami ciągłą określoną na odcinku rozumiemy funkcję o 
 
 Zwróćmy jeszcze uwagę na fakt, że funkcja $F(x) = -\ln(x)$ posiada osobliwość w 0, więc prawa strona (\ref{dynamicsim}) nie jest dobrze zdefiniowana dla $y_1(t) = y_2(t) = 0$, a obliczenia w których argumenty $F$ są bliskie 0 mogą być obarczone dużymi błędami numerycznymi. Podobnie we wzorze (\ref{dynamicsim}) występuje dzielenie przez $y_3$, więc dla $y_3(t) = 0$ prawa strona (\ref{odesim}) także nie jest dobrze określone.
 
-\subsection{Problem przybliżony}
+\subsection{Problem przybliżony}\label{simp_problem_subsec}
 Wyznaczenie rozwiązania problemu optymalnego sterowania w postaci jawnego wzoru rzadko kiedy jest możliwe. Z tego powodu zdecydujemy się na szukanie rozwiązania przybliżonego.
 
 Rozwiązanie problemu \ref{problem} przybliżymy rozwiązaniem pewnego problemu optymalizacji skończenie wymiarowej. W tym celu ustalimy siatkę dyskretyzacji przedziału $[0, T]$:
@@ -212,10 +212,10 @@ Ograniczenia występujące w sformułowaniu oryginalnego problemu można zwykle 
 Podejście to jest dokładnie opisane w~\cite{Kelly}, występuje też w~\cite{diehl} i~\cite{rao-methods}.
 
 \subsection{Plan rozwiązania}
-Aby obliczyć wynik problemu przybliżonego skorzystamy ze środowiska MATLAB/Octave wraz z dostarczonym z nim optymalizatorem problemu optymalizacji nieliniowej z ograniczeniami (FMINICON). W tym celu zaimplementujemy przejście od problemu optymalnego sterowania. Aby poprawić złożoność czasową optymalizacji i tym samym umożliwić stosowanie gęstszej siatki dyskretyzacji, obliczymy gradient przybliżonej funkcji celu. Będziemy też musieli znaleźć odpowiednią siatkę dyskretyzacji i punkt startowy dla optymalizatora.
+Aby obliczyć wynik problemu przybliżonego zdefiniowanego w rozdz.~\ref{simp_problem_subsec} zaimplementujemy przejście od problemu optymalnego sterowania do problemu optymalizacji nieliniowej z ograniczeniami. W tym celu skorzystamy ze środowiska MATLAB/Octave i dostarczonego w nim optymalizatora (FMINICON). Aby poprawić złożoność czasową optymalizacji i tym samym umożliwić stosowanie gęstszej siatki dyskretyzacji, obliczymy gradient przybliżonej funkcji celu. Będziemy też musieli znaleźć odpowiednią siatkę dyskretyzacji i punkt startowy dla optymalizatora.
 
 \section{Implementacja}
-Optymalizator FMINICON wymaga dostarczenia funkcji do optymalizowania, czyli w naszym przypadku funkcji $\hat{J}$, oraz ograniczeń, czyli w naszym przypadku jedynie (\ref{nlp_cons}). Domyślnie optymalizator wyznacza gradient za pomocą różnic skończonych, co wymaga uruchomienia funkcji celu liniowo wiele razy względem liczby parametrów. Aby poprawić wydajność optymalizacji zaimplementujemy liczenie gradientu przybliżonej funkcji celu ze względu na parametry $g_1,\ldots, g_n$.
+Optymalizator FMINICON wymaga dostarczenia funkcji do optymalizowania, czyli w naszym przypadku funkcji $\hat{J}$, oraz ograniczeń, czyli w przypadku metody ,,direct single shooting'' jedynie (\ref{nlp_cons}). Domyślnie optymalizator wyznacza gradient za pomocą różnic skończonych, co jest kosztowne, gdyż wymaga uruchomienia funkcji celu liniowo wiele razy względem liczby parametrów. Aby poprawić wydajność optymalizacji zaimplementujemy liczenie gradientu przybliżonej funkcji celu ze względu na parametry $g_0,\ldots, g_n$.
 
 Zauważmy, że znalezienie dobrego wyniku będzie wymagało zapewne wielokrotnego wywołania naszej funkcji celu przez optymalizator, więc zależy nam aby funkcja celu liczyła się możliwie szybko. Lepsza wydajnościowo implementacja pozwoli też na większe zagęszczenie siatki dyskretyzacji i tym samym wzrost dokładności aproksymacji.
 
@@ -265,7 +265,7 @@ W implementacji w Octave korzystamy ze zwektoryzowanej implementacji funkcji $\h
 
 Gradient funkcji celu możemy zaimplementować jako mnożenie wektora przez macierz:
 \begin{equation}
-  {\left[\frac{\partial J}{\partial g_i}\right]}_{i = 0, \ldots n} = \left(h(\alpha_0),\ldots,h(\alpha_N)\right) \cdot {\left[\frac{\partial j(\hat{y}(hi))}{\partial g_k}\right]}_{i = 0, \ldots N, k = 1, \ldots n}
+  {\left[\frac{\partial J}{\partial g_i}\right]}_{i = 0, \ldots n} = {\left(h(\alpha_0),\ldots,h(\alpha_N)\right)}^T \cdot {\left[\frac{\partial j(\hat{y}(hi))}{\partial g_k}\right]}_{i = 0, \ldots N, k = 1, \ldots n}
 \end{equation}
 gdzie
 \begin{equation}
@@ -302,26 +302,26 @@ Użyjemy wartości parametrów podanych w wyjściowej pracy~\cite{BBF-manuscript
 \end{align*}
 Wartości parametrów $\alpha_{12},\ \alpha_{21},\ \omega$ nie zostały ustalone w pracy, jedyne co jest ustalone to
 \[ \alpha_{12} < \alpha_{21}\quad 0 < \omega \le 2000 \]
-więc zbadamy problem dla 2 arbitralnie wybranych zestawów wartości tych parametrów:
+więc zbadamy problem dla 2 arbitralnie wybranych zestawów wartości tych parametrów (oznaczamy jako ,,Parametry'' w tabelach z wynikami):
 \begin{itemize}
 \item{(CC)} $\quad \alpha_{12} = 0.1 \quad \alpha_{21} = 0.15 \quad \omega = 1000$
 \item{(DC)} $\quad \alpha_{12} = 0.5 \quad \alpha_{21} = 0.75 \quad \omega = 2000$ 
 \end{itemize}
-Oznaczane ,,Parametry'' w tabelach z wynikami.
 \subsubsection{Algorytmy}
 Do eksperymentów użyte zostało środowisko Octave. Optymalizator FMINICON na tym środowisku umożliwia użycie jednego z dwóch algorytmów do optymalizacji nieliniowej:
+%TODO: krótkie wyjaśnienie co to za algorytmy
 \begin{itemize}
 \item{\it lm\_feasible\/} oznaczany w skrócie {\it lm\/}
 \item{\it sqp\/}
 \end{itemize}
 Jedną z różnic między tymi algorytmami jest to, że {\it lm\_feasable\/} zachowuje ograniczenia w trakcie optymalizacji, natomiast {\it sqp\/} wymusza ograniczenia jedynie na koniec procesu optymalizacji. W eksperymentach przetestowane zostały oba z tych algorytmów.
 \subsubsection{Metody dyskretyzacji}
+Do dyskretyzcji sterowania użyjemy dwóch metod (oznaczane ,,aproks.'' tabelach z wynikami):
 \begin{itemize}
 \item{$P_0$:} wykorzystująca splajny kawałkami stałe, zob. (\ref{dcontrol_1})
 \item{$P_1$:} wykorzystująca splajny kawałkami liniowe, zob. (\ref{dcontrol_2})
 \end{itemize}
-Oznaczane ,,aproks.'' tabelach z wynikami.
-\subsubsection{Siatki dyskretyzacji sterowania}
+Splajny te opierają się na siatce która, na użytek eksperymentu, może być jednego z trzech rodzajów (oznaczane ,,siatka'' w tabelach z wynikami):
 \begin{itemize}
 \item{$S_{\tau}$:} jednorodna, z krokiem $\tau$, więc $t_n = \tau n$. Ograniczymy się do $\tau \in \{0.1, 0.5, 1, 4\}$.
 \item{$N_{sr}$: Niejednorodna, gęstsza w środku} $t_n = \begin{cases}
@@ -335,8 +335,7 @@ Oznaczane ,,aproks.'' tabelach z wynikami.
     150 + 0.5\cdot (n - 200) \iif n > 200
   \end{cases}$
 \end{itemize}
-Oznaczane ,,siatka'' w tabelach z wynikami.
-\subsubsection{Kroki dyskretyzacji $h$ metody R-K rozwiązania (\ref{odesim})}
+\subsubsection{Krok dyskretyzacji $h$ metody R-K rozwiązania (\ref{odesim})}
 Ograniczymy się do $h \in \{0.02, 0.1, 0.5\}$.
 \subsubsection{Sterowania startowe}
 \begin{itemize}
@@ -660,9 +659,9 @@ Jak widzimy, wyniki dla różnych rodzajów parametrów znacznie się różnią.
 \subsection{Krytyka wyników}
 Wszystkie wyniki które udało się osiągnąć są minimami lokalnymi. Jak już zauważyliśmy, wyniki były mocno zależne od punktu startowego, nawet w przypadku algorytmu {\it sqp}, który powinien szukać rozwiązania bardziej globalnie. Być może zastosowanie innych algorytmów optymalizacji nieliniowej umożliwiłoby szukanie rozwiązania w sposób mniej zależący od znalezienia dobrego punktu startowego.
 
-Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tępa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą Solana wyższego rzędu też mogłoby poprawić tępo zbieżności. W literaturze rozważa też metody automatyzacji znajdowania siatki dyskretyzacji i odpowiedniego rzędu dyskretyzacji. Przykładem jest tu praca~\cite{Rao-ph}. Być może zastosowanie ich umożliwiłoby uzyskanie lepszych wyników.
+Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tępa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą Solana wyższego rzędu też mogłoby poprawić tempo zbieżności. W literaturze rozważa też metody automatyzacji znajdowania siatki dyskretyzacji i odpowiedniego rzędu dyskretyzacji. Przykładem jest tu praca~\cite{Rao-ph}. Być może zastosowanie ich umożliwiłoby uzyskanie lepszych wyników.
 
-Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z Rysunku~\ref{max_plot} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach 2, w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{\max}$ minimalna wartość $y_3$ wynosi ok. $0.02$, więc ten eksperyment może być obarczony istotnym błędem numerycznym.
+Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z Rysunku~\ref{max_plot} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach (DC), w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{\max}$ minimalna wartość $y_3$ wynosi ok. $0.02$, więc ten eksperyment może być obarczony istotnym błędem numerycznym.
 
 \newpage{}
 \bibliography{bibliography}{}
