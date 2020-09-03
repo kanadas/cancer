@@ -37,20 +37,20 @@ with open(sys.argv[1], "r") as in_file:
 #starts = ["$g_0$", "$g_3$"]
 
 #Discretization test
-parameters = ["(DC)"]
-backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-discrs = ["$P_0$", "$P_1$"]
-grids = ["$S_{0.5}$"]
-steps = ["0.1"]
-starts = ["$g_0$", "$g_{0.4,42.5}$"]
-
-# Grid test
 #parameters = ["(DC)"]
 #backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-#discrs = ["$P_0$"]
-#grids = ["$S_1$", "$S_{0.5}$", "$N_{sr}$"]
+#discrs = ["$P_0$", "$P_1$"]
+#grids = ["$S_{0.5}$"]
 #steps = ["0.1"]
 #starts = ["$g_0$", "$g_{0.4,42.5}$"]
+
+# Grid test
+parameters = ["(DC)"]
+backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+discrs = ["$P_0$"]
+grids = ["$S_1$", "$S_{0.5}$", "$S_{0.1}$", "$N_{sr}$"]
+steps = ["0.1"]
+starts = ["$g_0$", "$g_{0.4,42.5}$"]
 
 # h test
 #parameters = ["(DC)"]

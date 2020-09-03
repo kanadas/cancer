@@ -126,9 +126,9 @@ points = t0 : 0.1 : T;
 N = length(points);
 h = 0.1;
 start40 = [zeros(1,85*5), 40*ones(1,315*5+1)]/100;
-start55 = [zeros(1,85*5), 55*ones(1,315*5+1)]/100;
-[p_s01, res_s01, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants);
-[p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
+[p_s1, res_s1, cvg_s1, outp_s1] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, "active-set");
+disp("DONE 1")
+[p_s2, res_s2, cvg_s2, outp_s2] = run_opt(points, x0, start40, h, @const_discr, constants, "active-set");
 
 %BEST
 % 2. & {\it sqp\/} & stała & $S_{0.5}$ & 0.1 & $g_{0,0.55}$ & 2.71 & 10 & 130 \\

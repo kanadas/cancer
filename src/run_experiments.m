@@ -23,7 +23,9 @@ function run_experiments()
 					      discretizations{k},
 					      constants{i},
 					      backends{j});
-		results(idx,:) = [res, outp.niter, outp.nobjf];
+		[y, dy] = objf(p, grids{l}, x0, steps{m}, discretizations{k}, constants{i});
+		solutions(idx, :) = p;
+		results(idx,:) = [res, outp.niter, outp.nobjf, dy];
 		idx = idx + 1;
               endfor
 	    endfor
@@ -32,6 +34,7 @@ function run_experiments()
       endfor
     endfor
     
+    save([fname "_solutions"], "solutions");
     save("-ascii", fname, "results");
   endfunction
 
@@ -92,19 +95,17 @@ function run_experiments()
 % Discretization test
   disp("TEST DISCRETIZATION");
   constants = {c2};
-%  backends = {"lm_feasible", "active-set"};
-  backends = {"lm_feasible"};
+  backends = {"lm_feasible", "active-set"};
   discretizations = {@const_discr, @linear_discr};
   grids = {t0 : 0.5 : T};
   steps = {0.1};
   starts = {start0, start40};
-    run(constants, backends, discretizations, grids, steps, starts, "res/res_discr_lm")
+  run(constants, backends, discretizations, grids, steps, starts, "res/res_discr_lm")
 
 % Grid test
   disp("TEST GRID")
   constants = {c2};
-%  backends = {"lm_feasible", "active-set"};
-  backends = {"lm_feasible"};
+  backends = {"lm_feasible", "active-set"};
   discretizations = {@const_discr};
   grids = {t0 : 1 : T,
 	   t0 : 0.5 : T,
@@ -113,13 +114,12 @@ function run_experiments()
 	  };
   steps = {0.1};
   starts = {start0, start40};
-    run(constants, backends, discretizations, grids, steps, starts, "res/res_grid_lm")
+  run(constants, backends, discretizations, grids, steps, starts, "res/res_grid_lm")
 
 % h test
   disp("TEST h")
   constants = {c2};
-%  backends = {"lm_feasible", "active-set"};
-  backends = {"lm_feasible"};
+  backends = {"lm_feasible", "active-set"};
   discretizations = {@const_discr};
   grids = {t0 : 0.5 : T};
   steps = {0.5, 0.1, 0.02};
@@ -129,8 +129,7 @@ function run_experiments()
 % start test
   disp("TEST START")
   constants = {c2};
-%  backends = {"lm_feasible", "active-set"};
-  backends = {"lm_feasible"};
+  backends = {"lm_feasible", "active-set"};
   discretizations = {@const_discr};
   grids = {t0 : 0.5 : T};
   steps = {0.1};

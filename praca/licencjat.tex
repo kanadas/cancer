@@ -323,7 +323,7 @@ Jedną z różnic między tymi algorytmami jest to, że {\it lm\_feasable\/} zac
 Oznaczane ,,aproks.'' tabelach z wynikami.
 \subsubsection{Siatki dyskretyzacji sterowania}
 \begin{itemize}
-\item{$S_{\tau}$:} jednorodna, z krokiem $\tau$, więc $t_n = \tau n$. Ograniczymy się do $\tau \in \{0.5, 1, 4\}$.
+\item{$S_{\tau}$:} jednorodna, z krokiem $\tau$, więc $t_n = \tau n$. Ograniczymy się do $\tau \in \{0.1, 0.5, 1, 4\}$.
 \item{$N_{sr}$: Niejednorodna, gęstsza w środku} $t_n = \begin{cases}
     n \iif n \le 25 \\
     25 + 0.1\cdot(n-25) \iif 25 < n \le 525 \\
@@ -343,6 +343,7 @@ Ograniczymy się do $h \in \{0.02, 0.1, 0.5\}$.
 \item $g_0\equiv 0$
 \item $g_{3} \equiv g_{\max} = 3$
 \item $g_{\alpha,\beta} = \alpha \cdot \1_{[\beta, T]}$. Ograniczymy się do: $g_{0.4,42.5},\ g_{0.55,42.5}$.
+\item $\mathfrak{g} = 3 \cdot \1_{[0,10]} + 0.5 \cdot \1_{[50, T]}$
 \end{itemize}
 Oznaczane ,,start'' w tabelach z wynikami.
 
@@ -382,7 +383,9 @@ Pierwszy eksperyment ma na celu zaprezentowanie poprawności implementacji oblic
 \end{figure}
 Rozwiązania uzyskane obiema metodami są bardzo podobne, o czym świadczą wyniki zaprezentowane na Tabeli~\ref{test_tbl} i Rysunku~\ref{test_nograd_sol}. Ponadto nasza implementacja osiągnęła minimalnie lepszy wynik.
 
-Aby zyskać jeszcze większą pewność o poprawności naszej implementacji policzymy gradient $\hat{J}$ względem parametrów $g_i$, w punkcie zaprezentowanym na (\ref{test_sol}) przy użyciu naszej implementacji (oznaczmy go $G$), oraz przy użyciu metody różnic skończonych dla różnych wartości kroku $\tau \in \{10^{-3},\ldots,10^{-10}\}$ (oznaczmy je $G_\tau$). Następnie dla wszystkich $\tau$ obliczymy $\norm{G - G_\tau}_1$. Wyniki tych obliczneń przedstawiamy na Tabeli~\ref{grad_fd_tbl}.
+Aby zyskać jeszcze większą pewność o poprawności naszej implementacji policzymy gradient $\hat{J}$ względem parametrów $g_i$, w punkcie będącym sterowaniem zaprezentowanym na wykresie~(\ref{test_sol}). Porównamy gradient $G$ obliczony przy użyciu naszej implementacji, oraz gradient $G_\tau$ uzyskany za pomocą metody różnic skończonych dla różnych wartości kroku różnic skończonych
+\[\tau \in \{10^{-3},\ldots,10^{-10}\}.\]
+Następnie dla wszystkich $\tau$ obliczymy normę różnicy: $\norm{G - G_\tau}_1$. Wyniki tych obliczneń przedstawiamy na Tabeli~\ref{grad_fd_tbl}.
 
 \begin{table}[h!]
   \begin{center}
@@ -397,9 +400,9 @@ Aby zyskać jeszcze większą pewność o poprawności naszej implementacji poli
   \end{center}
 \end{table}
 
-Zgodnie z oczekiwaniami gdy krok różnic skończonych $\tau$ maleje, do pewnego momentu maleje też $\norm{G - G_\tau}_1$. W pewnym momencie norma ta zaczyna rosnąć wraz z dalszym zmniejszaniem $\tau$, co też jest zachowaniem oczekiwanym.
+Zgodnie z oczekiwaniami gdy krok różnic skończonych $\tau$ maleje, to do pewnego momentu maleje też $\norm{G - G_\tau}_1$. W pewnym momencie norma ta zaczyna rosnąć wraz z dalszym zmniejszaniem $\tau$, co też jest zachowaniem oczekiwanym.
 
-Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{test_tbl} nie uwzględnia wywołań potrzebnych do aproksymacji gradientu metodą różnic skończonych. Aby policzyć pochodną dla jednego parametru potrzeba raz dodatkowo wywołać $\hat{J}$, więc jednorazowe policzenie gradientu wymaga tylu wywołań ile jest parametrów (w tym przypadku 51). Gradient jest liczony w każdej iteracji co daje łącznie $20\cdot 51 = 1020$ dodatkowych wywołań $\hat{J}$. Inną wadą przybliżania gradientu metodą różnic skończonych są błędy. Zauważmy, że w okolicy punktu przecięcia się krzywych $y_1$ i $y_2$ wartość i pochodna wyrażenia $G((y_2(t) - y_1(t))/\epsilon) = \frac{1 + \tanh(x)}{2}$ zmienia się bardzo szybko w czasie, co powoduje znaczne błędy przy zbyt dużym kroku metody różnic skończonych.
+Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{test_tbl} nie uwzględnia wywołań potrzebnych do aproksymacji gradientu metodą różnic skończonych. Aby policzyć pochodną dla jednego parametru potrzeba raz dodatkowo wywołać $\hat{J}$, więc jednorazowe policzenie gradientu wymaga tylu wywołań ile jest parametrów (w tym przypadku 51). Gradient jest liczony w każdej iteracji co daje łącznie $20\cdot 51 = 1020$ dodatkowych wywołań $\hat{J}$. Inną wadą przybliżania gradientu metodą różnic skończonych są błędy. Zauważmy, że w okolicy punktu przecięcia się krzywych $y_1$ i $y_2$ wartość i pochodna wyrażenia $G((y_2(t) - y_1(t))/\epsilon)$, gdzie $G(x) = \frac{1 + \tanh(x)}{2}$, zmienia się bardzo szybko w czasie, co powoduje znaczne błędy przy zbyt dużym kroku metody różnic skończonych, co możemy też zaobserwować na Tabeli~\ref{grad_fd_tbl}, w postaci dużej normy różnicy gradientów, gdy krok różnic skończonych to $10^{-3}$, czyli wartość domyślna w FMINICON użyta też do obliczenia wyników tego eksperymentu.
 
 \subsubsection{Parametry (CC)}
 
@@ -420,6 +423,8 @@ Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{te
       (CC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
       \hline
       (CC) & {\it lm\/} & $P_1$ & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 \\
+      \hline
+      (CC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.14 & 9 & 10 \\
       \hline
       (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
       \hline
@@ -477,7 +482,7 @@ Jako, że najlepsze znalezione rozwiązanie dla tych parametrów jest dość pro
   \end{center}
 \end{table}
 
-Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować, że dla sterowania startowego $g_0$, dyskretyzacja $P_2$ osiąga zauważalnie lepsze rezultaty niż dyskretyzacja $P_0$. Dla algorytmu {\it lm\/} zastosowanie dyskretyzacji liniowej poprawiło wyniki, natomiast dla algorytmu {\it sqp\/} zmniejszyło zarówno liczbę iteracji jak i liczbę wywołań prawie dwukrotnie. Gdy punkt startowy to $g_{0.4,42.5}$, to obie dyskretyzacje osiągają prawie identyczne rezultaty, a wręcz dyskretyzacja $P_0$ wymaga minimalnie mniejszej liczby wywołań funkcji celu. 
+Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować, że dla sterowania startowego $g_0$, dyskretyzacja $P_1$ osiąga zauważalnie lepsze rezultaty niż dyskretyzacja $P_0$. Dla algorytmu {\it lm\/} zastosowanie dyskretyzacji liniowej poprawiło wyniki, natomiast dla algorytmu {\it sqp\/} zmniejszyło zarówno liczbę iteracji jak i liczbę wywołań prawie dwukrotnie. Gdy punkt startowy to $g_{0.4,42.5}$, to obie dyskretyzacje osiągają bardzo podobne rezultaty.
 
 \subsubsection{Siatka dyskretyzacji}
 
@@ -485,29 +490,33 @@ Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.09 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.08 & 63 & 121 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 2.81 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.1}$ & 0.1 & $g_0$ & 3.0 & 199 & 396 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.02 & 20 & 40 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.77 & 20 & 39 \\
+      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.02 & 25 & 51 \\
       \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.16 & 14 & 164 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 4.07 & 24 & 85 \\
-      \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
-      \hline
       (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.39 & 15 & 172 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 2.78 & 118 & 231 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.1}$ & 0.1 & $g_{0.4,42.5}$ & 2.81 & 38 & 81 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 48 & 96 \\
+      \hline
+      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 4.07 & 24 & 85 \\
+      \hline
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
       (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 8 & 104 \\
       \hline
@@ -516,9 +525,9 @@ Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować
   \end{center}
 \end{table}
 
-Pierwszym wnioskiem na temat siatki dyskretyzacji który możemy wyciągnąć z Tabeli~\ref{grid_tbl} jest to, że siatka dyskretyzacji nie ma zbyt dużego wpływu na końcowy wynik. Dla testów różniących się tylko siatką dyskretyzacji, różnica w wynikach dla algorytmu {\it lm\/} wynosi co najwyżej $0.09$. Nie ma też istotnych różnic w liczbie iteracji ani liczbie wywołań $\hat{J}$. Dla algorytmu {\it sqp\/} siatka dyskretyzacji ma już większe znaczenie, różnice wynoszą nawet $0.23$, pojawają się też większe różnice w liczbie iteracji i wywołań $\hat{J}$.
+Pierwszym wnioskiem na temat siatki dyskretyzacji który możemy wyciągnąć z Tabeli~\ref{grid_tbl} jest to, że dla algorytmu {\it lm\/} siatka dyskretyzacji nie ma zbyt dużego wpływu na końcowy wynik. Dla testów różniących się tylko siatką dyskretyzacji, różnica w wynikach dla algorytmu {\it lm\/} wynosi co najwyżej $0.09$. Możemy zauważyć, że zwykle wynik poprawia się wraz z zagęszczaniem siatki, ale jak widzimy dla startu $g_{0.4,42.5}$ i siatki $S_{0.1}$, zagęszczenie satki może pogorszyć wynik. Siatka nieregularna dla tego algorytmu nie osiągała najlepszych wyników, ale zbiegała znacznie szybciej niż siatki regularne o podobnych wynikach.
 
-Co ciekawe, dla startu $g_0$ siatka $S_1$ (czyli siatka o kroku 1) osiąga lepsze wyniki niż siatka $S_{0.5}$, ale przy starcie $g_{0.4,42.5}$ gęstsza siatka osiąga już lepsze wyniki, choć różnice są bardzo niewielkie. Siatka $N_{sr}$ (czyli siatka niejednorodna gęstsza na przedziale $[25, 75]$), przy startcie $g_0$, osiąga najlepsze wyniki  dla algorytmu {\it lm\/} oraz najgorsze dla algorytmu {\it sqp}.
+Dla algorytmu {\it sqp\/} i startu $g_0$ siatka dyskretyzacji ma już większe znaczenie, różnice wynoszą nawet $0.23$. Najlepszy wynik w tym przypadku osiąga siatka $S_1$, a siatka niejednorodna --- najgorszy. 
 
 Wyniki dla algorytmu {\it sqp\/} siatki $S_1$ i startu $g_{0.4,42.5}$ są podejrzane. Wartość $\hat{J}$ dla sterowania startowego $g_{0.4,42.5}$ wynosi $30.1$, więc jest lepsza niż wynik. Sprawdzenie wyników dla wywołań pośrednich ujawniło, że algorytm w trakcie optymalizacji osiągał wyniki podobne jak pozostałe testy dla tego sterowania startowego. Takie zachowanie byłoby teoretycznie możliwe dla tego algorytmu, ponieważ nie wymaga on spełnienia ograniczeń w trakcie optymalizacji, więc mógłby nie znaleźć lepszego punktu spełniającego ograniczenia. Jednakże punkt startowy spełnia ograniczenia, więc zachowanie takie wydaje się błędem optymalizatora.
 
@@ -528,38 +537,38 @@ Wyniki dla algorytmu {\it sqp\/} siatki $S_1$ i startu $g_{0.4,42.5}$ są podejr
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.2 & 20 & 39 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.12 & 79 & 156 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.76 & 20 & 41 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 2.95 & 20 & 42 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.76 & 20 & 41 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 2.94 & 129 & 256 \\
       \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.28 & 8 & 92 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 10 & 127 \\
-      \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
-      \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 3.31 & 9 & 106 \\
       \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 83 & 159 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.75 & 91 & 179 \\
+      \hline
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 10 & 127 \\
+      \hline
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
+      \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.75 & 13 & 166 \\
       \hline
-    \end{tabular}    
+    \end{tabular}
     \caption{Eksperymenty badające krok dyskretyzacji $h$}\label{step_tbl}
   \end{center}
 \end{table}
 
-Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it lm\/} zachowuje się przewidywalnie, to znaczy im niższy, tym lepsze wyniki. Co ciekawe, dla algorytmu {\it sqp\/} zależność jest odwrotna, choć różnice w wynikach są dość nieznaczne (rzędu $0.03$). Dla sterowania startowego $g_{0.4,42.5}$ krok dyskretyzacji wydaje się nie mieć prawie żadnego wpływu na wynik. Można też zauważyć pewien wzrost liczby wywołań $\hat{J}$ wraz ze spadkiem długości kroku.
+Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it lm\/} zachowuje się przewidywalnie, to znaczy im niższy, tym lepsze wyniki. Co ciekawe, dla algorytmu {\it sqp\/} zależność jest odwrotna, choć różnice w wynikach są dość nieznaczne (rzędu $0.03$). Dla sterowania startowego $g_{0.4,42.5}$ krok dyskretyzacji wydaje się nie mieć prawie żadnego wpływu na wynik.
 
 \subsubsection{Sterowanie startowe}
 
@@ -567,23 +576,27 @@ Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it 
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.11 & 20 & 40 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 20 & 42 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.72 & 20 & 42 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
       \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
       \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
+      \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
       \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
       \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.72 & 31 & 64 \\
+      \hline
       (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.71 & 10 & 130 \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $\mathfrak{g}$ & 2.82 & 87 & 169 \\
+      \hline
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $\mathfrak{g}$ & 2.81 & 100 & 1065 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające sterowanie startowe}\label{start_tbl}
@@ -599,7 +612,7 @@ Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it 
 
 Jak mogliśmy się już przekonać na poprzednich eksperymentach i co potwierdzają wyniki z Tabeli~\ref{start_tbl}, dobór odpowiedniego sterowania startowego jest kluczowy.
 
-Widzimy, że przy parametrach 2, podobnie jak przy parametrach 1, sterowanie $g_3$ (czyli stale równe $3 = g_{\max}$) wydaje się być minimum lokalnym, ale w tym przypadku znacznie gorszym od pozostałych rezultatów. Najlepsze wyniki osiągane są dla sterowania startowego $g_{0.55,42.5}$. Widzimy też, że algorytm {\it sqp\/} osiąga ogólnie lekko lepsze wyniki niż algorytm {\it lm}, ale wymaga znacznie większej ilości czasu.
+Widzimy, że przy parametrach (DC), podobnie jak przy parametrach (CC), sterowanie $g_3$ (czyli stale równe $3 = g_{\max}$) wydaje się być minimum lokalnym, ale w tym przypadku znacznie gorszym od pozostałych rezultatów. Najlepsze wyniki osiągane są dla sterowania startowego $g_{0.55,42.5}$. Ciekawe wyniki wychodzą sterowania startowego $\mathfrak{g}$. Jest to bardziej skomplikowane sterowanie startowe niż pozostałe i nie osiąga zby dobrych wyników. Ponadto wymaga stosunkowo dużo iteracji i wywołań funkcji $\hat{J}$, szczególne dla algorytmu {\it sqp\/} który potrzebował aż 1065 wywołań w 100 iteracjach, co było ustawione jako maksymalna liczba iteracji dla tego algorytmu.
 
 Najlepszy wynik to $2.71$ i osiągneliśmy go dla sterowania startowego $g_{0.55,42.5}$ i algorytmu {\it sqp}. Zaprezentowany jest on na Rysunku~\ref{param2_best_sol}.
 
