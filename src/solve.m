@@ -50,7 +50,11 @@ N = length(points);
 start_bang = 1:N;
 start_bang = start_bang < N/2;
 
+[y0, dy0] = objf(zeros(N,1), points, x0, h, @const_discr, constants);
+
 [p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants);
+[y, dy] = objf(p, points, x0, h, @const_discr, constants);
+
 #no gradient calculation experimment
 points = t0 : 4 : T;
 N = length(points);
@@ -187,68 +191,38 @@ pstarting = [(16/3 + 0.07)*ones((N-1)/4, 1); zeros((N+1)/2, 1); (-16/3 - 0.07)*o
 				 NONLCON = [],
 				 OPTIONS=optimset("GradObj", "on")); %, "Algorithm",  "active-set"));
 
+%TESTSSSTSTTST
+load "res/res_grid_solutions"; %solutions
 
+function s = start_bang(grid, point, val1, val2)
+  pos = lookup(grid, point);
+  s = [val1*ones(1, pos - 1), val2*ones(1, length(grid) - pos + 1)];
+endfunction
+start0 = @(grid) zeros(1, length(grid));
+start_max = @(grid) gmax*ones(1,length(grid));
+start40 = @(grid) start_bang(grid, 42.5, 0, 0.4);
+start55 = @(grid) start_bang(grid, 42.5, 0, 0.55);
+start3050 = @(grid) start_bang(grid, 10, 3, 0) + start_bang(grid, 50, 0, 0.5);
 
-%{
-Statystyki:
-nowe parametry:
-	Wynik dla:
-	zero control: 381831.74497
-	85x0 + 316x40:	301226.27469
-	85x0 + 316x55:  277858.64599
-	Eksperymenty:
-	     start 0:
-	     niter =  6
-	     nobjf =  17
-	     res =  324132.85096
-	     start bang:
-	     niter =  10
-	     nobjf =  26
-	     res =  283519.85873
-	     start best:
-	     niter =  19
-	     nobjf =  42
-	     res =  272466.20561
-	     active_set zero start:
-	     niter =  3
-	     nobjf =  57
-	     res =  340595.93819
-	     active set best start:
-	     niter =  7
-             nobjf =  110
-	     res =  272502.70105
-	Siatka niejednorodna:
-	       start 0:
-	       niter =  20
-	       nobjf =  42
-	       res =  295303.82581
-	       active set zero start:
-	       niter =  2
-	       nobjf =  53
-	       res =  348091.22831
-	       start bang:
-	       niter =  14
-	       nobjf =  35
-	       res =  277775.51745
-	       start best:
-    	       niter =  19
-	       nobjf =  42
-	       res =  272848.18541
-stare parametry:
-      Wynik dla	 
-      zero control: 567688.31755
-      max control:  213575.68897
-      Eksperymenty:
-             start 0:
-	     niter =  6
-	     nobjf =  15
-	     res =  234437.61671
-	     max start:
-	     niter =  1
-	     nobjf =  2
-    	     res =  213575.68897
-	     active set zero start:
-	     niter =  8
-	     nobjf =  9
-	     res =  213575.68897
+points = t0 : 1 : T;
+points = t0 : 0.5 : T;
+%points = t0 : 0.1 : T;
+points = [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)];
+start = start40(points);
+start = start0(points);
 
+discr = @const_discr;
+
+p = solutions{1};
+[y, dy] = objf(p, points, x0, 0.1, discr, constants);
+[y0, dy0] = objf(start, points, x0, 0.1, discr, constants);
+
+points = t0 : 0.5 : T;
+start = [zeros(1,85), 55*ones(1,316)]/100;
+[p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants, 1e-9);
+save "data/sol_big_prec.mat" p, res, cvg, outp;
+
+[p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, 1e-9);
+
+start = 2.9*ones(N,1);
+[p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants1);

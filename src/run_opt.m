@@ -1,4 +1,4 @@
-function [p, res, cvg, outp] = run_opt(points, x0, g0, h, discr_fun, constants, algorithm = "lm_feasible", do_grad = "on")
+function [p, res, cvg, outp] = run_opt(points, x0, g0, h, discr_fun, constants, TolFun=1e-6, algorithm = "lm_feasible", do_grad = "on")
   gmax = 3;
   N = length(points);
   maxIter = 0;
@@ -17,5 +17,5 @@ function [p, res, cvg, outp] = run_opt(points, x0, g0, h, discr_fun, constants, 
 			       OPTIONS=optimset("GradObj", do_grad,
 						"Algorithm", algorithm,
 					        "MaxIter", maxIter,
-					        "TolFun", 1e-6));
+					        "TolFun", TolFun));
 endfunction

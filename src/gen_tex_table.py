@@ -1,20 +1,32 @@
 import sys
 import itertools
 
-if len(sys.argv) != 2:
-    print("Usage: python " + sys.argv[0] + " <filename>")
+if not (len(sys.argv) in [2,3]):
+    print("Usage: python " + sys.argv[0] + " <filename> [<filename>]")
     exit(1)
 
-best = 1e9
+if len(sys.argv) > 2:
+    with open(sys.argv[2], "r") as in_file:
+        grads = [float(line) for line in in_file]
     
+best = 1e9
+
+i = 0
+
 def convert_row(row):
     global best
+    global i
     best = min(best, row[0])
     row[0] = str(round(1e-5*row[0], 2))
     if len(row) > 1:
         row[1] = str(round(row[1]))
         row[2] = str(round(row[2]))
-        row[3] = str(row[3])
+        if len(row) > 4:
+            row[4] = (str(round(row[4] / row[3], 1)))
+        if len(sys.argv) > 2:
+            row.append(str(round(grads[i] / row[3], 1)))
+            i += 1
+        row[3] = str(round(1e-5*row[3],2))
     return row
     
 content = []    
@@ -38,18 +50,18 @@ with open(sys.argv[1], "r") as in_file:
 #starts = ["$g_0$", "$g_3$"]
 
 #Discretization test
-parameters = ["(DC)"]
-backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-discrs = ["$P_0$", "$P_1$"]
-grids = ["$S_{0.5}$"]
-steps = ["0.1"]
-starts = ["$g_0$", "$g_{0.4,42.5}$"]
+#parameters = ["(DC)"]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["$P_0$", "$P_1$"]
+#grids = ["$S_{0.5}$"]
+#steps = ["0.1"]
+#starts = ["$g_0$", "$g_{0.4,42.5}$"]
 
 # Grid test
 #parameters = ["(DC)"]
 #backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
 #discrs = ["$P_0$"]
-#grids = ["$S_1$", "$S_{0.5}$", "$S_{0.1}$", "$N_{sr}$"]
+#grids = ["$S_1$", "$S_{0.5}$", "$N_{sr}$"]
 #steps = ["0.1"]
 #starts = ["$g_0$", "$g_{0.4,42.5}$"]
 
@@ -62,16 +74,16 @@ starts = ["$g_0$", "$g_{0.4,42.5}$"]
 #starts = ["$g_0$", "$g_{0.4,42.5}$"]
 
 # start test
-#parameters = ["(DC)"]
-#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-#discrs = ["$P_0$"]
-#grids = ["$S_{0.5}$"]
-#steps = ["0.1"]
-#starts = ["$g_0$", "$g_3$", "$g_{0.4,42.5}$", "$g_{0.55,42.5}$", "$\\mathfrak{g}$"]
+parameters = ["(DC)"]
+backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+discrs = ["$P_0$"]
+grids = ["$S_{0.5}$"]
+steps = ["0.1"]
+starts = ["$g_0$", "$g_3$", "$g_{0.4,42.5}$", "$g_{0.55,42.5}$"] #, "$\\mathfrak{g}$"]
 
-res = '''\\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+res = '''\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
 \\hline
-Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\\#\\hat{J}$ $ $\norm{G}_1$ \\\\
+Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\\#\\hat{J}$ & $\\norm{G}_1$ & $\\frac{\\norm{G_0}_1}{\\norm{G}_1}$ \\\\
 \\hline
 '''
 cases = [case + (tuple(result)) for (case,result) in

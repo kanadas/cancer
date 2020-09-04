@@ -407,35 +407,33 @@ Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana na Tabeli~\ref{te
 
 \begin{table}[h]
   \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ & $\norm{G}_1$ & $\frac{\norm{G_0}_1}{\norm{G}_1}$ \\
       \hline
-      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 2.2 & 3 & 8 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 2.2 & 3 & 8 & 0.32 & 16.8 \\
       \hline
-      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.19 & 3 & 8 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.19 & 3 & 8 & 0.32 & 17.1 \\
       \hline
-      (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_0$ & 2.64 & 9 & 14 \\
+      (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_0$ & 2.64 & 9 & 14 & 0.8 & 6.8 \\
       \hline
-      (CC) & {\it lm\/} & $P_1$ & $S_1$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      (CC) & {\it lm\/} & $P_1$ & $S_1$ & 0.1 & $g_0$ & 2.21 & 2 & 7 & 0.33 & 16.3 \\
       \hline
-      (CC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 \\
+      (CC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.21 & 2 & 7 & 0.33 & 16.3 \\
       \hline
-      (CC) & {\it lm\/} & $P_1$ & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 \\
+      (CC) & {\it lm\/} & $P_1$ & $N_{kon}$ & 0.1 & $g_0$ & 2.66 & 2 & 7 & 0.83 & 6.5 \\
       \hline
-      (CC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.14 & 9 & 10 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 & 0.26 & 1.0 \\
       \hline
-      (CC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 & 0.26 & 1.0 \\
       \hline
-      (CC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 & 0.26 & 1.0 \\
       \hline
-      (CC) & {\it lm\/} & $P_0$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_1$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 & 0.26 & 1.0 \\
       \hline
-      (CC) & {\it lm\/} & $P_1$ & $S_1$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 & 0.26 & 1.0 \\
       \hline
-      (CC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
-      \hline
-      (CC) & {\it lm\/} & $P_1$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 \\
+      (CC) & {\it lm\/} & $P_1$ & $N_{kon}$ & 0.1 & $g_3$ & 2.14 & 1 & 2 & 0.26 & 1.0 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty z parametrami (CC) dla różnych wyborów aproksymacji, siatki i startu}\label{param1_tbl}
@@ -456,25 +454,25 @@ Jako, że najlepsze znalezione rozwiązanie dla tych parametrów jest dość pro
 
 \begin{table}[h!]
   \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ & $\norm{G}_1$ & $\frac{\norm{G_0}_1}{\norm{G}_1}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 & 141.46 & 0.0 \\
       \hline
-      (DC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.94 & 95 & 185 \\
+      (DC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 2.94 & 95 & 185 & 23.69 & 0.1 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 & 32.34 & 0.1 \\
       \hline
-      (DC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.28 & 9 & 105 \\
+      (DC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.28 & 9 & 105 & 7.64 & 0.4 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 & 13.07 & 0.2 \\
       \hline
-      (DC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.74 & 103 & 202 \\
+      (DC) & {\it lm\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.74 & 103 & 202 & 32.08 & 0.1 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 & 5.67 & 0.4 \\
       \hline
-      (DC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 136 \\
+      (DC) & {\it sqp\/} & $P_1$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 136 & 4.47 & 0.5 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające metodę dyskretyzacji}\label{discr_tbl}
@@ -487,44 +485,40 @@ Porównując odpowiednie wartości Tabeli~\ref{discr_tbl}, możemy zaobserwować
 
 \begin{table}[h!]
   \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ & $\norm{G}_1$ & $\frac{\norm{G_0}_1}{\norm{G}_1}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.08 & 63 & 121 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.08 & 63 & 121 & 161.6 & 0.0 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 & 141.46 & 0.0 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.1}$ & 0.1 & $g_0$ & 3.0 & 199 & 396 \\
+      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.02 & 25 & 51 & 7.09 & 0.4 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.02 & 25 & 51 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.16 & 14 & 164 & 63.94 & 0.0 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_0$ & 3.16 & 14 & 164 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 & 32.34 & 0.1 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.39 & 15 & 172 & 49.73 & 0.1 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_0$ & 3.39 & 15 & 172 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 2.78 & 118 & 231 & 22.23 & 0.1 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 2.78 & 118 & 231 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 & 13.07 & 0.2 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
+      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 48 & 96 & 74.96 & 0.0 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.1}$ & 0.1 & $g_{0.4,42.5}$ & 2.81 & 38 & 81 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 4.07 & 24 & 85 & 0.13 & 16.9 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.76 & 48 & 96 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 & 5.67 & 0.4 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_1$ & 0.1 & $g_{0.4,42.5}$ & 4.07 & 24 & 85 \\
-      \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
-      \hline
-      (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 8 & 104 \\
+      (DC) & {\it sqp\/} & $P_0$ & $N_{sr}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 8 & 104 & 4.55 & 0.5 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające siatkę dyskretyzacji}\label{grid_tbl}
   \end{center}
 \end{table}
 
-Pierwszym wnioskiem na temat siatki dyskretyzacji który możemy wyciągnąć z Tabeli~\ref{grid_tbl} jest to, że dla algorytmu {\it lm\/} siatka dyskretyzacji nie ma zbyt dużego wpływu na końcowy wynik. Dla testów różniących się tylko siatką dyskretyzacji, różnica w wynikach dla algorytmu {\it lm\/} wynosi co najwyżej $0.09$. Możemy zauważyć, że zwykle wynik poprawia się wraz z zagęszczaniem siatki, ale jak widzimy dla startu $g_{0.4,42.5}$ i siatki $S_{0.1}$, zagęszczenie satki może pogorszyć wynik. Siatka nieregularna dla tego algorytmu nie osiągała najlepszych wyników, ale zbiegała znacznie szybciej niż siatki regularne o podobnych wynikach.
+Zauważmy, że dla algorytmu {\it lm\/} siatka dyskretyzacji nie ma zbyt dużego wpływu na końcowy wynik. Dla testów różniących się tylko siatką dyskretyzacji, różnica w wynikach dla algorytmu {\it lm\/} wynosi co najwyżej $0.09$. Możemy zauważyć, że zwykle wynik poprawia się wraz z zagęszczaniem siatki, ale jak widzimy dla startu $g_{0.4,42.5}$ i siatki $S_{0.1}$, zagęszczenie satki może pogorszyć wynik. Siatka nieregularna dla tego algorytmu nie osiągała najlepszych wyników, ale zbiegała znacznie szybciej niż siatki regularne o podobnych wynikach.
 
 Dla algorytmu {\it sqp\/} i startu $g_0$ siatka dyskretyzacji ma już większe znaczenie, różnice wynoszą nawet $0.23$. Najlepszy wynik w tym przypadku osiąga siatka $S_1$, a siatka niejednorodna --- najgorszy. 
 
@@ -534,33 +528,33 @@ Wyniki dla algorytmu {\it sqp\/} siatki $S_1$ i startu $g_{0.4,42.5}$ są podejr
 
 \begin{table}[h]
   \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ & $\norm{G}_1$ & $\frac{\norm{G_0}_1}{\norm{G}_1}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.12 & 79 & 156 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.12 & 79 & 156 & 1.98 & 1.5 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 & 141.46 & 0.0 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 2.94 & 129 & 256 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 2.94 & 129 & 256 & 2.77 & 1.1 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.28 & 8 & 92 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_0$ & 3.28 & 8 & 92 & 13.11 & 0.2 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 & 32.34 & 0.1 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 3.31 & 9 & 106 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_0$ & 3.31 & 9 & 106 & 9.24 & 0.3 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 83 & 159 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 83 & 159 & 192.7 & 0.0 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 & 13.07 & 0.2 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.75 & 91 & 179 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.75 & 91 & 179 & 48.14 & 0.0 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 10 & 127 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.5 & $g_{0.4,42.5}$ & 2.75 & 10 & 127 & 6.17 & 0.4 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 & 5.67 & 0.4 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.75 & 13 & 166 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.02 & $g_{0.4,42.5}$ & 2.75 & 13 & 166 & 18.87 & 0.1 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające krok dyskretyzacji $h$}\label{step_tbl}
@@ -573,29 +567,25 @@ Krok dyskretyzacji, jak wnioskujemy z Tabeli~\ref{step_tbl}, dla algorytmu {\it 
 
 \begin{table}[h]
   \begin{center}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
       \hline
-      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ \\
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ & $\norm{G}_1$ & $\frac{\norm{G_0}_1}{\norm{G}_1}$ \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.04 & 81 & 158 & 141.46 & 0.0 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_0$ & 3.3 & 18 & 205 & 32.34 & 0.1 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 & 0.13 & 1.0 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_3$ & 4.07 & 1 & 2 & 0.13 & 1.0 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 120 & 236 & 13.07 & 0.2 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.4,42.5}$ & 2.75 & 10 & 123 & 5.67 & 0.4 \\
       \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.72 & 31 & 64 \\
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.72 & 31 & 64 & 50.43 & 0.0 \\
       \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.71 & 10 & 130 \\
-      \hline
-      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $\mathfrak{g}$ & 2.82 & 87 & 169 \\
-      \hline
-      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $\mathfrak{g}$ & 2.81 & 100 & 1065 \\
+      (DC) & {\it sqp\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.71 & 10 & 130 & 3.63 & 0.6 \\
       \hline
     \end{tabular}
     \caption{Eksperymenty badające sterowanie startowe}\label{start_tbl}
@@ -615,43 +605,30 @@ Widzimy, że przy parametrach (DC), podobnie jak przy parametrach (CC), sterowan
 
 Najlepszy wynik to $2.71$ i osiągneliśmy go dla sterowania startowego $g_{0.55,42.5}$ i algorytmu {\it sqp}. Zaprezentowany jest on na Rysunku~\ref{param2_best_sol}.
 
-%TODO zrobić optmalizację wzgl. punktu nieciągłości i wartości przed i po
-%\subsection{Analiza zastosowanych metod}
-%
-%\begin{table}[h]
-%  \begin{center}
-%    \begin{tabular}{|c|c|c|c|c|c|}
-%      \hline
-%      & backend & start & wynik & \#iteracji & \#wywołań $\hat{J}$ \\
-%      \hline
-%      \multirow{3}{5em}{Parametry (\ref{exp1})} & {\it lm\_feasible\/} & $g(t) = 0$ & 234437.6 & 6 & 15 \\
-%      \cline{2-6}
-%      & {\it lm\_feasible\/} & $g(t) = g_{max}$ & 213575.7 & 1 & 2 \\
-%      \cline{2-6}
-%      & {\it sqp\/} & $g(t) = 0$ & 213575.7 & 8 & 9 \\
-%      \hline
-%      \multirow{5}{5em}{Parametry (\ref{exp2})} & {\it lm\_feasible\/} & $g(t) = 0$ & 324132.9 & 7 & 17 \\
-%      \cline{2-6}
-%      & {\it lm\_feasible\/} & $g(t) = 0.4\cdot\1_{[42.5,200]}$ & 283519.9 & 10 & 26 \\
-%      \cline{2-6}
-%      & {\it lm\_feasible\/} & $g(t) = 0.55\cdot\1_{[42.5,200]}$ & 272466.2 & 19 & 42 \\
-%      \cline{2-6}
-%      & {\it sqp\/} & $g(t) = 0$ & 340595.9 & 3 & 57 \\
-%      \cline{2-6}
-%      & {\it sqp\/} & $g(t) = 0.55\cdot\1_{[42.5,200]}$ & 272502.7 & 7 & 110 \\
-%      \hline
-%      \multirow{3}{6em}{Parametry (\ref{exp2}), siatka niejednorodna} & {\it lm\_feasible\/} & $g(t) = 0$ & 295303.8 & 20 & 42 \\
-%      \cline{2-6}
-%      & {\It lm\_feasible\/} & $g(t) = 0.4\cdot\1_{[42.5,200]}$ & 277775.5 & 14 & 35 \\
-%      \cline{2-6}
-%      & {\it lm\_feasible\/} & $g(t) = 0.55\cdot\1_{[42.5,200]}$ & 272848.2 & 19 & 42 \\
-%      \cline{2-6}
-%      & {\it sqp\/} & $g(t) = 0$ & 348091.2 & 2 & 53 \\
-%      \hline
-%    \end{tabular}
-%  \end{center}
-%  \caption{Wyniki niektórych eksperymentów}\label{resulttab}
-%\end{table}  
+\subsection{Większa dokładność optymalizacji}
+Osiągane rozwiązania wydają się bardzo odległe od minimów lokalnych, co widzimy po wartościach $\norm{G}_1$ i $\frac{\norm{G_0}_1}{\norm{G}_1}$. Okazuje się, że proces optymalizacji jest przerywany przez optymalizator z powodu zbyt niewielkiej poprawy wartości $\hat{J}$ między iteracjami. Z tego powodu przeprowadzimy dodatkowe eksperymenty, w których zmienimy parametr tego warunku stopu (opcja ,,TolFun'' w FMINICON) z $10^{-6}$ na $10^{-9}$. Wartość tego parametru oznacza minimalną względną poprawę wartości funkcji celu. Na Tabeli~\ref{new_best_tbl} i Rysunku~\ref{new_best_sol} prezentujemy wyniki przeprowadzonego eksperymentu.
+
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+      \hline
+      Parametry & algorytm & aproks. & siatka & $h$ & start & $\hat{J}$ & iter & $\#\hat{J}$ & $\norm{G}_1$ & $\frac{\norm{G_0}_1}{\norm{G}_1}$ \\
+      \hline
+      (DC) & {\it lm\/} & $P_0$ & $S_{0.5}$ & 0.1 & $g_{0.55,42.5}$ & 2.69 & 412 & 722 & 0.79 & 2.6 \\
+      \hline
+    \end{tabular}
+    \caption{Eksperyment z większą dokładnością}\label{new_best_tbl}
+  \end{center}
+\end{table}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.5\textwidth]{../plots/plot_new_best}
+  \caption{Rozwiązanie przy większej dokładności}\label{new_best_sol}
+\end{figure}
+
+Jak widzimy spowodowało to zauważalną poprawę wyników, zmianę w kształcie znalezionego sterowania, ale kosztem znacznego wzrostu czasu optymalizacji.
+
 \section{Analiza i krytyka wyników}
 
 Jak widzimy, wyniki dla różnych rodzajów parametrów znacznie się różnią. Dokładniejsze przyjrzenie się funkcjonałowi celu (\ref{objfsim}) pozwala wyjaśnić takie zjawisko. Jak widzimy parametr $\omega$ jest mnożony przez wartość drugiej całki. Zauważmy, że funkcja pod drugą całką jest gładkim przybliżeniem funkcji znaku wyrażenia $y_2(t) - y_1(t)$. W 2-gim zestawie parametrów parametr $\omega$ jest znacznie większy niż w 1-szym, więc w tym przypadku druga całka ma większy wpływ na wynik funkcjonału. Jak przyjrzymy się rozwiązaniu z Rysunku~\ref{param2_best_sol}, widzimy, że punkt nieciągłości znajduje się od razu po przecięciu się krzywych $y_1$ i $y_2$, a po nim sterowanie ma taką wartość aby krzywe te były bardzo blisko siebie, ale przy zachowaniu $y_2(t) - y_1(t) < 0$. Wygląda więc na to, przy parametrach (DC)\ bardziej opłaca się utrzymywać stan $y_2(t) - y_1(t) < 0$, natomiast przy parametrach (CC)\ lepsze wyniki daje minimalizacja pierwszej całki, czyli pola pod $y_1 + y_2$. Możemy się też spodziewać, że wysokie wartości sterowania powodują zmniejszanie się zarówno $y_1$ jak i $y_2$, ale od pewnej wartości sterowania $y_1$ maleje szybciej niż $y_2$. Taka hipoteza zgadzałaby się z interpretacją $y_1$ i $y_2$ jako liczba komórek rakowych odpowiednio podatnych na działanie leku i odpornych na niego, a wartości sterowania jako dawki leku.
