@@ -5,9 +5,9 @@ function run_experiments()
   t0 = 0;
   T = 200;
   x0 = [20; 280; 650];
-  function run(constants, backends, discretizetions, grids, steps, starts, fname)
-    results = zeros(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts), 5);
-    solutins = cell(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts));
+  function run(constants, backends, discretizetions, grids, steps, starts, precisions, fname)
+    results = zeros(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts)*length(precisions), 5);
+    solutins = cell(length(constants)*length(backends)*length(discretizations)*length(grids)*length(steps)*length(starts)*length(precisions));
     idx = 1;
     for i = 1:length(constants)
       for j = 1:length(backends)
@@ -15,22 +15,25 @@ function run_experiments()
 	  for l = 1:length(grids)
 	    for m = 1:length(steps)
               for n = 1:length(starts)
-		disp(strcat("Processing experiment  ", int2str(idx) ));
-		start = starts{n}(grids{l});
-		[p, res, cvg, outp] = run_opt(grids{l},
-					      x0,
-					      start,
-					      steps{m},
-					      discretizations{k},
-					      constants{i},
-					      backends{j});
-		[y, dy] = objf(p, grids{l}, x0, steps{m}, discretizations{k}, constants{i});
-		[y0, dy0] = objf(start, grids{l}, x0, steps{m}, discretizations{k}, constants{i});
-		save(["bak/" fname "_sol_" num2str(idx)], "p");
-		solutions{idx} = p;
-		results(idx,:) = [res, outp.niter, outp.nobjf, norm(dy,1), norm(dy0,1)];
-		idx = idx + 1;
-              endfor
+		for o = 1:length(precisions)
+		  disp(strcat("Processing experiment  ", int2str(idx) ));
+		  start = starts{n}(grids{l});
+		  [p, res, cvg, outp] = run_opt(grids{l},
+						x0,
+						start,
+						steps{m},
+						discretizations{k},
+						constants{i},
+						precisions{o},
+						backends{j});
+		  [y, dy] = objf(p, grids{l}, x0, steps{m}, discretizations{k}, constants{i});
+		  [y0, dy0] = objf(start, grids{l}, x0, steps{m}, discretizations{k}, constants{i});
+		  save(["bak/" fname "_sol_" num2str(idx)], "p");
+		  solutions{idx} = p;
+		  results(idx,:) = [res, outp.niter, outp.nobjf, norm(dy,1), norm(dy0,1)];
+		  idx = idx + 1;
+		endfor
+	      endfor
 	    endfor
 	  endfor
 	endfor
@@ -68,7 +71,9 @@ function run_experiments()
   start_max = @(grid) gmax*ones(1,length(grid));
   start40 = @(grid) start_bang(grid, 42.5, 0, 0.4);
   start55 = @(grid) start_bang(grid, 42.5, 0, 0.55);
-  start3050 = @(grid) start_bang(grid, 10, 3, 0) + start_bang(grid, 50, 0, 0.5);
+  load "data/bang_res.mat"; %p_bang res_bang cvg_bang outp_bang
+  start_comp = @(grid) start_bang(grid, p_bang(3), p_bang(1), p_bang(2));
+%  start3050 = @(grid) start_bang(grid, 10, 3, 0) + start_bang(grid, 50, 0, 0.5);
 
 % All experiments  
 %  constants = {c1, c2};
@@ -82,53 +87,7 @@ function run_experiments()
 %	  };
 %  steps = {0.5, 0.1, 0.02};
 %  starts = {start0, start_max, start40, start55, start3050};
-
-% CC test  
-%  disp("TEST (CC)")
-%  constants = {c1};
-%  backends = {"lm_feasible"};
-%  discretizations = {@const_discr, @linear_discr};
-%  grids = {t0 : 1 : T,
-%	   t0 : 0.5 : T,
-%	   [(0 : 0.5 : 50), (51 : 1 : 149), (150 : 0.5 : 200)],
-%	  };
-%  steps = {0.1};
-%  starts = {start0, start_max};
-%  run(constants, backends, discretizations, grids, steps, starts, "res/res_paramCC")
-
-% Discretization test
-%  disp("TEST DISCRETIZATION");
-%  constants = {c2};
-%  backends = {"lm_feasible", "active-set"};
-%  discretizations = {@const_discr, @linear_discr};
-%  grids = {t0 : 0.5 : T};
-%  steps = {0.1};
-%  starts = {start0, start40};
-%  run(constants, backends, discretizations, grids, steps, starts, "res/res_discr")
-
-% Grid test
-  disp("TEST GRID")
-  constants = {c2};
-  backends = {"lm_feasible", "active-set"};
-  discretizations = {@const_discr};
-  grids = {t0 : 1 : T,
-	   t0 : 0.5 : T,
-%	   t0 : 0.1 : T,
-	   [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)]
-	  };
-  steps = {0.1};
-  starts = {start0, start40};
-  run(constants, backends, discretizations, grids, steps, starts, "res/res_grid")
-
-% h test
-  disp("TEST h")
-  constants = {c2};
-  backends = {"lm_feasible", "active-set"};
-  discretizations = {@const_discr};
-  grids = {t0 : 0.5 : T};
-  steps = {0.5, 0.1, 0.02};
-  starts = {start0, start40};
-  run(constants, backends, discretizations, grids, steps, starts, "res/res_h")
+%  precisions = {1e-6, 1e-9, 1e-10, 1e-11, 1e-12}
 
 % start test
   disp("TEST START")
@@ -139,11 +98,64 @@ function run_experiments()
   steps = {0.1};
   starts = {start0,
 	    start_max,
-	    start40,
 	    start55,
-%	    start3050
+	    start_comp,
 	   };
-  run(constants, backends, discretizations, grids, steps, starts, "res/res_start")
+  precisions = {1e-6, 1e-9};
+  run(constants, backends, discretizations, grids, steps, starts, precisions, "res/res_start")
+  
+% CC test  
+  disp("TEST (CC)")
+  constants = {c1};
+  backends = {"lm_feasible"};
+  discretizations = {@const_discr, @linear_discr};
+  grids = {t0 : 1 : T,
+	   t0 : 0.5 : T,
+	   [(0 : 0.5 : 50), (51 : 1 : 149), (150 : 0.5 : 200)],
+	  };
+  steps = {0.1};
+  starts = {start0, start_max};
+  precisions = {1e-6, 1e-9};
+  run(constants, backends, discretizations, grids, steps, starts, precisions, "res/res_paramCC")
+
+% Discretization test
+  disp("TEST DISCRETIZATION");
+  constants = {c2};
+  backends = {"lm_feasible", "active-set"};
+  discretizations = {@linear_discr}; %const computed in start test
+  grids = {t0 : 0.5 : T};
+  steps = {0.1};
+  starts = {start_comp};
+  precisions = {1e-9};
+  run(constants, backends, discretizations, grids, steps, starts, precisions, "res/res_discr")
+
+% Grid test
+  disp("TEST GRID")
+  constants = {c2};
+  backends = {"lm_feasible", "active-set"};
+  discretizations = {@const_discr};
+  grids = {t0 : 1 : T,
+%	   t0 : 0.5 : T, computed in start test
+%	   t0 : 0.1 : T,
+	   [(0: 1 : 24), (25 : 0.1 : 75), (76 : 1 : 200)]
+	  };
+  steps = {0.1};
+  starts = {start_comp};
+  precisions = {1e-9};
+  run(constants, backends, discretizations, grids, steps, starts, precisions, "res/res_grid")
+
+% h test
+  disp("TEST h")
+  constants = {c2};
+  backends = {"lm_feasible", "active-set"};
+  discretizations = {@const_discr};
+  grids = {t0 : 0.5 : T};
+  steps = {0.5,
+%	   0.1, computed in tart test
+	   0.02};
+  starts = {start_comp};
+  precisions = {1e-9};
+  run(constants, backends, discretizations, grids, steps, starts, precisions, "res/res_h")
 endfunction
 
 %  factors = {backends, discretizations, grids, steps, starts};

@@ -116,14 +116,14 @@ start = [300*ones(1,20), zeros(1, 80), 50*ones(1,301)]/100;
 save "sol_bang.mat" p;
 
 [p_c1, res_c1, cvg_c1, outp_c1] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants1, "active-set");
-save "data/sol_test_c1.mat" p_c1, res_c1, outp_c1;
+save "data/sol_test_c1.mat" p_c1 res_c1 outp_c1;
 
 %Test sqp siatka S_1 start40 (na testach wyszedł absurdalny wynik)
 points = t0 : 1 : T;
 N = length(points);
 start = [zeros(1,42), 40*ones(1,159)]/100;
 [p_sqs1, res_sqs1, cvg_sqs1, outp_sqs1] = run_opt(points, x0, start, h, @const_discr, constants, "active-set");
-save "data/sol_test_sqs1.mat" p_sqs1, res_sqs1, outp_sqs1;
+save "data/sol_test_sqs1.mat" p_sqs1 res_sqs1 outp_sqs1;
 
 %Eksperymenty z gęstą siatką
 points = t0 : 0.1 : T;
@@ -225,4 +225,70 @@ save "data/sol_big_prec.mat" p, res, cvg, outp;
 [p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, 1e-9);
 
 start = 2.9*ones(N,1);
-[p, res, cvg, outp] = run_opt(points, x0, start, h, @const_discr, constants1);
+[p_cc, res_cc, cvg_cc, outp_cc] = run_opt(points, x0, start, h, @const_discr, constants1, 1e-9);
+[y_cc, dy_cc] = objf(p_cc, points, x0, h, @const_discr, constants1);
+[y0_cc, dy0_cc] = objf(start, points, x0, h, @const_discr, constants1);
+
+
+[p, res, cvg, outp] = run_opt(points, x0, zeros(N,1), h, @const_discr, constants, 1e-9);
+%save "data/res_zero_prec.mat" p res cvg outp;
+load "data/res_zero_prec.mat";
+[y_zprc, dy_zprc] = objf(p, points, x0, h, @const_discr, constants);
+[y0_zprc, dy0_zprc] = objf(zeros(N,1), points, x0, h, @const_discr, constants);
+
+t0 = 0;
+T = 200;
+h = 0.05;
+g0 = [0; 0.55; 42];
+g0 = [0; 0.4; 50];
+[p_bang, res_bang, cvg_bang, outp_bang] = run_opt_bang(t0, T, x0, g0, h, constants);
+save "data/bang_res.mat" p_bang, res_bang, cvg_bang, outp_bang;
+
+points = t0 : 0.5 : T;
+N = length(points);
+pt = lookup(points, p_bang(3));
+start = [p_bang(1)*ones(1,pt), p_bang(2)*ones(1,N - pt)];
+h = 0.1;
+[p_ns, res_ns, cvg_ns, outp_ns] = run_opt(points, x0, start, h, @const_discr, constants, 1e-9);
+
+lag = zeros(length(dy), 1);
+for i = 1:length(dy)
+  if p(i) < 1e-8
+    disp(dy(i))
+  endif
+  if p(i) < 1e-8 && dy(i) < 0
+    lag(i) = 0;
+  elseif p(i) > 3 - (1e-8) && dy(i) > 0
+    lag(i) = 0;
+  else
+    lag(i) = dy(i);
+  endif
+endfor
+
+%Loading backups
+function s = start_bang(grid, point, val1, val2)
+  pos = lookup(grid, point);
+  s = [val1*ones(1, pos - 1), val2*ones(1, length(grid) - pos + 1)];
+endfunction
+load "data/bang_res.mat"; %p_bang res_bang cvg_bang outp_bang
+start_comp = @(grid) start_bang(grid, p_bang(3), p_bang(1), p_bang(2));
+discr = @const_discr;
+grid = t0 : 0.5 : T;
+h = 0.1;
+start = start_comp(grid);
+[y0, dy0] = objf(start, grid, x0, h, discr, constants);
+results = zeros(8, 5);
+for i = 1:8
+  load(["bak/res/res_prec_sol_" num2str(i)]); %p outp
+  [y, dy] = objf(p, grid, x0, h, discr, constants);
+  results(i,:) = [y, outp.niter, outp.nobjf, norm(dy,1), norm(dy0,1)];
+endfor
+save("-ascii", "res/res_prec");
+
+				%SOME IMPORTANT RESULTS
+
+save "data/p_50_6.mat" p_55_6; %start g_55, tol=10^-6
+save "data/p_50_9.mat" p_55_9; %start g_55, tol=10^-9
+save "data/p_comp_6.mat" p_comp_6; %start g_computed, tol=10^-6
+save "data/p_comp_9.mat" p_comp_9; %start g_computed, tol=10^-9
+
