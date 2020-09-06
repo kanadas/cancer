@@ -5,13 +5,13 @@ if not (len(sys.argv) in [2,3]):
     print("Usage: python " + sys.argv[0] + " <filename> [<filename>]")
     exit(1)
 
-#if len(sys.argv) > 2:
-#    with open(sys.argv[2], "r") as in_file:
-#        grads = [float(line) for line in in_file]
-    
+if len(sys.argv) > 2:
+    with open(sys.argv[2], "r") as in_file:
+        grads = [[float(i) for i in line.split(' ') if i.strip()] for line in in_file]
+
 best = 1e9
 
-#i = 0
+i = 0
 
 def convert_row(row):
     global best
@@ -21,16 +21,24 @@ def convert_row(row):
     if len(row) > 1:
         row[1] = str(round(row[1]))
         row[2] = str(round(row[2]))
-        if len(row) > 4:
+        if len(sys.argv) > 2:
+            if grads[i][1] == 0:
+                ratio = 0
+            else:
+                ratio = grads[i][0] / grads[i][1]
+            if ratio > 0 and ratio < 1e-2:
+                row[4] = "{:.1e}".format(ratio)
+            else:
+                row[4] = str(round(ratio, 3))
+            row[3] = str(round(1e-5*grads[i][0],2))
+            i += 1
+        elif len(row) > 4:
             ratio = row[3] / row[4]
             if ratio < 1e-2:
                 row[4] = "{:.1e}".format(ratio)
             else:
                 row[4] = str(round(ratio, 3))
-#        if len(sys.argv) > 2:
-#            row.append(str(round(grads[i] / row[3], 1)))
-#            i += 1
-        row[3] = str(round(1e-5*row[3],2))
+            row[3] = str(round(1e-5*row[3],2))
     return row
     
 content = []    
@@ -83,13 +91,13 @@ with open(sys.argv[1], "r") as in_file:
 #precisions = ["$10^{-9}$"]
 
 # h test
-parameters = ["(DC)"]
-backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
-discrs = ["$P_0$"]
-grids = ["$S_{0.5}$"]
-steps = ["0.5", "0.02"]
-starts = ["$g_{0.07,0.59,48.2}$"]
-precisions = ["$10^{-9}$"]
+#parameters = ["(DC)"]
+#backends = ["{\\it lm\\/}", "{\\it sqp\\/}"]
+#discrs = ["$P_0$"]
+#grids = ["$S_{0.5}$"]
+#steps = ["0.5", "0.02"]
+#starts = ["$g_{0.07,0.59,48.2}$"]
+#precisions = ["$10^{-9}$"]
 
 # precision test
 parameters = ["(DC)"]
@@ -102,7 +110,7 @@ precisions = ["$10^{-6}$", "$10^{-9}$", "$10^{-11}$", "$10^{-13}$"]
 
 res = '''\\begin{tabular}{|c|c|c|c|c|c|c||c|c|c|c|c|}
 \\hline
-Param. & algorytm & aproks. & siatka & $h$ & start & Tol & $\hat{J}$ & iter & $\\#\\hat{J}$ & $\\norm{G}_1$ & $\\frac{\\norm{G}_1}{\\norm{G_0}_1}$ \\\\
+Param. & algorytm & aproks. & siatka & $h$ & start & Tol & $\hat{J}$ & iter & $\\#\\hat{J}$ & $\\norm{L}_1$ & $\\frac{\\norm{L}_1}{\\norm{L_0}_1}$ \\\\
 \\hline
 '''
 cases = [case + (tuple(result)) for (case,result) in

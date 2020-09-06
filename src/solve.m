@@ -30,11 +30,6 @@ constants1.alpha12 = 0.1;
 constants1.alpha21 = 0.15;
 constants1.omega = 1000;
 
-load "sol0.mat";
-load "sol_omega2k_1.mat";
-load "sol_omega2k.mat";
-save "sol0.mat" p0;
-
 points = t0 : 4 : T;
 
 points = t0 : 1 : T;
@@ -253,12 +248,12 @@ h = 0.1;
 
 lag = zeros(length(dy), 1);
 for i = 1:length(dy)
-  if p(i) < 1e-8
+  if p(i) < 1e-9
     disp(dy(i))
   endif
   if p(i) < 1e-8 && dy(i) < 0
     lag(i) = 0;
-  elseif p(i) > 3 - (1e-8) && dy(i) > 0
+  elseif p(i) > 3 - (1e-9) && dy(i) > 0
     lag(i) = 0;
   else
     lag(i) = dy(i);
@@ -283,7 +278,9 @@ for i = 1:8
   [y, dy] = objf(p, grid, x0, h, discr, constants);
   results(i,:) = [y, outp.niter, outp.nobjf, norm(dy,1), norm(dy0,1)];
 endfor
-save("-ascii", "res/res_prec");
+save("-ascii", "res/res_prec", "results");
+
+[p_scaled, res_scaled, cvg_scaled, outp_scaled] = run_opt(points, x0, start, h, @const_discr, constants, 1e-9);
 
 				%SOME IMPORTANT RESULTS
 
@@ -292,3 +289,8 @@ save "data/p_50_9.mat" p_55_9; %start g_55, tol=10^-9
 save "data/p_comp_6.mat" p_comp_6; %start g_computed, tol=10^-6
 save "data/p_comp_9.mat" p_comp_9; %start g_computed, tol=10^-9
 
+				%Some old, probably obsolete stuff
+load "sol0.mat";
+load "sol_omega2k_1.mat";
+load "sol_omega2k.mat";
+save "sol0.mat" p0;
