@@ -5,7 +5,7 @@
 
 \title{Optymalna strategia podawania leku}
 
-\tytulang{Optimal medicine dossage strategy}
+\tytulang{Optimal strategy of drug dosage}
 
 \kierunek{matematyka}
 
@@ -20,11 +20,11 @@
   49M37 Numerical methods based on nonlinear programming\\
   }
 
-\keywords{analiza numeryczna, teoria sterowania, programowanie nieliniowe, nowotwór, Octave, FMINCON}
+\keywords{teoria sterowania, programowanie nieliniowe, nowotwór, Octave}
 
 \usepackage[utf8]{inputenc}
 \usepackage{polski}
-\usepackage{romannum}
+%\usepackage{romannum}
 \usepackage{amsmath}
 % \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -74,11 +74,11 @@
 \newtheorem{definicja}{Definicja}
   
 \begin{document}
-
+\pagenumbering{arabic}
 \maketitle
 
 \begin{abstract}
-  W pracy przedstawiono metodę poszukiwania optymalnej strategii podawania leku przy leczeniu nowotworu.
+  W pracy przedstawiono metodę numerycznego wyznaczania przybliżenia optymalnej strategii podawania leku przy leczeniu nowotworu.
   Sporządzono i opisano implementację metody w środowisku Octave oraz przeprowadzono i omówiono wyniki eksperymentów.
 \end{abstract}
 
@@ -87,11 +87,11 @@
 \chapter*{Wprowadzenie}
 \addcontentsline{toc}{chapter}{Wprowadzenie}
 
-Nowotwory są jednym z największych problemów współczesnej medycyny. Przyczyniają się one do bardzo wielu zgonów na całym świecie. Proces leczenia nowotworu nie zawsze jest skuteczny, oraz potrafi być bardzo wyniszczający dla organizmu pacjenta.
+Nowotwory są jednym z największych problemów współczesnej medycyny. Przyczyniają się one do bardzo wielu zgonów na całym świecie. Proces leczenia nowotworu nie zawsze jest skuteczny oraz potrafi być bardzo wyniszczający dla organizmu pacjenta, dlatego tak istotne jest, by terapia prowadzona była w jak najlepszy sposób.
 
-W tej pracy postaramy się odpowiedzieć na pytanie, jaka strategia podawania leku przy leczeniu nowotworu daje najlepsze skutki. W tym celu skorzystamy z modelu formułującego problem jako problem znalezienia optymalnego sterowania.
+W tej pracy przedstawimy metodę przybliżonego rozwiązania pewnego modelu przedstawiającego zależność między strategią podawania leku, a przebiegiem i skutecznością terapii. Celem naszym będzie znalezienie strategii podawania leku optymalizującą, podaną w tym modelu, miarę skuteczności terapii.
 
-Do rozwiązania tego zadania skorzystamy z metod analizy numerycznej. Zaprojektujemy i zaimplementujemy algorytm poszukujący wspomnianej optymalnej strategii podawania leku. Przeprowadzimy też eksperymenty badające poprawność i skuteczność naszej implementacji, oraz wpływ jaki mają na nią rozmaite parametry wynikające z zastosowanej metody. Na końcu przeprowadzamy analizę i krytykę uzyskanych wyników oraz użytych metod.
+Do rozwiązania tego zadania sformułujemy je jako zadanie optymalizacji nieliniowej z ograniczeniami. Zaprojektujemy i zaimplementujemy algorytm poszukujący wspomnianej optymalnej strategii podawania leku. Przeprowadzimy też eksperymenty badające poprawność i skuteczność naszej implementacji, oraz wpływ jaki mają na nią rozmaite parametry wynikające z zastosowanej metody. Na końcu przeprowadzamy dyskusję uzyskanych wyników oraz użytych metod.
 
 \chapter{Sformułowanie problemu}
 Celem pracy jest znalezienie strategii podawania leku przy leczeniu nowotworu, pozwalającej osiągnąć możliwie największą skuteczność terapii. W tym celu skorzystamy z modelu przedstawionego w pracy \cite{BBF-manuscript} (zobacz też \cite{BBF2016}, \cite{BBF2019} gdzie przedstawiono podobne zagadnienia). Model ten przedstawia rozwój nowotworu w czasie w zależności od dawkowania leku, $g(t)$, za pomocą równania różniczkowego:
@@ -122,7 +122,7 @@ gdzie
   \omega, \epsilon > 0 
 \end{equation*}
 
-Problem ten w literaturze nazywa się problemem optymalnego sterowania.
+Problem ten w literaturze (np.~\cite{diehl},~\cite{rao-methods}) nazywa się problemem optymalnego sterowania.
 
 \section{Problem wyjściowy}
 Zdefiniujmy teraz formalnie problem oraz uprośćmy notację.
@@ -162,12 +162,12 @@ Przez funkcję kawałkami ciągłą określoną na odcinku rozumiemy funkcję o 
   \quad \text{ gdzie } i \in \{0,\ldots, n\},\ \xi_0 = 0,\ \xi_{n+1}=T
 \end{equation}
 
-Zwróćmy jeszcze uwagę na fakt, że funkcja $F(x) = -\ln(x)$ posiada osobliwość w 0, więc prawa strona (\ref{dynamicsim}) nie jest dobrze zdefiniowana dla $y_1(t) = y_2(t) = 0$, a obliczenia w których argumenty $F$ są bliskie 0 mogą być obarczone dużymi błędami numerycznymi. Podobnie we wzorze (\ref{dynamicsim}) występuje dzielenie przez $y_3$, więc dla $y_3(t) = 0$ prawa strona (\ref{odesim}) także nie jest dobrze określone.
+Zwróćmy jeszcze uwagę na fakt, że funkcja $F(x) = -\ln(x)$ posiada osobliwość w 0, więc prawa strona (\ref{dynamicsim}) nie jest dobrze zdefiniowana dla $y_1(t) = y_2(t) = 0$, a obliczenia w których argumenty $F$ są bliskie 0 mogą być obarczone dużymi błędami numerycznymi. Podobnie we wzorze (\ref{dynamicsim}) występuje dzielenie przez $y_3$, więc dla $y_3(t) = 0$ prawa strona (\ref{odesim}) także nie jest dobrze określona.
 
 \section{Problem przybliżony}\label{simp_problem_subsec}
 Wyznaczenie rozwiązania problemu optymalnego sterowania w postaci jawnego wzoru rzadko kiedy jest możliwe. Z tego powodu zdecydujemy się na szukanie rozwiązania przybliżonego.
 
-Rozwiązanie problemu \ref{problem} przybliżymy rozwiązaniem pewnego problemu optymalizacji skończenie wymiarowej. W tym celu ustalimy siatkę dyskretyzacji przedziału $[0, T]$:
+Rozwiązanie Problemu~\ref{problem} przybliżymy rozwiązaniem pewnego problemu optymalizacji skończenie wymiarowej. W tym celu ustalimy siatkę dyskretyzacji przedziału $[0, T]$:
 \begin{equation}
   0 = t_0 < t_1 < \cdots < t_{n-1} < t_n = T
 \end{equation}
@@ -179,7 +179,7 @@ Możemy teraz przybliżać sterowanie $g$ za pomocą splajnu opartego na punktac
 \end{gather}
 i jest jednoznacznie zdefiniowane przez wartości $g_i \simeq g(t_i)$ dla $i = 0,\ldots, n$. Te wartości będą optymalizowanymi zmiennymi.
 
-Korzystając z przybliżonej funkcji sterowania, na każdym odcinku $[t_n, t_{n+1}]$ przybliżymy rozwiązanie $y$ równania różniczkowego (\ref{odesim}). Użyjemy do tego $M$ kroków metody Rungego-Kutty rzędu $r$ ze stałym krokiem długości $h = \frac{t_{n+1} - t_n}{M}$, wtedy przybliżone rozwiązanie $\hat{y}(t) \simeq y(t)$ w punkcie $t = t_n + (m + 1)h$ dla $m = 0,\ldots, M$  wyraża się przez:
+Korzystając z przybliżonej funkcji sterowania, na każdym odcinku $[t_n, t_{n+1}]$ przybliżymy rozwiązanie $y$ równania różniczkowego (\ref{odesim}). Użyjemy do tego $M$ kroków metody Rungego-Kutty rzędu $r$ ze stałym krokiem długości $h = \frac{t_{n+1} - t_n}{M}$. Wtedy przybliżone rozwiązanie $\hat{y}(t) \simeq y(t)$ w punkcie $t = t_n + (m + 1)h$ dla $m = 0,\ldots, M$  wyraża się przez:
 \begin{equation} \label{rk}
   \begin{split}
     &k_1 = f(t_n + mh, \hat{y}(t_n + mh), \hat{g}), \\
@@ -240,7 +240,7 @@ Aby znaleźć te warunki przybliża się całkę z powyższego równania za pomo
 \end{equation}
 Powyższy wzór dodaje się do ograniczeń optymalizatora jako ograniczenie równościowe. W ten sposób RRZ (\ref{ode-alternative}) zostaje w przybliżeniu wymuszone w rozwiązaniu.
 
-Ograniczenia występujące w sformułowaniu oryginalnego problemu można zwykle bez problemu przekształcić na ograniczenia na $g_i$ oraz $y_i$. Przybliżony funkcjonał celu definiuje się, jako numeryczne przybliżenie oryginalnego funkcjonału celu zastosowane do przybliżonego stanu $\hat{y}$ i sterowania $\hat{g}$.
+Ograniczenia występujące w sformułowaniu oryginalnego problemu można zwykle bez problemu przekształcić na ograniczenia $g_i$ oraz $y_i$. Przybliżony funkcjonał celu definiuje się, jako numeryczne przybliżenie oryginalnego funkcjonału celu zastosowane do przybliżonego stanu $\hat{y}$ i sterowania $\hat{g}$.
 
 Podejście to jest dokładnie opisane w~\cite{Kelly}, występuje też w~\cite{diehl} i~\cite{rao-methods}.
 
@@ -250,9 +250,9 @@ Aby obliczyć wynik problemu przybliżonego zdefiniowanego w rozdz.~\ref{simp_pr
 \chapter{Implementacja}
 Optymalizator FMINICON wymaga dostarczenia funkcji do optymalizowania, czyli w naszym przypadku funkcji $\hat{J}$, oraz ograniczeń, czyli w przypadku metody ,,direct single shooting'' jedynie (\ref{nlp_cons}). Domyślnie optymalizator wyznacza gradient za pomocą różnic skończonych, co jest kosztowne, gdyż wymaga uruchomienia funkcji celu liniowo wiele razy względem liczby parametrów. Aby poprawić wydajność optymalizacji zaimplementujemy liczenie gradientu przybliżonej funkcji celu ze względu na parametry $g_0,\ldots, g_n$.
 
-Zauważmy, że znalezienie dobrego wyniku będzie wymagało zapewne wielokrotnego wywołania naszej funkcji celu przez optymalizator, więc zależy nam aby funkcja celu liczyła się możliwie szybko. Lepsza wydajnościowo implementacja pozwoli też na większe zagęszczenie siatki dyskretyzacji i tym samym wzrost dokładności aproksymacji.
+Zauważmy, że znalezienie dobrego wyniku będzie zapewne wymagało wielokrotnego wywołania naszej funkcji celu przez optymalizator, więc zależy nam aby funkcja celu liczyła się możliwie szybko. Lepsza wydajnościowo implementacja pozwoli też na większe zagęszczenie siatki dyskretyzacji i tym samym wzrost dokładności aproksymacji.
 
-Jedną z praktyk pozwalającą poprawić wydajność programów w środowiskach MATLAB i Octave jest tak zwana wektoryzacja. Polega ona na zastępowaniu pętli operacjami na wektorach. Korzysta to z faktu, że wiele funkcji w tych środowiskach można wywołać z wektorem parametrów, zamiast pojedynczego parametru i zwracają one wtedy wektor wyników, oraz wykonują się znacznie szybciej niż gdyby wywołać je wielokrotnie w pętli. Z tego powodu będziemy korzystać z tej techniki gdzie to tylko możliwe.
+Jedną z praktyk pozwalającą poprawić wydajność programów w środowiskach MATLAB i Octave jest tak zwana wektoryzacja. Polega ona na zastępowaniu pętli operacjami na wektorach. Korzysta to z faktu, że wiele funkcji w tych środowiskach można wywołać z wektorem parametrów, zamiast pojedynczego parametru i zwracają one wtedy wektor wyników, oraz wykonują się znacznie szybciej niż gdyby wywołać je wielokrotnie w pętli, z pojedyńczymi argumentami. Z tego powodu będziemy korzystać z tej techniki gdzie to tylko możliwe.
 
 Aby sprowadzić problem optymalnego sterowania do problemu optymalizacji nieliniowej musimy obliczyć przybliżone sterowanie (\ref{control_1}) lub (\ref{control_2}), przybliżyć rozwiązanie równania różniczkowego (\ref{rk}) a następnie za pomocą uzyskanego rozwiązania obliczyć kwadraturę (\ref{quad}) przybliżającą funkcję celu (\ref{objf}). Ponadto chcemy obliczyć gradient funkcji celu, co będzie wymagało policzenia pochodnej każdego z wymienionych wzorów względem parametrów $g_i$.
 
@@ -269,7 +269,7 @@ Aby policzyć gradient przybliżonego sterowania $\hat{g}$ ze względu na parame
 
 Implementacja powyższych wzorów jest standardowa, znajdowanie odpowiedniego indeksu $i$ odbywa się tak samo, jak przy liczeniu wartości przybliżonego sterowania.
 
-Zarówno funkcja $lookup$ jak i pozostałe operacje wykorzystywane do policzenia przybliżonego sterowania i jego gradientu są zwektoryzowane, w szczególności środowiska MATLAB i Octave umożliwiają wektorowe indeksowanie, więc nasza implementacja sterowania i gradientu też jest zwektoryzowana.
+Zarówno funkcja $lookup$ jak i pozostałe operacje wykorzystywane do policzenia przybliżonego sterowania i jego gradientu są zwektoryzowane. W szczególności, środowiska MATLAB i Octave umożliwiają wektorowe indeksowanie, więc nasza implementacja sterowania i jego gradientu też jest zwektoryzowana.
 
 \section{Równanie różniczkowe}\label{subsec_rrz}
 Aby przybliżyć rozwiązanie równania (\ref{ode}) należy zaimplementować funkcję $f(t,y,g)$, a następnie bezpośrednio zaimplementować odpowiednią metodę Rungego-Kutty (\ref{rk}). Wzory te implementuje się bezpośrednio.
@@ -286,7 +286,7 @@ gdzie
 \end{equation}
 Wzory na elementy macierzy $D_f$ pominiemy, liczy się je i implementuje standardowo.
 
-Nasza implementacja umożliwia też przekazanie wektora punktów w czasie jako argumentu. W takim przypadku w trakcie iteracji będzie spamiętywać wyliczone wartości w tych punktach. Dla wygody założymy, że punkty podane będą w kolejności rosnącej, oraz odległości między sąsiednimi punktami będą podzielne przez długość kroku $h$. Dzięki temu założeniu punkty nieciągłości naszego przybliżonego sterowania będą zawsze wypadały między krokami metody R-K, dzięki czemu pojedynczy krok będzie przybliżał równanie różniczkowe o ciągłej prawej stronie, co jest jednym z założeń metody R-K.
+Nasza implementacja umożliwia też przekazanie wektora punktów w czasie jako argumentu. W takim przypadku wyliczane wartości w podanych punktach będą spamiętywane w trakcie optymalizacji i zwrócone w wyniku. Dla wygody założymy, że punkty podane będą w kolejności rosnącej, oraz odległości między sąsiednimi punktami będą podzielne przez długość kroku $h$. Dzięki temu założeniu potencjalne punkty nieciągłości naszego przybliżonego sterowania będą zawsze wypadały między krokami metody R-K, dzięki czemu pojedynczy krok algorytmu będzie przybliżał rozwiązanie równania różniczkowego o ciągłej prawej stronie, co jest jednym z założeń metody R-K.
 
 \section{Funkcja celu}
 Przybliżoną funkcję celu (\ref{quad}) można zaimplementować za pomocą iloczynu skalarnego:
@@ -363,27 +363,44 @@ Do dyskretyzacji sterowania użyjemy dwóch metod (oznaczane ,,aproks.'' tabelac
 Splajny te opierają się na siatce która, na użytek eksperymentu, może być jednego z trzech rodzajów (oznaczane ,,siatka'' w tabelach z wynikami):
 \begin{itemize}
 \item{$S_{\tau}$:} jednorodna, z krokiem $\tau$, więc $t_n = \tau n$. Ograniczymy się do $\tau \in \{0.1, 0.5, 1, 4\}$.
-\item{$N_{sr}$: Niejednorodna, gęstsza w środku} $t_n = \begin{cases}
-    n \iif n \le 25 \\
-    25 + 0.1\cdot(n-25) \iif 25 < n \le 525 \\
-    75 + (n - 525) \iif n > 525
+\item{$N_{sr}$: Niejednorodna, gęstsza w środku,} $t_n = \begin{cases}
+    n \quad \text{gdy } n \le 25 \\
+    25 + 0.1\cdot(n-25) \quad \text{gdy } 25 < n \le 525 \\
+    75 + (n - 525) \quad \text{gdy } n > 525
   \end{cases}$
-\item{$N_{kon}$: Niejednorodna, gęstsza na końcach} $t_n = \begin{cases}
-    0.5\cdot n \iif n \le 100 \\
-    50 + (n - 100) \iif 100 < n \le 200 \\
-    150 + 0.5\cdot (n - 200) \iif n > 200
+\item{$N_{kon}$: Niejednorodna, gęstsza na końcach,} $t_n = \begin{cases}
+    0.5\cdot n \quad \text{gdy } n \le 100 \\
+    50 + (n - 100) \quad \text{gdy } 100 < n \le 200 \\
+    150 + 0.5\cdot (n - 200) \quad \text{gdy } n > 200
   \end{cases}$
 \end{itemize}
 \subsection{Krok dyskretyzacji $h$ metody R-K rozwiązania (\ref{odesim})}
 Ograniczymy się do $h \in \{0.02, 0.1, 0.5\}$.
 \subsection{Sterowania startowe}\label{start_control}
-Optymalizator FMINICON wymaga podania początkowego przybliżenia sterowania optymalnego. Znalezienie odpowiednio dobrego przybliżenia startowego może być niezbędne do uzyskania dobrych rezultatów, choć istnieją metody optymalizacji pozwalające osiągać dobre rezultaty nawet przy niezbyt dobrym przybliżeniu początkowym. Jest to bardzo przydatne w zadaniach w których nie znamy dobrego punktu startowego. Czasem jednak wiedza ekspercka pozwala ustalić dobry punkt startowy który wystarczy lekko poprawić aby uzyskać optimum. W naszym przypadku nie znamy dobrych kandydatów na sterowanie startowe. Przetestujemy więc sterowania ekstremalne (stale równe 0 lub $g_{\max}$) oraz sterowania kawałkami stałe postaci
-\[g_{\alpha,\beta,\gamma} = \alpha \cdot \1_{[t_0, \gamma)} + \beta \cdot \1_{[\gamma, T)}.\]
+Optymalizator FMINICON wymaga podania początkowego przybliżenia sterowania optymalnego. Rozpoczęcie optymalizacji od odpowiednio dobrego sterowania może być niezbędne do uzyskania dobrych wyników, choć istnieją metody optymalizacji pozwalające osiągać dobre rezultaty nawet przy niezbyt dobrym przybliżeniu początkowym. Jest to bardzo przydatne w zadaniach w których nie znamy dobrego punktu startowego. Czasem jednak wiedza ekspercka pozwala ustalić dobre przybliżenie początkowe które wystarczy lekko poprawić aby uzyskać optimum. W naszym przypadku nie znamy dobrych kandydatów na sterowanie startowe. Przetestujemy więc sterowania ekstremalne (stale równe 0 lub $g_{\max}$) oraz sterowania kawałkami stałe postaci
+\begin{equation}\label{start-parametrization}
+  g_{\alpha,\beta,\gamma} = \alpha \cdot \1_{[t_0, \gamma)} + \beta \cdot \1_{[\gamma, T)}.
+\end{equation}
 Ograniczymy się do: $g_{0,0.55,42.5},\ g_{0.07,0.59,48.2}$. Zastosowane sterowanie startowe będzie podane w kolumnie ,,start'' w tabelach z wynikami.
+
+\subsection{Heurystyczna metoda znajdowania sterowania startowego}\label{start_method}
+
+Aby znaleźć sterowanie startowe które pozwoli uzyskać dobre wyniki, posłużyliśmy się pewną heurystyczną metodą. Będziemy szukać punktu startowego kawałkami stałego z maksymalnie jednym punktem nieciągłości.  Zauważmy, że sterowanie takie można sparametryzować trzema wartościami, co zrobiono w (\ref{start-parametrization}). Aby uzyskać jak najlepszy punkt startowy tej postaci, dostosowaliśmy naszą implementację rozwiązania problemu do podanej parametryzacji, czyli optymalizowaliśmy problem
+\begin{equation}
+  \min_{\alpha,\beta,\gamma} \check{J}(\alpha,\beta,\gamma) := \hat{J}(\alpha, \beta)\quad \text{z dyskretyzacją } t = (t_0, \gamma, T)
+\end{equation}
+i z ograniczeniami
+\begin{equation}
+  0 \le \alpha,\beta \le g_{\max}, \quad t_0 < \gamma < T.
+\end{equation}
+Zauważmy, że ta metoda jest heurystyczna, ponieważ nie wiemy czy $\check{J}(\alpha,\beta,\gamma)$ zależy od $\gamma$ w sposób różniczkowalny, ani nawet ciągły. Z tego też powodu nie mogliśmy policzyć analitycznie gradientu dla tego zadania i skorzystaliśmy z metody różnic skończonych. Aby otrzymać dobre rezultaty trzeba było uważnie ustawić parametr zatrzymania optymalizacji (,,TolFun''), oraz długość kroku różnic skończonych. Warto jeszcze nadmienić, że przez takie sformułowanie problemu nie mamy gwarancji, że punkt nieciągłości wypada między krokami algorytmów R-K (\ref{rk}) i kwadratury (\ref{quad}), co może skutkować znacznym błędem w wynikach tych metod na jednym przedziale długości $h$. Z tego powodu zastosowano wartość $h = 0.05$, niższą niż w większości eksperymentów.
+
+Pomimo heurystyczności tej metody, udało się za jej pomocą uzyskać sterowanie $g_{0.07,0.59,48.2}$, które osiągnęło najlepsze wyniki w eksperymentach.
+
 \subsection{Warunek stopu}
 Algorytm {\it lm\/} kończy optymalizację gdy spełniony jest jeden z kilku warunków. Jednym z nich jest zbyt niewielka względna poprawa funkcji celu. Minimalna wartość tej poprawy jest ustawiana w FMINCON parametrem ,,TolFun''. Domyślną wartością tego parametru jest $10^{-4}$.
 
-Podobnie dla algorytmu {\it sqp\/} istnieje w Octave parametr ,,octave\_sqp\_tolerance'', który odpowiada za różne kryteria stopu (niestety dokumentacja nie precyzuje za które dokładnie). Domyślną wartością tego parametru jest pierwiastek z precyzji arytmetyki, czyli ok $10^{-8}$.
+Podobnie dla algorytmu {\it sqp\/} istnieje w Octave parametr ,,octave\_sqp\_tolerance'', który odpowiada za różne kryteria stopu (niestety dokumentacja nie precyzuje za które). Domyślną wartością tego parametru jest pierwiastek z precyzji arytmetyki, czyli ok. $10^{-8}$.
 
 W eksperymentach przetestujemy wpływ obu tych parametrów na proces optymalizacji. Dla prostoty oznaczmy oba te parametry przez ,,Tol'', co oznacza, że gdy testujemy algorytm {\it lm\/} to przez ,,Tol'' mamy na myśli ,,TolFun'', a gdy testujemy {\it sqp}, to mamy na myśli ,,octave\_sqp\_tolerance''. Przetestujemy wartości $\text{Tol} \in \{10^{-6}, 10^{-9}, 10^{-11}, 10^{-13}\}$. 
 
@@ -396,15 +413,15 @@ Podamy też wartości pomagające ocenić jak blisko jest rozwiązaniu do faktyc
 \begin{equation}\label{lagrangian}
   \nabla L = {(l_i)}^T_{i = 0,\ldots, n} \quad \text{gdzie} \quad
   l_i = \begin{cases}
-    0\ \iif\ g_i = 0 \land \frac{\partial \hat{J}}{\partial g_i} > 0 \\
-    0\ \iif\ g_i = g_{\max} \land \frac{\partial \hat{J}}{\partial g_i} < 0 \\
+    0\ \quad \text{gdy } g_i = 0 \land \frac{\partial \hat{J}}{\partial g_i} > 0 \\
+    0\ \quad \text{gdy } g_i = g_{\max} \land \frac{\partial \hat{J}}{\partial g_i} < 0 \\
     \frac{\partial \hat{J}}{\partial g_i}\ \text{w.p.p.}
   \end{cases}
   .
 \end{equation}
 Będziemy podawać normę gradientu Lagrangianu dla punktu zakończenia optymalizacji $\norm{L}_1$, oraz normę względną, czyli stosunek normy gradientów w punkcie zakończenia optymalizacji i w punkcie startowym: $\frac{\norm{L}_1}{\norm{L_0}_1}$.
 
-Wartości funkcji celu są duże, więc dla zwiększenia czytelności będziemy podawać wartości dla $10^{-5}\hat{J}$ zaokrąglone do 2 miejsc po przecinku. Podobnie, dla normy lagrangianu będziemy podawać wartość $10^{-5}\norm{L}_1$ zaokrągloną do 2 miejsc po przecinku. Wartość normy względnej $\frac{\norm{L}_1}{\norm{L_0}_1}$ będziemy podawać zaokrągloną do 3 miejsc po przecinku, lub (gdy jest mniejsza niż $10^{-2}$) w postaci naukowej z dwoma cyframi znaczącymi.
+Wartości funkcji celu są duże, więc dla zwiększenia czytelności będziemy podawać wartości dla $10^{-5}\hat{J}$ zaokrąglone do 2 miejsc po przecinku. Podobnie, dla normy lagrangianu będziemy podawać wartość $10^{-5}\norm{L}_1$ zaokrągloną do 2 miejsc po przecinku. Wartość normy względnej $\frac{\norm{L}_1}{\norm{L_0}_1}$ będziemy podawać zaokrągloną do 3 miejsc po przecinku, lub (gdy jest mniejsza niż $10^{-2}$) w postaci wykładniczej z dwoma cyframi znaczącymi.
 
 \subsection{Test poprawności liczenia gradientu}
 Pierwszy eksperyment ma na celu zaprezentowanie poprawności implementacji obliczania gradientu funkcji celu. Aby to sprawdzić porównamy naszą implementację, z domyślną implementacją przybliżającą gradient za pomocą różnic skończonych (FD) dostępną w FMINICON.\ Obliczanie wyników metodą domyślną wymaga wiele czasu, więc eksperyment obejmie tylko jeden przypadek, opisany na Tabeli~\ref{test_tbl}. Celem tego eksperymentu jest sprawdzenie poprawności implementacji, więc ograniczymy liczbę iteracji optymalizatora do 20, oraz pominiemy podawanie norm gradientów.
@@ -436,9 +453,9 @@ Pierwszy eksperyment ma na celu zaprezentowanie poprawności implementacji oblic
 \end{figure}
 Rozwiązania uzyskane obiema metodami są bardzo podobne, o czym świadczą wyniki zaprezentowane na Tabeli~\ref{test_tbl} i Rysunku~\ref{test_nograd_sol}. Ponadto nasza implementacja osiągnęła minimalnie lepszy wynik.
 
-Dodatkowo policzymy gradient $G$, w punkcie będącym sterowaniem zaprezentowanym na wykresie~(\ref{test_sol}), obliczony przy użyciu naszej implementacji, oraz gradient $G_\tau$ uzyskany za pomocą metody FD dla różnych wartości kroku różnic skończonych
-\[\tau \in \{10^{-3},\ldots,10^{-10}\}.\]
-Następnie dla wszystkich $\tau$ obliczymy normę różnicy: $\norm{G - G_\tau}_1$. Wyniki tych obliczeń przedstawiamy na Tabeli~\ref{grad_fd_tbl}.
+Dodatkowo policzymy gradient $G$ w punkcie będącym sterowaniem zaprezentowanym na wykresie~(\ref{test_sol}), oraz obliczymy przybliżenie $G_\tau$ tego gradientu za pomocą metody FD z krokiem $\tau$, dla różnych wartości kroku:
+\[\tau \in \{10^{-3},10^{-4},\ldots,10^{-10}\}.\]
+Następnie dla każdego $\tau$ obliczymy normę różnicy: $\norm{G - G_\tau}_1$. Wyniki tych obliczeń przedstawiamy na Tabeli~\ref{grad_fd_tbl}.
 
 \begin{table}[h!]
   \begin{center}
@@ -453,9 +470,9 @@ Następnie dla wszystkich $\tau$ obliczymy normę różnicy: $\norm{G - G_\tau}_
   \end{center}
 \end{table}
 
-Zgodnie z oczekiwaniami gdy krok różnic skończonych $\tau$ maleje, to do pewnego momentu maleje też $\norm{G - G_\tau}_1$. W pewnym momencie norma ta zaczyna rosnąć wraz z dalszym zmniejszaniem $\tau$, gdyż dla tak niskich wartości $\tau$, obliczanie różnic dzielonych obarczone jest znacznym błędem numerycznym.
+Zgodnie z oczekiwaniami, gdy krok różnic skończonych $\tau$ maleje, to do pewnego momentu maleje też $\norm{G - G_\tau}_1$. W pewnym momencie norma ta zaczyna rosnąć wraz z dalszym zmniejszaniem $\tau$, gdyż dla tak niskich wartości $\tau$ obliczanie różnic dzielonych obarczone jest znacznym błędem numerycznym.
 
-Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana w Tabeli~\ref{test_tbl} nie uwzględnia wywołań potrzebnych do aproksymacji gradientu metodą różnic skończonych. Aby policzyć pochodną dla jednego parametru potrzeba raz dodatkowo wywołać $\hat{J}$, więc jednorazowe policzenie gradientu wymaga tylu wywołań ile jest parametrów (w tym przypadku 51). Gradient jest liczony w każdej iteracji co daje łącznie $20\cdot 51 = 1020$ dodatkowych wywołań $\hat{J}$. Inną wadą przybliżania gradientu metodą różnic skończonych są błędy. Zauważmy, że w okolicy punktu przecięcia się krzywych $y_1$ i $y_2$ wartość i pochodna wyrażenia $G((y_2(t) - y_1(t))/\epsilon)$, gdzie $G(x) = \frac{1 + \tanh(x)}{2}$, zmienia się bardzo szybko w czasie, co powoduje znaczne błędy przy zbyt dużym kroku metody różnic skończonych, co możemy też zaobserwować na Tabeli~\ref{grad_fd_tbl}, w postaci dużej normy różnicy gradientów, gdy krok różnic skończonych to $10^{-3}$, czyli wartość domyślna w FMINICON użyta też do obliczenia wyników tego eksperymentu. Oznacza to w szczególności, że powyższe wyniki uzyskane przy użyciu FD są zapewne bardzo odległe od optymalnych.
+Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana w Tabeli~\ref{test_tbl} nie uwzględnia wywołań potrzebnych do aproksymacji gradientu metodą różnic skończonych. Aby policzyć pochodną dla jednego parametru potrzeba raz dodatkowo wywołać $\hat{J}$, więc jednorazowe policzenie gradientu wymaga tylu wywołań ile jest parametrów (w tym przypadku 51). Gradient jest liczony w każdej iteracji, co daje łącznie $20\cdot 51 = 1020$ dodatkowych wywołań $\hat{J}$. Inną wadą przybliżania gradientu metodą różnic skończonych są błędy. Zauważmy, że w okolicy punktu przecięcia się krzywych $y_1$ i $y_2$, wartość i pochodna wyrażenia $G((y_2(t) - y_1(t))/\epsilon)$, gdzie $G(x) = \frac{1 + \tanh(x)}{2}$, zmienia się bardzo szybko w czasie, co powoduje znaczne błędy przy zbyt dużym kroku metody różnic skończonych. Możemy je zaobserwować na Tabeli~\ref{grad_fd_tbl}, w postaci dużej normy różnicy gradientów, gdy krok różnic skończonych to $10^{-3}$. Wartość $10^{-3}$ jest wartością domyślna w FMINICON i została użyta do obliczenia wyników tego eksperymentu. Oznacza to w szczególności, że powyższe wyniki uzyskane przy użyciu FD są zapewne bardzo odległe od optymalnych.
 
 \subsection{Parametry (CC)}
 
@@ -523,14 +540,14 @@ Warto tu jeszcze dodać, że liczba wywołań $\hat{J}$ podana w Tabeli~\ref{tes
 \begin{figure}[h]
   \centering
   \includegraphics[width=.5\textwidth]{../plots/plot_max}
-  \caption{Rozwiązanie dla parametrów (CC)}\label{max_plot}
+  \caption{Najlepsze znalezione rozwiązanie dla parametrów (CC)}\label{max_plot}
 \end{figure}
 
 Wyniki dla parametrów (CC)\ są dość jednoznaczne. Najmniejszą wartość $\hat{J}$ osiągamy dla sterowania $g \equiv g_{\max} = 3$, które zaprezentowano na Rysunku~\ref{max_plot}. Wszystkie testy zaczynające z tego sterowania zatrzymały się po jednej iteracji, patrz Tabela~\ref{param1_tbl}. Na podstawie tego, że norma lagrangianu w $g_3$ jest zerowa, możemy wnioskować, że rozwiązanie to jest minimum lokalnym naszego problemu.
 
-Wyniki testów z~Tebeli~\ref{param1_tbl} korzystające z siatki niejednorodnej wypadają zauważalnie gorzej od pozostałych. Widzimy też, że zmniejszenie Tol poprawiło wartość $\hat{J}$ w bardzo małym stopniu, a znacząco zwiększyło liczbę iteracji. Algorytm {\it sqp\/} jest jedynym który zbiegł z zerowego sterowania do sterowania optymalnego, co pokazuje że algorytm ten lepiej sprawuje się w powyższych przypadkach testowych.
+Wyniki testów z Tabeli~\ref{param1_tbl} korzystające z siatki niejednorodnej wypadają zauważalnie gorzej od pozostałych. Widzimy też, że zmniejszenie Tol poprawiło wartość $\hat{J}$ w bardzo małym stopniu, a znacząco zwiększyło liczbę iteracji. Algorytm {\it sqp\/} jest jedynym który zbiegł z zerowego sterowania do sterowania optymalnego, co pokazuje że algorytm ten lepiej sprawuje się w powyższych przypadkach testowych.
 
-Jako, że najlepsze znalezione rozwiązanie dla parametrów (CC) trywializuje się, w dalszych eksperymentach skupimy się na parametrach~(DC), które dodatkowo zdają się prowadzić do nieciągłego optymalnego sterowania.
+Jako, że najlepsze znalezione, dla parametrów (CC), rozwiązanie trywializuje się, w dalszych eksperymentach skupimy się na parametrach~(DC), które dodatkowo zdają się prowadzić do nieciągłego optymalnego sterowania.
 
 \subsection{Wpływ sterowania startowego}
 
@@ -577,9 +594,9 @@ Jako, że najlepsze znalezione rozwiązanie dla parametrów (CC) trywializuje si
   \end{center}
 \end{table}
 
-Wyniki badające różne sterowania startowe dla różnych algorytmów i wartości tolerancji przedstawione zostały na Tabeli~\ref{start_tbl}. Pozwalają one na wyciągnięcie kilku ciekawych wniosków. Po pierwsze widzimy, że dla $\text{Tol} = 10^{-6}$ wynikowe gradienty są bardzo duże, w szczególności prawie zawsze większe od gradientów startowych. Oznacza to, że rozwiązania te są zapewne dalekie od optimów lokalnych, więc ta wartość tolerancji jest zapewne zbyt duża i dalej będziemy skupiać się na badaniu niższych wartości tolerancji. Ponadto wygląda na to, że zmniejszenie tolerancji nie poprawiło wyników algorytmu {\it sqp}.
+Wyniki badające różne sterowania startowe dla różnych algorytmów i wartości tolerancji przedstawione zostały na Tabeli~\ref{start_tbl}. Pozwalają one na wyciągnięcie kilku ciekawych wniosków. Po pierwsze widzimy, że dla $\text{Tol} = 10^{-6}$ względne normy lagrangianów są bardzo duże, w szczególności prawie zawsze większe od 1. Oznacza to, że rozwiązania te są zapewne dalekie od optimów lokalnych, więc ta wartość Tol jest zapewne zbyt duża i dalej będziemy skupiać się na badaniu niższych wartości tolerancji. Ponadto wygląda na to, że zmniejszenie Tol nie poprawiło wyników algorytmu {\it sqp}.
 
-Na Tabeli~\ref{start_tbl} widzimy, że norma lagrangianu dla rozwiązania $g_3$ wynosi 0, więc możemy wnioskować, że przy parametrach (DC), podobnie jak przy parametrach (CC), sterowanie $g_3$ (czyli stale równe $3 = g_{\max}$) jest minimum lokalnym. Jednak w tym przypadku wartości $\hat{J}$ dla tego minimum są znacznie gorsze od pozostałych rezultatów. 
+Na Tabeli~\ref{start_tbl} widzimy, że norma lagrangianu dla rozwiązania $g_3$ wynosi 0, więc możemy wnioskować, że przy parametrach (DC), podobnie jak przy parametrach (CC), sterowanie $g_3$ (czyli stale równe $3 = g_{\max}$) jest minimum lokalnym. Jednak w tym przypadku wartości $\hat{J}$ są znacznie gorsze od pozostałych rezultatów. 
 
 Najlepsze wartości $\hat{J}$ osiągane są przy sterowaniach startowych $g_{0,0.55,42.5}$ i $g_{0.07,0.59,48.2}$. Widzimy, że nawet dla Tol $= 10^{-6}$ wychodzą dobre wartości funkcjonału celu, ale dopiero ustawienie Tol na $10^{-9}$ pozwala uzyskać niskie wartości $\frac{\norm{L}_1}{\norm{L_0}_1}$ i tutaj wyraźnie lepiej wypada sterowanie startowe $g_{0.07,0.59,48.2}$. Warto też zauważyć, że pomimo podobnych wartości funkcji $\hat{J}$ dla tych czterech przypadków testowych, wynikowe sterowania zauważalnie się dla nich różnią, co pokazano na Rysunkach~\ref{test_g55_sol} i~\ref{test_gcomp_sol}.
 
@@ -664,7 +681,7 @@ Jak widzimy na Tabeli~\ref{discr_tbl} dyskretyzacja kawałkami stała wydaje si�
   \end{center}
 \end{table}
 
-Zgodnie z oczekiwaniami gęstsza siatka jednorodna osiąga lepsze wyniki dla algorytmu {\it lm}, co widzimy na Tabeli~\ref{grid_tbl}, natomiast siatka niejednorodna okazuje się osiągać gorsze wyniki od siatek jednorodnych. Co prawda wartości $\hat{J}$ dla siatki niejednorodnej są niewiele gorsze od tych dla siatki jednorodnej, a liczba iteracji znacznie mniejsza, ale po normach gradientu, widzimy, że punkt do którego zbiegła optymalizacja jest znacznie odległy od minimum lokalnego. Dla algorytmu {\it sqp\/} wartości $\hat{J}$ są takie same dla każdej siatki, ale widzimy, że gradient wyniku jest najmniejszy dla siatki $S_1$, czyli w tym wypadku lepiej wypada rzadsza siatka jednorodna.
+Zgodnie z oczekiwaniami gęstsza siatka jednorodna osiąga lepsze wyniki dla algorytmu {\it lm}, co widzimy na Tabeli~\ref{grid_tbl}, natomiast siatka niejednorodna okazuje się osiągać gorsze wyniki od siatek jednorodnych. Co prawda wartości $\hat{J}$ dla siatki niejednorodnej są niewiele gorsze od tych dla siatki jednorodnej, a liczba iteracji znacznie mniejsza, ale po normach gradientu widzimy, że punkt do którego zbiegła optymalizacja jest znacznie odległy od minimum lokalnego. Dla algorytmu {\it sqp\/} wartości $\hat{J}$ są takie same dla każdej siatki, ale widzimy, że gradient wyniku jest najmniejszy dla siatki $S_1$, czyli w tym wypadku lepiej wypada rzadsza siatka jednorodna.
 
 \subsection{Krok dyskretyzacji $h$}
 
@@ -691,7 +708,7 @@ Zgodnie z oczekiwaniami gęstsza siatka jednorodna osiąga lepsze wyniki dla alg
   \end{center}
 \end{table}
 
-Wyniki eksperymentów badających wpływ dobory kroku dyskretyzacji $h$ przestawiono na Tabeli~\ref{step_tbl}. Widzimy, że przy obniżeniu długości kroku z $0.5$ do $0.1$ wyniki się poprawiły. Dla algorytmu {\it lm\/} spadła liczba potrzebnych iteracji, a dla algorytmu {\it sqp\/} spadła norma lagrangianu. Przy dalszym obniżaniu kroku $h$ wyniki wydają się pogarszać, w szczególności dla algorytmu {\it lm}, któremu nie udało się znaleźć żadnego lepszego sterowania od sterowania startowego i zakończył optymalizację po pierwszej iteracji. Zauważmy tutaj, że dla różnych długości kroków $h$ rozpatrujemy faktycznie inne zadanie, więc takie zachowanie jest możliwe.
+Wyniki eksperymentów badających wpływ dobory kroku dyskretyzacji $h$ przestawiono na Tabeli~\ref{step_tbl}. Widzimy, że przy obniżeniu długości kroku z $0.5$ do $0.1$ wyniki się poprawiły. Dla algorytmu {\it lm\/} spadła liczba potrzebnych iteracji, a dla algorytmu {\it sqp\/} spadła norma lagrangianu. Przy dalszym obniżaniu kroku $h$ wyniki wydają się pogarszać, w szczególności dla algorytmu {\it lm}, któremu nie udało się znaleźć żadnego sterowania lepszego od sterowania startowego i zakończył optymalizację po pierwszej iteracji. Zauważmy tutaj, że dla różnych długości kroków $h$ rozpatrujemy faktycznie inne zadanie, więc takie zachowanie jest możliwe.
 
 \subsection{Warunek stopu}
 
@@ -722,7 +739,7 @@ Wyniki eksperymentów badających wpływ dobory kroku dyskretyzacji $h$ przestaw
   \end{center}
 \end{table}
 
-Najlepsze wyniki na Tabeli~\ref{tol_tbl} osiągane są dla Tol $= 10^{-11}$. Przy Tol $= 10^{-6}$ norma $\norm{G}_1$ jest duża, więc rozwiązanie uzyskane w ten sposób jest raczej odległe od minimum lokalnego. Widzimy też poprawę normy względnej lagrangianu o rząd wielkości przy obniżeniu wartości Tol z $10^{-9}$ do $10^{-11}$, choć należy zauważyć, że poprawa ta wymagała przeprowadzenia aż 500 dodatkowych iteracji. Przy dalszym obniżaniu Tol do $10^{-13}$ wyniki wydają się pogarszać, więc zapewne optymalna wartością Tol dla tego przypadku jest bliska $10^{-11}$.
+Najlepsze wyniki na Tabeli~\ref{tol_tbl} osiągane są dla Tol $= 10^{-11}$. Przy Tol $= 10^{-6}$ norma $\norm{G}_1$ jest duża, więc rozwiązanie uzyskane w ten sposób jest raczej odległe od minimum lokalnego. Widzimy też poprawę normy względnej lagrangianu o rząd wielkości przy obniżeniu wartości Tol z $10^{-9}$ do $10^{-11}$, choć należy zauważyć, że poprawa ta wymagała przeprowadzenia aż 500 dodatkowych iteracji. Przy dalszym obniżaniu Tol do $10^{-13}$ wyniki wydają się pogarszać, więc zapewne optymalna wartość Tol dla tego przypadku jest bliska $10^{-11}$.
 
 Ten eksperyment potwierdza nasze podejrzenia, że dla algorytmu {\it sqp\/} parametr tolerancji nie ma wpływu na wynik w naszych eksperymentach, a wyniki osiągane przez ten algorytm wydają się być dalekie od minimum zarówno lokalnego jak i globalnego.
 
@@ -734,40 +751,28 @@ Podsumowując najlepsze wyniki udało się osiągnąć przy użyciu algorytmu {\
   \caption{Najlepsze znalezione rozwiązanie dla parametrów (DC)}\label{plot_best_dc}
 \end{figure}
 
-\section{Heurystyczna metoda znajdowania sterowania startowego}\label{start_method}
+\section{Dyskusja wyników}
 
-Aby znaleźć sterowanie startowe które pozwoli uzyskać dobre wyniki posłużyliśmy się pewną heurystyczną metodą. Jak już pisaliśmy w rozdziale~\ref{start_control}, spodziewaliśmy się, że optymalny wynik będzie nieciągły. Zauważmy, że sterowanie kawałkami stałe z jednym punktem nieciągłości można sparametryzować trzema wartościami, co nawet sugeruje notacja $g_{\alpha,\beta,\gamma}$. Aby uzyskać jak najlepszy punkt startowy tej postaci dostosowaliśmy naszą implementację rozwiązania problemu do tej parametryzacji, to znaczy optymalizowaliśmy problem
-\begin{equation}
-  \min_{\alpha,\beta,\gamma} \check{J}(\alpha,\beta,\gamma) := \hat{J}(\alpha, \beta)\quad \text{z dyskretyzacją } t = (t_0, \gamma, T)
-\end{equation}
-i z ograniczeniami
-\begin{equation}
-  0 \le \alpha,\beta \le g_{\max}, \quad t_0 < \gamma < T.
-\end{equation}
-Zauważmy, że ta metoda jest heurystyczna, ponieważ nie wiemy czy $\check{J}(\alpha,\beta,\gamma)$ zależy od $\gamma$ w sposób różniczkowalny, ani nawet ciągły. Z tego też powodu nie mogliśmy policzyć analitycznie gradientu dla tego zadania i skorzystaliśmy z różnic skończonych. Aby otrzymać dobre rezultaty trzeba było jeszcze uważnie ustawić parametry zatrzymania optymalizacji (,,TolFun''), oraz długość kroku różnic skończonych. Warto jeszcze nadmienić, że przez takie sformułowanie problemu nie mamy gwarancji, że punkt nieciągłości wypada między krokami algorytmów R-K (\ref{rk}) i kwadratury (\ref{quad}), co może skutkować znacznym błędem w wynikach tych metod na jednym przedziale długości $h$, więc zastosowano niższą wartość $h = 0.05$ niż w większości eksperymentów.
+Jak widzimy, wyniki dla parametrów (CC) i (DC) znacznie się różnią. Dokładniejsze przyjrzenie się funkcjonałowi celu (\ref{objfsim}) pozwala uzasadnić takie zjawisko na poziomie intuicji. Jak widzimy parametr $\omega$ jest mnożony przez wartość drugiej całki. Zauważmy, że funkcja pod drugą całką jest gładkim przybliżeniem funkcji znaku wyrażenia $y_2(t) - y_1(t)$. W przypadku (DC) parametr $\omega$ jest znacznie większy niż w (CC), więc w tym przypadku druga całka ma większy wpływ na wynik funkcjonału. Jak przyjrzymy się rozwiązaniu z np. Rysunku~\ref{p_comp_9}, widzimy, że punkt nieciągłości znajduje się od razu po przecięciu się krzywych $y_1$ i $y_2$, a po nim sterowanie ma taką wartość aby krzywe te były bardzo blisko siebie, ale przy zachowaniu $y_2(t) - y_1(t) < 0$. Wygląda więc na to, przy parametrach (DC)\ bardziej opłaca się utrzymywać stan $y_2(t) - y_1(t) < 0$, natomiast przy parametrach (CC)\ lepsze wyniki daje minimalizacja pierwszej całki, czyli pola pod $y_1 + y_2$. Możemy się też spodziewać, że wysokie wartości sterowania powodują zmniejszanie się zarówno $y_1$ jak i $y_2$, ale od pewnej wartości sterowania $y_1$ maleje szybciej niż $y_2$. Taka hipoteza zgadzałaby się z interpretacją $y_1$ i $y_2$ jako liczba komórek nowotworowych odpowiednio podatnych na działanie leku i odpornych na niego, a wartości sterowania jako dawki leku.
 
-Pomimo heurystyczności tej metody, udało się nią uzyskać sterowanie $g_{0.07,0.59,48.2}$, które osiągnęło najlepsze rezultaty w eksperymentach.
+Otrzymywane normy względne lagrangianów były dość niewielkie dla najlepszych otrzymywanych wyników. Sugeruje to, że otrzymywane wyniki są bliskie optimom lokalnym. Należy jednak pamiętać, że nie jest to jeszcze dowód i wyniki te mogą jednak okazać się odległe od optimów lokalnych. Ponadto otrzymywane wyniki były mocno zależne od punktu startowego, co pozwala podejrzewać, że istnieją punkty startowe dla których moglibyśmy osiągnąć znacznie lepsze wyniki. W szczególności podejrzewamy, że sterowania startowe z różnymi punktami nieciągłości prowadzą do innych optimów lokalnych. Podejrzenia te są oparte na obserwacji, że optymalizacja, zaczynając z nieciągłego sterowania, kończyła się zwykle wynikiem mającym nieciągłość w tym samym punkcie. Być może zastosowanie innych algorytmów optymalizacji nieliniowej umożliwiłoby szukanie rozwiązania w sposób mniej zależący od znalezienia dobrego punktu startowego. Może też da się sformalizować heurystyczną metodę poszukiwania punktu startowego opisaną w rozdziale~\ref{start_method}, oraz uzyskać za jej pomocą znacznie lepsze wyniki. Ostatecznie, być może przyjęta przez nas metoda ,,direct single shooting'' nie jest dobrym wyborem dla tego zadania. Być może użycie np. metody ,,direct collocation'' pozwoliłoby osiągnąć lepsze,\ bliższe lokalnemu i globalnemu minimum wyniki.
 
-\chapter{Analiza i krytyka wyników}
-
-Jak widzimy, wyniki dla parametrów (CC) i (DC) znacznie się różnią. Dokładniejsze przyjrzenie się funkcjonałowi celu (\ref{objfsim}) pozwala uzasadnić takie zjawisko na poziomie intuicji. Jak widzimy parametr $\omega$ jest mnożony przez wartość drugiej całki. Zauważmy, że funkcja pod drugą całką jest gładkim przybliżeniem funkcji znaku wyrażenia $y_2(t) - y_1(t)$. W przypadku (DC) parametr $\omega$ jest znacznie większy niż w (CC), więc w tym przypadku druga całka ma większy wpływ na wynik funkcjonału. Jak przyjrzymy się rozwiązaniu z np. Rysunku~\ref{p_comp_9}, widzimy, że punkt nieciągłości znajduje się od razu po przecięciu się krzywych $y_1$ i $y_2$, a po nim sterowanie ma taką wartość aby krzywe te były bardzo blisko siebie, ale przy zachowaniu $y_2(t) - y_1(t) < 0$. Wygląda więc na to, przy parametrach (DC)\ bardziej opłaca się utrzymywać stan $y_2(t) - y_1(t) < 0$, natomiast przy parametrach (CC)\ lepsze wyniki daje minimalizacja pierwszej całki, czyli pola pod $y_1 + y_2$. Możemy się też spodziewać, że wysokie wartości sterowania powodują zmniejszanie się zarówno $y_1$ jak i $y_2$, ale od pewnej wartości sterowania $y_1$ maleje szybciej niż $y_2$. Taka hipoteza zgadzałaby się z interpretacją $y_1$ i $y_2$ jako liczba komórek rakowych odpowiednio podatnych na działanie leku i odpornych na niego, a wartości sterowania jako dawki leku.
-
-Otrzymywane normy względne lagrangianów były dość niewielkie dla najlepszych otrzymywanych wyników. Sugeruje to,że otrzymywane wyniki są bliskie optimom lokalnym. Należy jednak pamiętać, że wyniki te mogą być jednak odległe nawet od optimów lokalnych. Ponadto otrzymywane wyniki były mocno zależne od punktu startowego, co pozwala podejrzewać, że istnieją punkty startowe dla których moglibyśmy osiągnąć znacznie lepsze wyniki. W szczególności podejrzewamy, że sterowania startowe z różnymi punktami nieciągłości prowadzą do innych optimów lokalnych. Podejrzenia te są oparte na obserwacji, że optymalizacja, zaczynając z nieciągłego sterowania, kończyła się zwykle wynikiem mającym nieciągłość w tym samym punkcie. Być może zastosowanie innych algorytmów optymalizacji nieliniowej umożliwiłoby szukanie rozwiązania w sposób mniej zależący od znalezienia dobrego punktu startowego. Może też da się sformalizować heurystyczną metodę poszukiwania punktu startowego opisaną w rozdziale~\ref{start_method}, oraz uzyskać za jej pomocą znacznie lepsze wyniki. Ostatecznie, być może przyjęta przez nas metoda ,,direct single shooting'' nie jest dobrym wyborem dla tego zadania. Być może użycie np. metody ,,direct collocation'' pozwoliłoby osiągnąć lepsze,\ bliższe lokalnemu i globalnemu minimum wyniki.
-
-Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tempa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą splajna wyższego rzędu też mogłoby poprawić tempo zbieżności. W literaturze rozważa się też metody automatyzacji znajdowania siatki dyskretyzacji i odpowiedniego rzędu dyskretyzacji. Przykładem jest tu praca~\cite{Rao-ph}. Być może zastosowanie ich umożliwiłoby uzyskanie lepszych wyników.
+Niejednorodna siatka dyskretyzacji jest metodą nierzadko pozwalającą na poprawę tempa zbieżności, ale nie udało się jej tu z sukcesem zastosować. Podobnie przybliżanie sterowania za pomocą splajnu wyższego rzędu też mogłoby poprawić tempo zbieżności. W literaturze rozważa się też metody automatyzacji znajdowania siatki dyskretyzacji i odpowiedniego rzędu dyskretyzacji. Przykładem jest tu praca~\cite{Rao-ph}. Być może zastosowanie ich umożliwiłoby uzyskanie lepszych wyników.
 
 Dla parametrów (DC) nie udało nam się skutecznie zastosować algorytmu {\it sqp}. Algorytm ten potrafi osiągać dobre wyniki, co mogliśmy zaobserwować w przypadku (CC), dla którego osiągnął on znacznie lepsze rezultaty niż {\it lm\_feasible}. Podejrzewamy, że problemem w naszym przypadku były zbyt luźne warunki zakończenia optymalizacji tego algorytmu.  Niestety dokumentacja algorytmu {\it sqp\/}  nie specyfikuje jakie są warunki zakończenia optymalizacji i na co wpływa parametr ,,octave\_sqp\_tolerance''. Ponadto, zgodnie z dokumentacją, jest to jedyny parametr służący do kontrolowania warunków zakończenia optymalizacji używany przez ten algorytm.
 
-Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z Rysunku~\ref{max_plot} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach (DC), w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{\max}$ minimalna wartość $y_3$ wynosi ok. $0.02$. Nie jest to wartość na tyle małą, by móc powodować istotne błędy, ale jej występowanie sygnalizuje, że w innych eksperymentach być może pojawiają się mniejsze wartości.
+Przypomnijmy jeszcze uwagę z początku pracy, że gdy $y_1 = y_2 = 0$, lub $y_3 = 0$ to zadanie nie jest dobrze określone, a w przypadku gdy wartości te są bliskie zeru, mogą występować znaczne błędy numeryczne. W żadnym eksperymencie wartości $y_1$ ani $y_2$ nie były bliskie zeru. Minimalna wartość $y_3$ z Rysunku~\ref{max_plot} to $14.9$, więc i ta nie jest zbyt bliska 0. Okazuje się jednak, że przy parametrach (DC), w rozwiązaniu (\ref{odesim}) dla sterowania stale równego $g_{\max}$ minimalna wartość $y_3$ wynosi ok. $0.02$. Nie jest to wartość na tyle mała, by móc powodować istotne błędy, ale jej występowanie sygnalizuje, że w innych eksperymentach być może pojawiają się mniejsze wartości.
 
 Zauważmy, że najlepsze otrzymywane wyniki dla parametrów (DC) sugerują, że optymalne sterowanie jest nieciągłe. Jeśli jest tak w rzeczywistości, to zapewne wszystkie nasze przybliżenia obarczone są pierwotnym błędem aproksymacji, powodowanym faktem, że prawie na pewno optymalny punkt nieciągłości nie należy do naszej siatki dyskretyzacji. Zauważmy też, że użyte przez nas metody, w szczególności aproksymacja sterowania przez funkcję kawałkami stałą, oraz dostosowanie długości kroku $h$ algorytmu R-K do długości przedziału dyskretyzacji, mogą skutecznie ograniczać skutki możliwej nieciągłości optymalnego sterowania. Wskazywać na to mogą na przykład zauważalnie lepsze wyniki dyskretyzacji kawałkami stałej w porównaniu do dyskretyzacji kawałkami liniowej, które możemy zaobserwować na Tabeli~\ref{discr_tbl}.
 
 Na koniec należy podkreślić znaczenie zaimplementowania funkcji obliczającej gradient $\hat{J}$. Pozwoliło to znacząco zmniejszyć liczbę obliczeń funkcjonału celu $\hat{J}$. Asymptotyczna liczba obliczeń $\hat{J}$ wykonywanych w jednej iteracji optymalizacji spadła z liniowej wzgl.\ liczby parametrów do stałej. Przykładowo w eksperymentach zawierających 400 parametrów i wymagających 1000 iteracji, pozwoliło no przyspieszyć obliczenia ok. 100 razy.
 
 \chapter{Podsumowanie}
-W tej pracy przeszliśmy od problemu optymalnej strategii podawania leku do problemu optymalizacji nieliniowej z ograniczeniami. Udało nam się zaprojektować i zaimplementować algorytm poszukujący optymalnego rozwiązania przedstawionego problemu, oraz przeprowadziliśmy testy potwierdzające poprawność naszej implementacji. Przeprowadziliśmy wiele eksperymentów sprawdzających wpływ rozmaitych parametrów na proces i wyniki optymalizacji. Eksperymenty te pozwoliły znaleźć zestaw parametrów dający obiecujące wyniki. Przeanalizowaliśmy też problemy napotkane w trakcie pracy, oraz niedoskonałości naszego rozwiązania i zaproponowaliśmy potencjalne możliwości ich rozwiązania.
+W tej pracy sprowadziliśmy problem optymalnej strategii podawania leku do problemu optymalizacji nieliniowej z ograniczeniami, korzystając z metody ,,direct single shooting''. Jedną z istotnych cech podejścia było opracowanie procedury obliczającej (dokładny) gradient funkcji celu, z pominięciem aproksymacji różnicami skończonymi, która jest kosztowna obliczeniowo i może skutkować istotnymi błędami przybliżenia. Przeprowadziliśmy też testy potwierdzające poprawność naszej implementacji, przez porównanie z różnicową aproksymacją gradientu.
 
-Przeprowadzona analiza i krytyka metod oraz wyników pozwoliła ustalić, że wyniki wyglądają obiecująco, ale istnieją też poważne wątpliwości co do ich optymalności. Uzyskane rezultaty sugerują, że wykorzystane metody mają szansę być użyteczne w rozwiązywaniu problemów tego typu.
+Przeprowadzone eksperymenty pozwoliły ustalić, że w przypadku tego zadania potencjalnie lepsze wyniki udaje się osiągać przy użyciu algorytmu {\it lm\_feasible\/} niż {\it sqp\/} oraz przybliżaniu sterowania funkcją kawałkami stałą niż kawałkami liniową. Oszacowaliśmy też optymalną, dla tego problemu, długość kroku dyskretyzacji algorytmu R-K na $0.1$, oraz wartość parametru tolerancji optymalizatora na $10^{-11}$. Omówiliśmy ponadto możliwe zagrożenia dla naszego rozwiązania, takie jak potencjalna nieciągłość optymalnego sterowania, brak zbieżności globalnej, czy możliwa znaczna odległość wyniku optymalizacji od minimum lokalnego.
+
+Po przeanalizowaniu otrzymanych wyników, dochodzimy do wniosku, że wyglądają one obiecująco, ale nie nadają się jeszcze do wykorzystania w praktyce. Zastosowana metoda wydaje się mieć potencjał, ale dalsza praca jest potrzebna aby zweryfikować jakość i optymalność uzyskanych wyników. Niewątpliwie warto też sprawdzić alternatywne podejścia, jak np. metodę ,,direct collocation''. Mogą one umożliwić uzyskanie lepszych wyników, oraz dać pewien punkt odniesienia co do jakości uzyskanych przez nas wyników.
 
 \newpage{}
 \bibliography{bibliography}{}

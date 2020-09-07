@@ -1,30 +1,30 @@
 \babel@toc {polish}{}
-\contentsline {chapter}{Wprowadzenie}{v}%
-\contentsline {chapter}{\numberline {1}Sformułowanie problemu}{vii}%
-\contentsline {section}{\numberline {1.1}Problem wyjściowy}{viii}%
-\contentsline {section}{\numberline {1.2}Problem przybliżony}{viii}%
-\contentsline {section}{\numberline {1.3}Alternatywne podejście}{x}%
-\contentsline {section}{\numberline {1.4}Plan rozwiązania}{x}%
-\contentsline {chapter}{\numberline {2}Implementacja}{xi}%
-\contentsline {section}{\numberline {2.1}Sterowanie}{xi}%
-\contentsline {section}{\numberline {2.2}Równanie różniczkowe}{xii}%
-\contentsline {section}{\numberline {2.3}Funkcja celu}{xii}%
-\contentsline {chapter}{\numberline {3}Eksperymenty}{xv}%
-\contentsline {section}{\numberline {3.1}Zbiór testowy}{xv}%
-\contentsline {subsection}{\numberline {3.1.1}Zestawy parametrów}{xv}%
-\contentsline {subsection}{\numberline {3.1.2}Algorytmy}{xvi}%
-\contentsline {subsection}{\numberline {3.1.3}Metody dyskretyzacji}{xvi}%
-\contentsline {subsection}{\numberline {3.1.4}Krok dyskretyzacji $h$ metody R-K rozwiązania (\ref {odesim})}{xvi}%
-\contentsline {subsection}{\numberline {3.1.5}Sterowania startowe}{xvi}%
-\contentsline {subsection}{\numberline {3.1.6}Warunek stopu}{xvii}%
-\contentsline {section}{\numberline {3.2}Wyniki eksperymentów}{xvii}%
-\contentsline {subsection}{\numberline {3.2.1}Test poprawności liczenia gradientu}{xviii}%
-\contentsline {subsection}{\numberline {3.2.2}Parametry (CC)}{xix}%
-\contentsline {subsection}{\numberline {3.2.3}Wpływ sterowania startowego}{xx}%
-\contentsline {subsection}{\numberline {3.2.4}Metoda dyskretyzacji}{xxi}%
-\contentsline {subsection}{\numberline {3.2.5}Siatka dyskretyzacji}{xxii}%
-\contentsline {subsection}{\numberline {3.2.6}Krok dyskretyzacji $h$}{xxiii}%
-\contentsline {subsection}{\numberline {3.2.7}Warunek stopu}{xxiv}%
-\contentsline {section}{\numberline {3.3}Heurystyczna metoda znajdowania sterowania startowego}{xxv}%
-\contentsline {chapter}{\numberline {4}Analiza i krytyka wyników}{xxvii}%
-\contentsline {chapter}{\numberline {5}Podsumowanie}{xxix}%
+\contentsline {chapter}{Wprowadzenie}{5}%
+\contentsline {chapter}{\numberline {1}Sformułowanie problemu}{7}%
+\contentsline {section}{\numberline {1.1}Problem wyjściowy}{8}%
+\contentsline {section}{\numberline {1.2}Problem przybliżony}{8}%
+\contentsline {section}{\numberline {1.3}Alternatywne podejście}{10}%
+\contentsline {section}{\numberline {1.4}Plan rozwiązania}{10}%
+\contentsline {chapter}{\numberline {2}Implementacja}{11}%
+\contentsline {section}{\numberline {2.1}Sterowanie}{11}%
+\contentsline {section}{\numberline {2.2}Równanie różniczkowe}{12}%
+\contentsline {section}{\numberline {2.3}Funkcja celu}{12}%
+\contentsline {chapter}{\numberline {3}Eksperymenty}{15}%
+\contentsline {section}{\numberline {3.1}Zbiór testowy}{15}%
+\contentsline {subsection}{\numberline {3.1.1}Zestawy parametrów}{15}%
+\contentsline {subsection}{\numberline {3.1.2}Algorytmy}{16}%
+\contentsline {subsection}{\numberline {3.1.3}Metody dyskretyzacji}{16}%
+\contentsline {subsection}{\numberline {3.1.4}Krok dyskretyzacji $h$ metody R-K rozwiązania (\ref {odesim})}{16}%
+\contentsline {subsection}{\numberline {3.1.5}Sterowania startowe}{16}%
+\contentsline {subsection}{\numberline {3.1.6}Heurystyczna metoda znajdowania sterowania startowego}{17}%
+\contentsline {subsection}{\numberline {3.1.7}Warunek stopu}{17}%
+\contentsline {section}{\numberline {3.2}Wyniki eksperymentów}{17}%
+\contentsline {subsection}{\numberline {3.2.1}Test poprawności liczenia gradientu}{18}%
+\contentsline {subsection}{\numberline {3.2.2}Parametry (CC)}{19}%
+\contentsline {subsection}{\numberline {3.2.3}Wpływ sterowania startowego}{20}%
+\contentsline {subsection}{\numberline {3.2.4}Metoda dyskretyzacji}{21}%
+\contentsline {subsection}{\numberline {3.2.5}Siatka dyskretyzacji}{22}%
+\contentsline {subsection}{\numberline {3.2.6}Krok dyskretyzacji $h$}{24}%
+\contentsline {subsection}{\numberline {3.2.7}Warunek stopu}{24}%
+\contentsline {section}{\numberline {3.3}Dyskusja wyników}{25}%
+\contentsline {chapter}{\numberline {4}Podsumowanie}{29}%
